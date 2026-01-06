@@ -29,7 +29,7 @@ async function handleRoute(request, { params }) {
     }
 
     // ==================== AUTH ====================
-    if (route === '/auth/register' && method === 'POST') {
+    if (route === '/register' && method === 'POST') {
       const body = await request.json()
       const { email, password, name } = body
 
