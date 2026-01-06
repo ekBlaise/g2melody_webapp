@@ -343,7 +343,8 @@ test_plan:
     - "Donations API"
     - "Music CRUD API"
     - "Purchases API"
-  stuck_tasks: []
+  stuck_tasks:
+    - "User Registration API"
   test_all: false
   test_priority: "high_first"
 
