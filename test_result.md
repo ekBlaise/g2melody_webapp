@@ -347,3 +347,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Initial MVP built with Projects & Donations + Music Store. All backend APIs tested manually with curl and working. Frontend UI complete with donation and purchase dialogs. Mock payments implemented. Ready for backend testing."
+  - agent: "testing"
+    message: "Backend API testing completed. Found 1 critical routing issue with user registration endpoint conflicting with NextAuth routes. All other APIs (Projects, Donations, Music, Purchases, Admin Stats) are working correctly. Donations properly update project amounts, purchases create payment records, and all CRUD operations function as expected."
