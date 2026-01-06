@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  VISITOR
+  USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  CURRENT
+  PAST
+  DRAFT
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentType {
+  DONATION
+  PURCHASE
+  TICKET
+  BOOKING
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  password      String?
+  image         String?
+  role          UserRole  @default(USER)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  donations     Donation[]
+  purchases     Purchase[]
+  payments      Payment[]
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  title       String
+  description String        @db.Text
+  image       String?
+  goalAmount  Float
+  currentAmount Float       @default(0)
+  status      ProjectStatus @default(CURRENT)
+  deadline    DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  donations   Donation[]
+}
+
+model Donation {
+  id          String        @id @default(uuid())
+  amount      Float
+  currency    String        @default("XAF")
+  donorName   String?
+  donorEmail  String?
+  message     String?
+  anonymous   Boolean       @default(false)
+  status      PaymentStatus @default(PENDING)
+  projectId   String
+  userId      String?
+  createdAt   DateTime      @default(now())
+
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User?         @relation(fields: [userId], references: [id])
+  payment     Payment?
+}
+
+model Music {
+  id          String    @id @default(uuid())
+  title       String
+  artist      String
+  album       String?
+  genre       String?
+  duration    Int?      // in seconds
+  price       Float
+  currency    String    @default("XAF")
+  coverImage  String?
+  audioFile   String?
+  previewFile String?
+  sheetMusic  String?   // PDF URL
+  isHymn      Boolean   @default(false)
+  releaseDate DateTime?
+  plays       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  purchases   Purchase[]
+}
+
+model Purchase {
+  id          String        @id @default(uuid())
+  amount      Float
+  currency    String        @default("XAF")
+  status      PaymentStatus @default(PENDING)
+  musicId     String
+  userId      String?
+  guestEmail  String?
+  downloadUrl String?
+  downloadCount Int         @default(0)
+  createdAt   DateTime      @default(now())
+
+  music       Music         @relation(fields: [musicId], references: [id])
+  user        User?         @relation(fields: [userId], references: [id])
+  payment     Payment?
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  amount          Float
+  currency        String        @default("XAF")
+  type            PaymentType
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   String?       // stripe, paypal, momo, orange
+  transactionId   String?
+  receiptUrl      String?
+  userId          String?
+  donationId      String?       @unique
+  purchaseId      String?       @unique
+  metadata        Json?
+  createdAt       DateTime      @default(now())
+
+  user            User?         @relation(fields: [userId], references: [id])
+  donation        Donation?     @relation(fields: [donationId], references: [id])
+  purchase        Purchase?     @relation(fields: [purchaseId], references: [id])
+}
+
+model News {
+  id          String    @id @default(uuid())
+  title       String
+  content     String    @db.Text
+  excerpt     String?
+  image       String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  title       String
+  description String    @db.Text
+  image       String?
+  venue       String?
+  address     String?
+  eventDate   DateTime
+  endDate     DateTime?
+  ticketPrice Float?
+  currency    String    @default("XAF")
+  capacity    Int?
+  published   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id          String        @id @default(uuid())
+  eventId     String
+  buyerName   String
+  buyerEmail  String
+  quantity    Int           @default(1)
+  totalAmount Float
+  currency    String        @default("XAF")
+  status      PaymentStatus @default(PENDING)
+  ticketCode  String        @unique
+  createdAt   DateTime      @default(now())
+
+  event       Event         @relation(fields: [eventId], references: [id])
+}
+
+model ChoirBooking {
+  id            String    @id @default(uuid())
+  clientName    String
+  clientEmail   String
+  clientPhone   String?
+  eventType     String
+  eventDate     DateTime
+  venue         String?
+  details       String?   @db.Text
+  status        String    @default("pending") // pending, confirmed, completed, cancelled
+  quotedAmount  Float?
+  currency      String    @default("XAF")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
