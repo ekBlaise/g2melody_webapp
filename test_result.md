@@ -185,15 +185,18 @@ backend:
 
   - task: "User Registration API"
     implemented: true
-    working: true
+    working: false
     file: "/app/app/api/[[...path]]/route.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "POST /api/auth/register creates new user with hashed password"
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL: Registration endpoint /auth/register conflicts with NextAuth catch-all route /api/auth/[...nextauth]. NextAuth intercepts all /api/auth/* requests. Registration returns 'This action with HTTP POST is not supported by NextAuth.js'. Route needs to be moved to /api/register or /api/users/register to avoid conflict."
 
   - task: "NextAuth Authentication"
     implemented: true
