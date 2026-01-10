@@ -8,9 +8,9 @@ datasource db {
 }
 
 enum UserRole {
-  VISITOR
-  USER
-  ADMIN
+  USER      // Regular users (learners, supporters)
+  MEMBER    // Choir members (added by admin)
+  ADMIN     // Full admin access
 }
 
 enum ProjectStatus {
