@@ -78,7 +78,7 @@ function Navigation({ isScrolled, activeSection }) {
                 Sign In
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/join">
               <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 Join G2 Melody
               </Button>
