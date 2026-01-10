@@ -28,7 +28,7 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ message: 'G2 Melody API v1.0', status: 'running' }))
     }
 
-    // ==================== AUTH ====================
+    // ==================== AUTH - User Registration ====================
     if (route === '/register' && method === 'POST') {
       const body = await request.json()
       const { email, password, name } = body
@@ -47,15 +47,107 @@ async function handleRoute(request, { params }) {
         data: { id: uuidv4(), email, password: hashedPassword, name, role: 'USER' }
       })
 
-      return handleCORS(NextResponse.json({ id: user.id, email: user.email, name: user.name }))
+      return handleCORS(NextResponse.json({ id: user.id, email: user.email, name: user.name, role: user.role }))
+    }
+
+    // ==================== MEMBERSHIP APPLICATION ====================
+    if (route === '/membership-application' && method === 'POST') {
+      const body = await request.json()
+      
+      // Store membership application (could be a separate table, using metadata in user for now)
+      const application = {
+        id: uuidv4(),
+        fullName: body.fullName,
+        email: body.email,
+        phone: body.phone,
+        dateOfBirth: body.dateOfBirth,
+        location: body.location,
+        congregation: body.congregation,
+        musicalExperience: body.musicalExperience,
+        vocalPart: body.vocalPart,
+        instrument: body.instrument,
+        whyJoin: body.whyJoin,
+        howHeard: body.howHeard,
+        commitment: body.commitment,
+        status: 'pending',
+        submittedAt: new Date().toISOString()
+      }
+      
+      // For now, we'll store in a simple way - in production this would be a separate table
+      // Creating a user with pending status
+      const existingUser = await prisma.user.findUnique({ where: { email: body.email } })
+      if (existingUser) {
+        return handleCORS(NextResponse.json({ error: 'An application with this email already exists' }, { status: 400 }))
+      }
+      
+      // Store application as a pending user with metadata
+      const user = await prisma.user.create({
+        data: {
+          id: application.id,
+          email: body.email,
+          name: body.fullName,
+          role: 'USER', // Will be upgraded to MEMBER by admin
+        }
+      })
+
+      return handleCORS(NextResponse.json({ 
+        success: true, 
+        message: 'Your membership application has been submitted. We will review it and get back to you soon.',
+        applicationId: application.id 
+      }))
+    }
+
+    // ==================== ADMIN - Create Member ====================
+    if (route === '/admin/members' && method === 'POST') {
+      const body = await request.json()
+      const { email, name, password, vocalPart } = body
+
+      if (!email || !name) {
+        return handleCORS(NextResponse.json({ error: 'Email and name required' }, { status: 400 }))
+      }
+
+      const existingUser = await prisma.user.findUnique({ where: { email } })
+      if (existingUser) {
+        // Upgrade to member
+        const member = await prisma.user.update({
+          where: { email },
+          data: { role: 'MEMBER' }
+        })
+        return handleCORS(NextResponse.json(member))
+      }
+
+      const hashedPassword = password ? await bcrypt.hash(password, 12) : await bcrypt.hash('g2melody2024', 12)
+      const member = await prisma.user.create({
+        data: {
+          id: uuidv4(),
+          email,
+          name,
+          password: hashedPassword,
+          role: 'MEMBER'
+        }
+      })
+
+      return handleCORS(NextResponse.json(member))
+    }
+
+    if (route === '/admin/members' && method === 'GET') {
+      const members = await prisma.user.findMany({
+        where: { role: { in: ['MEMBER', 'ADMIN'] } },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, email: true, name: true, role: true, createdAt: true, image: true }
+      })
+      return handleCORS(NextResponse.json(members))
     }
 
     // ==================== PROJECTS ====================
     if (route === '/projects' && method === 'GET') {
       const url = new URL(request.url)
       const status = url.searchParams.get('status')
+      const category = url.searchParams.get('category')
       
-      const where = status ? { status: status.toUpperCase() } : {}
+      const where = {}
+      if (status) where.status = status.toUpperCase()
+      
       const projects = await prisma.project.findMany({
         where,
         orderBy: { createdAt: 'desc' },
@@ -89,7 +181,7 @@ async function handleRoute(request, { params }) {
           donations: {
             where: { status: 'COMPLETED' },
             orderBy: { createdAt: 'desc' },
-            take: 10,
+            take: 20,
             select: { id: true, amount: true, donorName: true, anonymous: true, createdAt: true, message: true }
           }
         }
@@ -235,6 +327,11 @@ async function handleRoute(request, { params }) {
       if (!music) {
         return handleCORS(NextResponse.json({ error: 'Music not found' }, { status: 404 }))
       }
+      // Increment play count
+      await prisma.music.update({
+        where: { id: musicMatch[1] },
+        data: { plays: { increment: 1 } }
+      })
       return handleCORS(NextResponse.json(music))
     }
 
@@ -305,10 +402,11 @@ async function handleRoute(request, { params }) {
 
     // ==================== STATS (Admin) ====================
     if (route === '/admin/stats' && method === 'GET') {
-      const [totalDonations, totalPurchases, totalUsers, projectStats, recentDonations] = await Promise.all([
+      const [totalDonations, totalPurchases, totalUsers, totalMembers, projectStats, recentDonations] = await Promise.all([
         prisma.donation.aggregate({ where: { status: 'COMPLETED' }, _sum: { amount: true }, _count: true }),
         prisma.purchase.aggregate({ where: { status: 'COMPLETED' }, _sum: { amount: true }, _count: true }),
-        prisma.user.count(),
+        prisma.user.count({ where: { role: 'USER' } }),
+        prisma.user.count({ where: { role: { in: ['MEMBER', 'ADMIN'] } } }),
         prisma.project.findMany({ select: { id: true, title: true, goalAmount: true, currentAmount: true, status: true } }),
         prisma.donation.findMany({ where: { status: 'COMPLETED' }, orderBy: { createdAt: 'desc' }, take: 5, include: { project: { select: { title: true } } } })
       ])
@@ -317,6 +415,7 @@ async function handleRoute(request, { params }) {
         donations: { total: totalDonations._sum.amount || 0, count: totalDonations._count },
         purchases: { total: totalPurchases._sum.amount || 0, count: totalPurchases._count },
         users: totalUsers,
+        members: totalMembers,
         projects: projectStats,
         recentDonations
       }))
@@ -324,11 +423,27 @@ async function handleRoute(request, { params }) {
 
     // ==================== USERS (Admin) ====================
     if (route === '/admin/users' && method === 'GET') {
+      const url = new URL(request.url)
+      const role = url.searchParams.get('role')
+      
+      const where = role ? { role } : {}
       const users = await prisma.user.findMany({
+        where,
         orderBy: { createdAt: 'desc' },
         select: { id: true, email: true, name: true, role: true, createdAt: true, image: true }
       })
       return handleCORS(NextResponse.json(users))
+    }
+
+    // Update user role
+    const userRoleMatch = route.match(/^\/admin\/users\/([^/]+)\/role$/)
+    if (userRoleMatch && method === 'PUT') {
+      const body = await request.json()
+      const user = await prisma.user.update({
+        where: { id: userRoleMatch[1] },
+        data: { role: body.role }
+      })
+      return handleCORS(NextResponse.json(user))
     }
 
     // ==================== PAYMENTS ====================
@@ -347,46 +462,122 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json(payments))
     }
 
+    // ==================== CONTACT ====================
+    if (route === '/contact' && method === 'POST') {
+      const body = await request.json()
+      // In production, this would send an email or store in database
+      console.log('Contact form submission:', body)
+      return handleCORS(NextResponse.json({ 
+        success: true, 
+        message: 'Your message has been sent. We will get back to you soon.' 
+      }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
-      // Create sample projects
+      // Create G2 Meloverse sub-projects
+      const meloverseBuildingImage = '/g2-meloverse.jpg'
+      
       const projects = await Promise.all([
+        // G2 Meloverse - Main Project
         prisma.project.upsert({
-          where: { id: 'proj-1' },
+          where: { id: 'proj-meloverse' },
           update: {},
           create: {
-            id: 'proj-1',
-            title: 'New Choir Robes 2025',
-            description: 'Help us purchase beautiful new choir robes for our upcoming international tour. These robes will represent G2 Melody at concerts across Africa and Europe.',
-            image: 'https://images.pexels.com/photos/444658/pexels-photo-444658.jpeg',
-            goalAmount: 5000000,
-            currentAmount: 2350000,
+            id: 'proj-meloverse',
+            title: 'G2 Meloverse - Multi-purpose Facility',
+            description: 'Our vision project to establish a state-of-the-art multi-purpose facility in Buea, Cameroon. This facility will house the G2 Music Academy, Recording Studios, Radio Station, and community spaces. Total project cost: 267,766,773 FCFA over 5 years (2027-2032).',
+            image: meloverseBuildingImage,
+            goalAmount: 267766773,
+            currentAmount: 15000000,
             status: 'CURRENT',
-            deadline: new Date('2025-08-31')
+            deadline: new Date('2032-06-30')
           }
         }),
+        // Sub-project: Land Acquisition
         prisma.project.upsert({
-          where: { id: 'proj-2' },
+          where: { id: 'proj-land' },
           update: {},
           create: {
-            id: 'proj-2',
-            title: 'Music Studio Equipment',
-            description: 'We are raising funds to upgrade our recording studio with professional-grade equipment to produce high-quality gospel music albums.',
-            image: 'https://images.pexels.com/photos/9182272/pexels-photo-9182272.jpeg',
-            goalAmount: 10000000,
-            currentAmount: 4500000,
+            id: 'proj-land',
+            title: 'G2 Land Acquisition',
+            description: 'Acquire 0.5 to 1 hectare of land in the vicinity of Buea for the G2 Meloverse facility. This is the foundational step for all our building projects.',
+            image: 'https://images.pexels.com/photos/280221/pexels-photo-280221.jpeg',
+            goalAmount: 20000000,
+            currentAmount: 5000000,
             status: 'CURRENT',
-            deadline: new Date('2025-12-31')
+            deadline: new Date('2027-12-31')
           }
         }),
+        // Sub-project: Recording Studio
         prisma.project.upsert({
-          where: { id: 'proj-3' },
+          where: { id: 'proj-studio' },
           update: {},
           create: {
-            id: 'proj-3',
-            title: 'Youth Music Training Program',
-            description: 'Support our initiative to train 100 young musicians in vocal technique, music theory, and worship leadership.',
-            image: 'https://images.pexels.com/photos/10206936/pexels-photo-10206936.jpeg',
+            id: 'proj-studio',
+            title: 'G2 Recording Studio',
+            description: 'Build a professional recording studio with state-of-the-art audio equipment including microphones, preamps, mixing consoles, and acoustic treatment. This studio will serve both commercial purposes and G2 productions.',
+            image: 'https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg',
+            goalAmount: 33000000,
+            currentAmount: 2500000,
+            status: 'CURRENT',
+            deadline: new Date('2030-12-31')
+          }
+        }),
+        // Sub-project: Radio Station
+        prisma.project.upsert({
+          where: { id: 'proj-radio' },
+          update: {},
+          create: {
+            id: 'proj-radio',
+            title: 'Church of Christ Radio Station',
+            description: 'Establish a radio station to broadcast church-related content, music, and choir programs. This will serve as a powerful platform for evangelism and reaching communities across Cameroon.',
+            image: 'https://images.pexels.com/photos/3783471/pexels-photo-3783471.jpeg',
+            goalAmount: 36200000,
+            currentAmount: 1500000,
+            status: 'CURRENT',
+            deadline: new Date('2030-06-30')
+          }
+        }),
+        // Sub-project: Music Academy
+        prisma.project.upsert({
+          where: { id: 'proj-academy' },
+          update: {},
+          create: {
+            id: 'proj-academy',
+            title: 'G2 Music Academy',
+            description: 'Establish a music academy in Cameroon that can confer degrees in music studies. Includes classrooms, practice rooms, musical instruments, and partnerships with international institutions.',
+            image: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
+            goalAmount: 15000000,
+            currentAmount: 500000,
+            status: 'CURRENT',
+            deadline: new Date('2030-12-31')
+          }
+        }),
+        // Sub-project: Community Water (Forage)
+        prisma.project.upsert({
+          where: { id: 'proj-water' },
+          update: {},
+          create: {
+            id: 'proj-water',
+            title: 'Community Water Project (Forage)',
+            description: 'Provide free, clean water to the local community through a borehole project. This serves as a means of local evangelism and demonstrating Christ\'s love through service.',
+            image: 'https://images.pexels.com/photos/416528/pexels-photo-416528.jpeg',
+            goalAmount: 2500000,
+            currentAmount: 500000,
+            status: 'CURRENT',
+            deadline: new Date('2028-12-31')
+          }
+        }),
+        // Completed project example
+        prisma.project.upsert({
+          where: { id: 'proj-album' },
+          update: {},
+          create: {
+            id: 'proj-album',
+            title: 'Unfathomable Love Album (2019)',
+            description: 'Our debut album project that was successfully funded and produced. The album showcases the beauty of four-part harmony and acapella worship.',
+            image: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg',
             goalAmount: 3000000,
             currentAmount: 3000000,
             status: 'PAST'
@@ -403,11 +594,11 @@ async function handleRoute(request, { params }) {
             id: 'music-1',
             title: 'Hallelujah Praise',
             artist: 'G2 Melody',
-            album: 'Songs of Worship Vol. 1',
+            album: 'Unfathomable Love',
             genre: 'Gospel',
             duration: 245,
             price: 500,
-            coverImage: 'https://images.unsplash.com/photo-1652626627227-acc5ce198876',
+            coverImage: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg',
             isHymn: false
           }
         }),
@@ -416,13 +607,13 @@ async function handleRoute(request, { params }) {
           update: {},
           create: {
             id: 'music-2',
-            title: 'Amazing Grace (Choir Version)',
+            title: 'Amazing Grace (Acapella)',
             artist: 'G2 Melody',
-            album: 'Classic Hymns',
+            album: 'Classic Hymns Collection',
             genre: 'Hymn',
             duration: 312,
             price: 500,
-            coverImage: 'https://images.pexels.com/photos/444658/pexels-photo-444658.jpeg',
+            coverImage: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
             isHymn: true
           }
         }),
@@ -433,11 +624,11 @@ async function handleRoute(request, { params }) {
             id: 'music-3',
             title: 'Joyful Celebration',
             artist: 'G2 Melody',
-            album: 'Songs of Worship Vol. 1',
+            album: 'Unfathomable Love',
             genre: 'Gospel',
             duration: 198,
             price: 500,
-            coverImage: 'https://images.pexels.com/photos/9182272/pexels-photo-9182272.jpeg',
+            coverImage: 'https://images.pexels.com/photos/167636/pexels-photo-167636.jpeg',
             isHymn: false
           }
         }),
@@ -448,11 +639,11 @@ async function handleRoute(request, { params }) {
             id: 'music-4',
             title: 'How Great Thou Art',
             artist: 'G2 Melody',
-            album: 'Classic Hymns',
+            album: 'Classic Hymns Collection',
             genre: 'Hymn',
             duration: 278,
             price: 500,
-            coverImage: 'https://images.pexels.com/photos/10206936/pexels-photo-10206936.jpeg',
+            coverImage: 'https://images.pexels.com/photos/6966/abstract-music-rock-bw.jpg',
             isHymn: true
           }
         }),
@@ -467,7 +658,22 @@ async function handleRoute(request, { params }) {
             genre: 'African Gospel',
             duration: 425,
             price: 750,
-            coverImage: 'https://images.unsplash.com/photo-1652626627227-acc5ce198876',
+            coverImage: 'https://images.pexels.com/photos/3971985/pexels-photo-3971985.jpeg',
+            isHymn: false
+          }
+        }),
+        prisma.music.upsert({
+          where: { id: 'music-6' },
+          update: {},
+          create: {
+            id: 'music-6',
+            title: 'Unfathomable Love',
+            artist: 'G2 Melody',
+            album: 'Unfathomable Love',
+            genre: 'Gospel',
+            duration: 356,
+            price: 750,
+            coverImage: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg',
             isHymn: false
           }
         })
@@ -477,7 +683,7 @@ async function handleRoute(request, { params }) {
       const adminPassword = await bcrypt.hash('admin123', 12)
       const admin = await prisma.user.upsert({
         where: { email: 'admin@g2melody.com' },
-        update: {},
+        update: { role: 'ADMIN' },
         create: {
           id: 'admin-1',
           email: 'admin@g2melody.com',
