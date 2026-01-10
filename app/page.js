@@ -1081,9 +1081,7 @@ function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                <Music className="w-6 h-6 text-white" />
-              </div>
+              <img src="/logo.png" alt="G2 Melody" className="h-12 w-auto" />
               <div>
                 <span className="text-xl font-bold text-white">G2 Melody</span>
                 <p className="text-xs text-gray-500">Gospel Guardians Melody</p>
