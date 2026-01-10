@@ -1,71 +1,128 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { toast } from 'sonner'
 import {
   Music, Heart, Users, Calendar, ChevronRight, Play, Pause, ShoppingCart,
   Menu, X, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube,
   Target, Clock, DollarSign, Download, Search, Filter, Star, Award,
-  Mic2, BookOpen, Headphones, Gift, ArrowRight, CheckCircle2
+  Mic2, BookOpen, Headphones, Gift, ArrowRight, CheckCircle2, GraduationCap,
+  Church, Globe, Sparkles, Quote, ChevronDown, Send, MessageCircle,
+  Video, FileText, Zap, Shield, Users2, Building, Lightbulb, HandHeart
 } from 'lucide-react'
 
 // Navigation Component
-function Navigation({ isScrolled }) {
+function Navigation({ isScrolled, activeSection }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  const navLinks = [
+    { href: '#home', label: 'Home' },
+    { href: '#about', label: 'About' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#music', label: 'Music' },
+    { href: '#learn', label: 'Learn Muzik' },
+    { href: '#contact', label: 'Contact' },
+  ]
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-100' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
-              <Music className="w-6 h-6 text-white" />
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <Music className="w-6 h-6 text-white" />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-[8px] font-bold text-white">G2</span>
+              </div>
             </div>
-            <span className={`text-xl font-bold ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
+            <div className="hidden sm:block">
+              <span className={`text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
+              <p className={`text-[10px] uppercase tracking-widest ${isScrolled ? 'text-gray-500' : 'text-white/70'}`}>Gospel Guardians</p>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#projects" className={`font-medium transition-colors ${isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white/90 hover:text-white'}`}>Projects</a>
-            <a href="#music" className={`font-medium transition-colors ${isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white/90 hover:text-white'}`}>Music Store</a>
-            <a href="#about" className={`font-medium transition-colors ${isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white/90 hover:text-white'}`}>About</a>
+          <div className="hidden lg:flex items-center space-x-1">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+                  activeSection === link.href.replace('#', '')
+                    ? isScrolled ? 'bg-amber-100 text-amber-700' : 'bg-white/20 text-white'
+                    : isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-3">
             <Link href="/login">
-              <Button variant={isScrolled ? 'outline' : 'secondary'} size="sm">Sign In</Button>
+              <Button variant={isScrolled ? 'ghost' : 'ghost'} size="sm" className={isScrolled ? 'text-gray-700' : 'text-white hover:bg-white/10'}>
+                Sign In
+              </Button>
             </Link>
             <Link href="/register">
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">Join Us</Button>
+              <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                Join G2 Melody
+              </Button>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className={isScrolled ? 'text-gray-900' : 'text-white'} /> : <Menu className={isScrolled ? 'text-gray-900' : 'text-white'} />}
+          <button 
+            className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10'}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
+            ) : (
+              <Menu className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
+            )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white rounded-lg shadow-xl p-4 mt-2 space-y-4">
-            <a href="#projects" className="block py-2 text-gray-700 hover:text-blue-600">Projects</a>
-            <a href="#music" className="block py-2 text-gray-700 hover:text-blue-600">Music Store</a>
-            <a href="#about" className="block py-2 text-gray-700 hover:text-blue-600">About</a>
-            <div className="flex space-x-2 pt-4">
-              <Link href="/login" className="flex-1"><Button variant="outline" className="w-full">Sign In</Button></Link>
-              <Link href="/register" className="flex-1"><Button className="w-full bg-blue-600">Join Us</Button></Link>
+          <div className="lg:hidden bg-white rounded-2xl shadow-2xl p-6 mt-2 mb-4 animate-in slide-in-from-top-5">
+            <div className="space-y-2">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-medium transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+            <div className="flex space-x-3 pt-6 mt-6 border-t">
+              <Link href="/login" className="flex-1">
+                <Button variant="outline" className="w-full">Sign In</Button>
+              </Link>
+              <Link href="/register" className="flex-1">
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">Join Us</Button>
+              </Link>
             </div>
           </div>
         )}
@@ -76,58 +133,239 @@ function Navigation({ isScrolled }) {
 
 // Hero Section
 function HeroSection() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  
+  const slides = [
+    {
+      image: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
+      title: 'Evangelizing Through',
+      highlight: 'Music',
+      subtitle: 'Uniting voices in worship, spreading the Gospel across Cameroon and beyond'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1541697367348-dfc31a1611dc',
+      title: 'Revitalizing',
+      highlight: 'Church Music',
+      subtitle: 'Preserving acapella heritage while nurturing the next generation of worship leaders'
+    }
+  ]
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
+    }, 6000)
+    return () => clearInterval(timer)
+  }, [])
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.pexels.com/photos/9182272/pexels-photo-9182272.jpeg"
-          alt="Choir Performance"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-900/70 to-transparent" />
-      </div>
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Images with Crossfade */}
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === index ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <img
+            src={slide.image}
+            alt={slide.title}
+            className="w-full h-full object-cover scale-105"
+          />
+        </div>
+      ))}
+      
+      {/* Gradient Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-gray-900/30" />
+      
+      {/* Decorative Elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-3xl">
-          <Badge className="mb-6 bg-blue-600/20 text-blue-200 border-blue-400/30">
-            <Music className="w-3 h-3 mr-1" /> Excellence in Worship
-          </Badge>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Lifting Hearts Through <span className="text-blue-400">Gospel Music</span>
+        <div className="max-w-4xl">
+          {/* Badge */}
+          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-8 border border-white/20">
+            <Church className="w-4 h-4 text-amber-400" />
+            <span className="text-sm font-medium text-white/90">Gospel Guardians Melody</span>
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          </div>
+
+          {/* Main Heading */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.9]">
+            {slides[currentSlide].title}{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400">
+              {slides[currentSlide].highlight}
+            </span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
-            G2 Melody is Cameroon's premier choir dedicated to spreading the gospel through excellence in worship, community building, and music education.
+
+          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
+            {slides[currentSlide].subtitle}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-16">
             <a href="#projects">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8">
-                <Heart className="mr-2 h-5 w-5" /> Support Our Projects
+              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-lg px-8 py-6 rounded-xl shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 group">
+                <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                Support Our Mission
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </a>
-            <a href="#music">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 text-lg px-8">
-                <Headphones className="mr-2 h-5 w-5" /> Explore Music
+            <a href="#learn">
+              <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-8 py-6 rounded-xl backdrop-blur-sm">
+                <GraduationCap className="mr-2 h-5 w-5" />
+                Learn Muzik
               </Button>
             </a>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-white/20">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-white">50+</div>
-              <div className="text-gray-300">Choir Members</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-white">100+</div>
-              <div className="text-gray-300">Performances</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-white">15+</div>
-              <div className="text-gray-300">Years of Excellence</div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { value: '2016', label: 'Founded', icon: Calendar },
+              { value: '50+', label: 'Members', icon: Users },
+              { value: '4-Part', label: 'Harmony', icon: Music },
+              { value: '∞', label: 'Faith', icon: Heart },
+            ].map((stat, index) => (
+              <div key={index} className="text-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                <stat.icon className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
+                <div className="text-sm text-gray-400">{stat.label}</div>
+              </div>
+            ))}
           </div>
+        </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <a href="#about" className="flex flex-col items-center text-white/60 hover:text-white transition-colors">
+          <span className="text-xs uppercase tracking-widest mb-2">Scroll</span>
+          <ChevronDown className="w-5 h-5" />
+        </a>
+      </div>
+    </section>
+  )
+}
+
+// About Section
+function AboutSection() {
+  const coreValues = [
+    { icon: Shield, title: 'Holiness', desc: 'Walking in righteousness and spiritual purity' },
+    { icon: HandHeart, title: 'Stewardship', desc: 'Faithful management of God-given talents' },
+    { icon: Users2, title: 'Teamwork', desc: 'Unity in purpose and collaborative excellence' },
+    { icon: Heart, title: 'Agape Love', desc: 'Unconditional Christ-like love for all' },
+    { icon: Shield, title: 'Discipline', desc: 'Commitment to growth and accountability' },
+  ]
+
+  const objectives = [
+    { icon: Mic2, title: 'Evangelism Through Music', desc: 'Using non-instrumental singing to spread the Gospel of Christ' },
+    { icon: Sparkles, title: 'Spiritual Devotion', desc: 'Serving as a beacon of faith and commitment to God\'s work' },
+    { icon: Users, title: 'Unity in Diversity', desc: 'Bringing together individuals from diverse backgrounds' },
+    { icon: Music, title: 'Revitalize Church Music', desc: 'Promoting mastery of four-part harmony and acapella traditions' },
+    { icon: GraduationCap, title: 'Music Education', desc: 'Developing talents through structured professional training' },
+    { icon: Globe, title: 'Global Outreach', desc: 'Spreading worship across Cameroon and beyond' },
+  ]
+
+  return (
+    <section id="about" className="py-24 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+      {/* Decorative Background */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-50 to-transparent opacity-50" />
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <Badge className="mb-4 bg-amber-100 text-amber-700 px-4 py-1.5 text-sm font-medium">
+            About Us
+          </Badge>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Gospel Guardians{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Melody</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea, 
+            evolving into a powerful force for musical evangelism and worship excellence.
+          </p>
+        </div>
+
+        {/* Mission & Vision Cards */}
+        <div className="grid md:grid-cols-2 gap-8 mb-20">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white overflow-hidden group hover:shadow-2xl transition-all duration-300">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
+            <CardHeader>
+              <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+                <Target className="w-7 h-7" />
+              </div>
+              <CardTitle className="text-2xl">Our Mission</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-white/90 leading-relaxed">
+                Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music, 
+                and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church, 
+                while extending Christ's love to individuals from diverse backgrounds.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white overflow-hidden group hover:shadow-2xl transition-all duration-300">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
+            <CardHeader>
+              <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+                <Lightbulb className="w-7 h-7" />
+              </div>
+              <CardTitle className="text-2xl">Our Vision</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-white/90 leading-relaxed">
+                A future where the musical landscape of the Church is revitalized, young choirs are nurtured, 
+                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond. 
+                We envision establishing a music academy and nurturing worship leaders globally.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Objectives Grid */}
+        <div className="mb-20">
+          <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">What We Do</h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {objectives.map((obj, index) => (
+              <div key={index} className="group p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl border border-gray-100 hover:border-amber-200 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <obj.icon className="w-6 h-6 text-amber-600" />
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">{obj.title}</h4>
+                <p className="text-gray-600 text-sm">{obj.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Core Values */}
+        <div className="bg-gray-900 rounded-3xl p-8 md:p-12 text-white">
+          <h3 className="text-2xl font-bold text-center mb-10">Our Core Values</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {coreValues.map((value, index) => (
+              <div key={index} className="text-center group">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-3 group-hover:from-amber-500 group-hover:to-orange-500 transition-all duration-300">
+                  <value.icon className="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" />
+                </div>
+                <h4 className="font-semibold mb-1">{value.title}</h4>
+                <p className="text-xs text-gray-400">{value.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Affiliation */}
+        <div className="mt-12 text-center">
+          <p className="text-gray-500 text-sm">
+            <Church className="w-4 h-4 inline mr-2" />
+            Affiliated with <span className="font-semibold text-gray-700">The Church of Christ Bomaka</span> • 
+            Recognized by the <span className="font-semibold text-gray-700">Board of Trustees for Churches of Christ in Cameroon</span>
+          </p>
         </div>
       </div>
     </section>
@@ -151,60 +389,82 @@ function ProjectsSection({ projects, onDonate }) {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
   }
 
+  // Vision Projects (Future Goals)
+  const visionProjects = [
+    { icon: GraduationCap, title: 'Music Academy', desc: 'Establish a music academy in Cameroon that confers degrees in music studies' },
+    { icon: Video, title: 'Recording Studio', desc: 'Build a permanent recording studio for training and producing quality music' },
+    { icon: Building, title: 'TV & Radio Station', desc: 'Launch media platforms to reach wider audiences with gospel music' },
+    { icon: Building, title: 'Multipurpose Facility', desc: 'Create a dedicated space for rehearsals, events, and community outreach' },
+  ]
+
   return (
-    <section id="projects" className="py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section id="projects" className="py-24 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-blue-100 text-blue-700">
-            <Target className="w-3 h-3 mr-1" /> Our Initiatives
+          <Badge className="mb-4 bg-green-100 text-green-700 px-4 py-1.5">
+            <Target className="w-3 h-3 mr-1" /> Our Projects
           </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">Support Our Projects</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-500">Mission</span>
+          </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Help G2 Melody continue spreading the gospel through music. Every contribution makes a difference.
+            Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
           </p>
         </div>
 
+        {/* Current Projects */}
         <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-12">
-            <TabsTrigger value="current">Current Projects ({currentProjects.length})</TabsTrigger>
-            <TabsTrigger value="past">Completed ({pastProjects.length})</TabsTrigger>
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-12 p-1 bg-gray-100 rounded-xl">
+            <TabsTrigger value="current" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow">
+              Active Projects ({currentProjects.length})
+            </TabsTrigger>
+            <TabsTrigger value="past" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow">
+              Completed ({pastProjects.length})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="current">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {currentProjects.map((project) => (
-                <Card key={project.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 group">
-                  <div className="relative h-48 overflow-hidden">
+                <Card key={project.id} className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group">
+                  <div className="relative h-56 overflow-hidden">
                     <img
-                      src={project.image || 'https://images.pexels.com/photos/444658/pexels-photo-444658.jpeg'}
+                      src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'}
                       alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     {project.deadline && (
-                      <Badge className="absolute top-4 right-4 bg-orange-500">
+                      <Badge className="absolute top-4 right-4 bg-orange-500 shadow-lg">
                         <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days left
                       </Badge>
                     )}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 bg-white/30" />
+                    </div>
                   </div>
-                  <CardHeader>
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-xl line-clamp-2">{project.title}</CardTitle>
                     <CardDescription className="line-clamp-2">{project.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-3" />
-                      <div className="flex justify-between text-sm">
-                        <span className="font-semibold text-blue-600">{formatCurrency(project.currentAmount)}</span>
-                        <span className="text-gray-500">of {formatCurrency(project.goalAmount)}</span>
+                    <div className="flex justify-between items-end mb-4">
+                      <div>
+                        <p className="text-2xl font-bold text-green-600">{formatCurrency(project.currentAmount)}</p>
+                        <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
                       </div>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Users className="w-4 h-4 mr-1" />
-                        {project._count?.donations || 0} donors
+                      <div className="text-right">
+                        <p className="text-lg font-semibold text-gray-900">{Math.round(getProgress(project.currentAmount, project.goalAmount))}%</p>
+                        <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter>
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => onDonate(project)}>
+                  <CardFooter className="pt-0">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg" 
+                      onClick={() => onDonate(project)}
+                    >
                       <Heart className="mr-2 h-4 w-4" /> Donate Now
                     </Button>
                   </CardFooter>
@@ -216,10 +476,10 @@ function ProjectsSection({ projects, onDonate }) {
           <TabsContent value="past">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pastProjects.map((project) => (
-                <Card key={project.id} className="overflow-hidden opacity-90">
+                <Card key={project.id} className="overflow-hidden border-0 shadow-lg">
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={project.image || 'https://images.pexels.com/photos/444658/pexels-photo-444658.jpeg'}
+                      src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'}
                       alt={project.title}
                       className="w-full h-full object-cover grayscale-[30%]"
                     />
@@ -228,20 +488,30 @@ function ProjectsSection({ projects, onDonate }) {
                     </Badge>
                   </div>
                   <CardHeader>
-                    <CardTitle className="text-xl">{project.title}</CardTitle>
-                    <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                    <CardTitle className="text-lg">{project.title}</CardTitle>
+                    <p className="text-green-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between text-sm">
-                      <span className="font-semibold text-green-600">Goal Reached!</span>
-                      <span className="text-gray-500">{formatCurrency(project.goalAmount)}</span>
-                    </div>
-                  </CardContent>
                 </Card>
               ))}
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Vision Projects */}
+        <div className="mt-20">
+          <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">Our Vision Projects</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {visionProjects.map((project, index) => (
+              <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 text-center group hover:border-amber-300 hover:shadow-lg transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mx-auto mb-4 group-hover:from-amber-500 group-hover:to-orange-500 transition-all duration-300">
+                  <project.icon className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors" />
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">{project.title}</h4>
+                <p className="text-sm text-gray-600">{project.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
@@ -274,31 +544,56 @@ function MusicStoreSection({ music, onPurchase }) {
   }
 
   return (
-    <section id="music" className="py-20 bg-white">
+    <section id="music" className="py-24 bg-gradient-to-b from-white via-purple-50/30 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-purple-100 text-purple-700">
+          <Badge className="mb-4 bg-purple-100 text-purple-700 px-4 py-1.5">
             <Headphones className="w-3 h-3 mr-1" /> Music Store
           </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">Our Music Collection</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Music Collection</span>
+          </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Listen, purchase, and download our worship songs, hymns, and original compositions.
+            Experience the power of acapella worship. Purchase and download our original compositions, hymns, and gospel tracks.
           </p>
+        </div>
+
+        {/* Album Highlight */}
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white mb-16 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <Badge className="bg-white/20 text-white mb-4">Featured Album</Badge>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4">Unfathomable Love</h3>
+              <p className="text-white/80 mb-6">
+                Our debut album released in 2019, featuring original compositions that showcase the beauty of four-part harmony and acapella worship.
+              </p>
+              <Button className="bg-white text-purple-600 hover:bg-white/90">
+                <Play className="mr-2 h-4 w-4" /> Listen Now
+              </Button>
+            </div>
+            <div className="flex justify-center">
+              <div className="w-64 h-64 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+                <Music className="w-24 h-24 text-white/60" />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-12 max-w-2xl mx-auto">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               placeholder="Search songs, artists..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-12 h-12 rounded-xl border-gray-200"
             />
           </div>
           <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-            <SelectTrigger className="w-full sm:w-48">
+            <SelectTrigger className="w-full sm:w-48 h-12 rounded-xl">
               <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Genre" />
             </SelectTrigger>
@@ -315,40 +610,40 @@ function MusicStoreSection({ music, onPurchase }) {
         {/* Music Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredMusic.map((track) => (
-            <Card key={track.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+            <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
               <div className="relative aspect-square">
                 <img
                   src={track.coverImage || 'https://images.unsplash.com/photo-1652626627227-acc5ce198876'}
                   alt={track.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <button
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
-                >
-                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button
+                    className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
+                    onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
+                  >
                     {playingId === track.id ? (
-                      <Pause className="w-6 h-6 text-blue-600" />
+                      <Pause className="w-7 h-7 text-purple-600" />
                     ) : (
-                      <Play className="w-6 h-6 text-blue-600 ml-1" />
+                      <Play className="w-7 h-7 text-purple-600 ml-1" />
                     )}
-                  </div>
-                </button>
+                  </button>
+                </div>
                 {track.isHymn && (
                   <Badge className="absolute top-3 left-3 bg-amber-500">Hymn</Badge>
                 )}
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 line-clamp-1">{track.title}</h3>
+                <h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">{track.title}</h3>
                 <p className="text-sm text-gray-500 mb-2">{track.artist}</p>
-                <div className="flex items-center justify-between text-sm text-gray-400">
-                  <span>{track.album || 'Single'}</span>
-                  <span>{formatDuration(track.duration)}</span>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">{track.album || 'Single'}</span>
+                  <span className="text-gray-400">{formatDuration(track.duration)}</span>
                 </div>
               </CardContent>
               <CardFooter className="p-4 pt-0 flex items-center justify-between">
-                <span className="font-bold text-blue-600">{formatCurrency(track.price)}</span>
-                <Button size="sm" onClick={() => onPurchase(track)}>
+                <span className="text-lg font-bold text-purple-600">{formatCurrency(track.price)}</span>
+                <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={() => onPurchase(track)}>
                   <ShoppingCart className="w-4 h-4 mr-1" /> Buy
                 </Button>
               </CardFooter>
@@ -357,7 +652,7 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {filteredMusic.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <Music className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500">No music found matching your search.</p>
           </div>
@@ -367,77 +662,350 @@ function MusicStoreSection({ music, onPurchase }) {
   )
 }
 
-// About Section
-function AboutSection() {
+// Learn Muzik Section
+function LearnMuzikSection() {
+  const programs = [
+    {
+      icon: Mic2,
+      title: 'Vocal Training',
+      desc: 'Master the art of acapella singing with professional voice coaching',
+      level: 'Beginner to Advanced',
+      duration: '12 weeks'
+    },
+    {
+      icon: Music,
+      title: 'Four-Part Harmony',
+      desc: 'Learn the fundamentals of SATB (Soprano, Alto, Tenor, Bass) arrangement',
+      level: 'Intermediate',
+      duration: '8 weeks'
+    },
+    {
+      icon: BookOpen,
+      title: 'Music Theory',
+      desc: 'Understand the building blocks of music from notation to composition',
+      level: 'All Levels',
+      duration: '10 weeks'
+    },
+    {
+      icon: FileText,
+      title: 'Sight Reading',
+      desc: 'Develop the ability to read and sing music at first sight',
+      level: 'Beginner',
+      duration: '6 weeks'
+    },
+    {
+      icon: Users,
+      title: 'Choir Leadership',
+      desc: 'Learn to conduct, arrange, and lead worship teams effectively',
+      level: 'Advanced',
+      duration: '16 weeks'
+    },
+    {
+      icon: Church,
+      title: 'Worship Ministry',
+      desc: 'Combine musical skills with spiritual leadership in worship settings',
+      level: 'All Levels',
+      duration: '8 weeks'
+    },
+  ]
+
   return (
-    <section id="about" className="py-20 bg-gradient-to-b from-blue-900 to-blue-950">
+    <section id="learn" className="py-24 bg-gradient-to-b from-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <Badge className="mb-4 bg-blue-100 text-blue-700 px-4 py-1.5">
+            <GraduationCap className="w-3 h-3 mr-1" /> Learn Muzik
+          </Badge>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Develop Your{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-500">Musical Gift</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Our structured music education program is designed to nurture your talents and equip you for worship leadership.
+          </p>
+        </div>
+
+        {/* Feature Banner */}
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white mb-16 relative overflow-hidden">
+          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full" />
+          <div className="absolute right-20 top-10 w-32 h-32 bg-white/5 rounded-full" />
+          <div className="relative grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4">G2 Melody Music Academy</h3>
+              <p className="text-white/90 mb-6 text-lg">
+                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies. 
+                Until then, we offer comprehensive training programs for aspiring musicians and worship leaders.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link href="/register">
+                  <Button className="bg-white text-blue-600 hover:bg-white/90">
+                    <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
+                  </Button>
+                </Link>
+                <Button variant="outline" className="border-white text-white hover:bg-white/10">
+                  View Curriculum
+                </Button>
+              </div>
+            </div>
+            <div className="hidden md:grid grid-cols-2 gap-4">
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
+                <div className="text-4xl font-bold">100+</div>
+                <div className="text-white/80">Students Trained</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
+                <div className="text-4xl font-bold">6</div>
+                <div className="text-white/80">Programs</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
+                <div className="text-4xl font-bold">4-Part</div>
+                <div className="text-white/80">Harmony Focus</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
+                <div className="text-4xl font-bold">∞</div>
+                <div className="text-white/80">Dedication</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Programs Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {programs.map((program, index) => (
+            <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
+              <CardHeader>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mb-4 group-hover:from-blue-500 group-hover:to-cyan-500 transition-all duration-300">
+                  <program.icon className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" />
+                </div>
+                <CardTitle className="text-xl">{program.title}</CardTitle>
+                <CardDescription>{program.desc}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between text-sm">
+                  <Badge variant="outline">{program.level}</Badge>
+                  <span className="text-gray-500">{program.duration}</span>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Link href="/register" className="w-full">
+                  <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                    Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-16">
+          <p className="text-gray-600 mb-4">Ready to start your musical journey?</p>
+          <Link href="/register">
+            <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
+              Join G2 Melody Today <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Contact Section
+function ContactSection() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [sending, setSending] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSending(true)
+    // Simulate sending
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    toast.success('Message sent successfully!', {
+      description: 'We\'ll get back to you as soon as possible.'
+    })
+    setFormData({ name: '', email: '', subject: '', message: '' })
+    setSending(false)
+  }
+
+  return (
+    <section id="contact" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <Badge className="mb-4 bg-pink-100 text-pink-700 px-4 py-1.5">
+            <MessageCircle className="w-3 h-3 mr-1" /> Contact Us
+          </Badge>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">Touch</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Have questions about our ministry, music, or how to join? We'd love to hear from you!
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Contact Info */}
           <div>
-            <Badge className="mb-4 bg-blue-600/20 text-blue-200 border-blue-400/30">
-              <Users className="w-3 h-3 mr-1" /> About Us
-            </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Who We Are</h2>
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              G2 Melody is a vibrant gospel choir based in Cameroon, dedicated to spreading the message of hope and salvation through excellent worship music. Founded with a passion for musical excellence and spiritual growth, we have grown into a community of talented musicians and singers united by faith.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-6 mb-8">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <Mic2 className="w-6 h-6 text-white" />
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-gray-900 to-gray-800 text-white overflow-hidden">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl">Contact Information</CardTitle>
+                <CardDescription className="text-gray-400">
+                  Reach out to us through any of these channels
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-pink-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Location</h4>
+                    <p className="text-gray-400">Bomaka, Buea<br />South West Region, Cameroon</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-1">Excellence in Worship</h3>
-                  <p className="text-gray-400 text-sm">We strive for the highest standards in every performance.</p>
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-pink-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Email</h4>
+                    <p className="text-gray-400">g2melodycmr@gmail.com</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-6 h-6 text-white" />
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <Church className="w-5 h-5 text-pink-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Affiliated Church</h4>
+                    <p className="text-gray-400">The Church of Christ Bomaka</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-1">Music Education</h3>
-                  <p className="text-gray-400 text-sm">Training the next generation of worship leaders.</p>
+
+                {/* Social Links */}
+                <div className="pt-6 border-t border-white/10">
+                  <h4 className="font-semibold mb-4">Follow Us</h4>
+                  <div className="flex space-x-3">
+                    {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
+                      <a
+                        key={index}
+                        href="#"
+                        className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-pink-500 transition-colors"
+                      >
+                        <Icon className="w-5 h-5" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-1">Community Impact</h3>
-                  <p className="text-gray-400 text-sm">Making a difference through music ministry.</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <Award className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-1">Award Winning</h3>
-                  <p className="text-gray-400 text-sm">Recognized for excellence in gospel music.</p>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+
+            {/* Booking Card */}
+            <Card className="border-0 shadow-lg mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Calendar className="w-5 h-5 mr-2 text-amber-500" />
+                  Book the Choir
+                </CardTitle>
+                <CardDescription>
+                  Want G2 Melody to perform at your event?
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 text-sm mb-4">
+                  We're available for weddings, church programs, concerts, and special events. 
+                  Contact us to discuss your requirements and get a quote.
+                </p>
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">
+                  Request Booking
+                </Button>
+              </CardContent>
+            </Card>
           </div>
-          <div className="relative">
-            <img
-              src="https://images.pexels.com/photos/10206936/pexels-photo-10206936.jpeg"
-              alt="G2 Melody Community"
-              className="rounded-2xl shadow-2xl"
-            />
-            <div className="absolute -bottom-8 -left-8 bg-white rounded-xl shadow-xl p-6 max-w-xs">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Star className="w-8 h-8 text-blue-600" />
+
+          {/* Contact Form */}
+          <Card className="border-0 shadow-xl">
+            <CardHeader>
+              <CardTitle>Send us a Message</CardTitle>
+              <CardDescription>Fill out the form below and we'll get back to you</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      placeholder="John Doe"
+                      className="mt-1"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      placeholder="john@example.com"
+                      className="mt-1"
+                      required
+                    />
+                  </div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-gray-900">4.9</div>
-                  <div className="text-gray-500 text-sm">Community Rating</div>
+                  <Label htmlFor="subject">Subject</Label>
+                  <Select value={formData.subject} onValueChange={(value) => setFormData({...formData, subject: value})}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select a subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">General Inquiry</SelectItem>
+                      <SelectItem value="membership">Membership</SelectItem>
+                      <SelectItem value="booking">Event Booking</SelectItem>
+                      <SelectItem value="music">Music Purchase</SelectItem>
+                      <SelectItem value="donation">Donations</SelectItem>
+                      <SelectItem value="learning">Learn Muzik</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
-            </div>
-          </div>
+                <div>
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea
+                    id="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    placeholder="How can we help you?"
+                    rows={5}
+                    className="mt-1"
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
+                  disabled={sending}
+                >
+                  {sending ? (
+                    <>Sending...</>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" /> Send Message
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
@@ -450,74 +1018,84 @@ function Footer() {
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-          <div>
-            <div className="flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+          <div className="lg:col-span-1">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
                 <Music className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">G2 Melody</span>
+              <div>
+                <span className="text-xl font-bold text-white">G2 Melody</span>
+                <p className="text-xs text-gray-500">Gospel Guardians Melody</p>
+              </div>
             </div>
-            <p className="text-gray-400 mb-6">
-              Excellence in worship, spreading the gospel through music from Cameroon to the world.
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Evangelizing through music, uniting voices in worship, and spreading the Gospel across Cameroon and beyond since 2016.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Youtube className="w-5 h-5" />
-              </a>
+            <div className="flex space-x-3">
+              {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
+                <a key={index} href="#" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-amber-500 transition-colors">
+                  <Icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
           </div>
 
           <div>
             <h3 className="text-white font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-3">
-              <li><a href="#projects" className="hover:text-white transition-colors">Projects</a></li>
-              <li><a href="#music" className="hover:text-white transition-colors">Music Store</a></li>
-              <li><a href="#about" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Events</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Book the Choir</a></li>
+              {['About Us', 'Our Projects', 'Music Store', 'Learn Muzik', 'Contact'].map((item) => (
+                <li key={item}>
+                  <a href={`#${item.toLowerCase().replace(' ', '')}`} className="hover:text-white transition-colors flex items-center">
+                    <ChevronRight className="w-4 h-4 mr-1 text-amber-500" />
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="text-white font-semibold mb-6">Support</h3>
+            <h3 className="text-white font-semibold mb-6">Programs</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              {['Vocal Training', 'Four-Part Harmony', 'Music Theory', 'Choir Leadership', 'Worship Ministry'].map((item) => (
+                <li key={item}>
+                  <a href="#learn" className="hover:text-white transition-colors flex items-center">
+                    <ChevronRight className="w-4 h-4 mr-1 text-amber-500" />
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
             <h3 className="text-white font-semibold mb-6">Contact</h3>
             <ul className="space-y-4">
-              <li className="flex items-center space-x-3">
-                <MapPin className="w-5 h-5 text-blue-500" />
-                <span>Douala, Cameroon</span>
+              <li className="flex items-start space-x-3">
+                <MapPin className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <span>Bomaka, Buea<br />Cameroon</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-blue-500" />
-                <span>contact@g2melody.com</span>
+                <Mail className="w-5 h-5 text-amber-500" />
+                <span>g2melodycmr@gmail.com</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-blue-500" />
-                <span>+237 6XX XXX XXX</span>
+                <Church className="w-5 h-5 text-amber-500" />
+                <span>Church of Christ Bomaka</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-          <p>&copy; {new Date().getFullYear()} G2 Melody. All rights reserved.</p>
+        <div className="border-t border-gray-800 mt-12 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-500 text-sm">
+              &copy; {new Date().getFullYear()} G2 Melody (Gospel Guardians Melody). All rights reserved.
+            </p>
+            <p className="text-gray-500 text-sm mt-2 md:mt-0">
+              Affiliated with The Church of Christ Bomaka
+            </p>
+          </div>
         </div>
       </div>
     </footer>
@@ -557,12 +1135,11 @@ function DonationDialog({ project, open, onOpenChange }) {
 
       if (!res.ok) throw new Error('Donation failed')
 
-      toast.success('Thank you for your donation!', {
-        description: 'Your support means the world to us.'
+      toast.success('Thank you for your generous donation!', {
+        description: 'May God bless you abundantly.'
       })
       onOpenChange(false)
       setFormData({ amount: '', donorName: '', donorEmail: '', message: '', anonymous: false, paymentMethod: 'card' })
-      // Reload to show updated amounts
       window.location.reload()
     } catch (error) {
       toast.error('Donation failed', { description: 'Please try again.' })
@@ -577,16 +1154,15 @@ function DonationDialog({ project, open, onOpenChange }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Donate to {project?.title}</DialogTitle>
+          <DialogTitle className="text-2xl">Support: {project?.title}</DialogTitle>
           <DialogDescription>
-            Your donation helps us achieve our goals. Every contribution matters!
+            Your donation helps us spread the Gospel through music. Every contribution matters!
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Suggested Amounts */}
           <div>
-            <Label className="mb-3 block">Quick Amount (XAF)</Label>
+            <Label className="mb-3 block font-medium">Quick Amount (XAF)</Label>
             <div className="grid grid-cols-5 gap-2">
               {suggestedAmounts.map(amount => (
                 <Button
@@ -594,6 +1170,7 @@ function DonationDialog({ project, open, onOpenChange }) {
                   type="button"
                   variant={formData.amount === amount.toString() ? 'default' : 'outline'}
                   size="sm"
+                  className={formData.amount === amount.toString() ? 'bg-green-600 hover:bg-green-700' : ''}
                   onClick={() => setFormData({ ...formData, amount: amount.toString() })}
                 >
                   {(amount / 1000)}k
@@ -602,9 +1179,8 @@ function DonationDialog({ project, open, onOpenChange }) {
             </div>
           </div>
 
-          {/* Custom Amount */}
           <div>
-            <Label htmlFor="amount">Amount (XAF)</Label>
+            <Label htmlFor="amount">Custom Amount (XAF)</Label>
             <Input
               id="amount"
               type="number"
@@ -616,7 +1192,6 @@ function DonationDialog({ project, open, onOpenChange }) {
             />
           </div>
 
-          {/* Donor Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="donorName">Your Name</Label>
@@ -642,7 +1217,6 @@ function DonationDialog({ project, open, onOpenChange }) {
             </div>
           </div>
 
-          {/* Anonymous */}
           <div className="flex items-center space-x-2">
             <Checkbox
               id="anonymous"
@@ -654,7 +1228,6 @@ function DonationDialog({ project, open, onOpenChange }) {
             </Label>
           </div>
 
-          {/* Message */}
           <div>
             <Label htmlFor="message">Message (Optional)</Label>
             <Textarea
@@ -667,9 +1240,8 @@ function DonationDialog({ project, open, onOpenChange }) {
             />
           </div>
 
-          {/* Payment Method */}
           <div>
-            <Label className="mb-3 block">Payment Method</Label>
+            <Label className="mb-3 block font-medium">Payment Method</Label>
             <div className="grid grid-cols-2 gap-3">
               {[
                 { id: 'card', label: 'Card', icon: '💳' },
@@ -681,7 +1253,7 @@ function DonationDialog({ project, open, onOpenChange }) {
                   key={method.id}
                   type="button"
                   variant={formData.paymentMethod === method.id ? 'default' : 'outline'}
-                  className="justify-start"
+                  className={`justify-start ${formData.paymentMethod === method.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
                   onClick={() => setFormData({ ...formData, paymentMethod: method.id })}
                 >
                   <span className="mr-2">{method.icon}</span> {method.label}
@@ -694,7 +1266,7 @@ function DonationDialog({ project, open, onOpenChange }) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" disabled={loading} className="bg-green-600 hover:bg-green-700">
               {loading ? 'Processing...' : 'Complete Donation'}
             </Button>
           </DialogFooter>
@@ -724,7 +1296,7 @@ function PurchaseDialog({ track, open, onOpenChange }) {
       if (!res.ok) throw new Error('Purchase failed')
 
       toast.success('Purchase successful!', {
-        description: 'Your download link has been sent to your email.'
+        description: 'Your download link will be sent to your email.'
       })
       onOpenChange(false)
     } catch (error) {
@@ -748,16 +1320,16 @@ function PurchaseDialog({ track, open, onOpenChange }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center space-x-4 py-4">
+        <div className="flex items-center space-x-4 py-4 px-4 bg-gray-50 rounded-xl">
           <img
             src={track?.coverImage || 'https://images.unsplash.com/photo-1652626627227-acc5ce198876'}
             alt={track?.title}
             className="w-20 h-20 rounded-lg object-cover"
           />
           <div>
-            <h3 className="font-semibold">{track?.title}</h3>
+            <h3 className="font-semibold text-lg">{track?.title}</h3>
             <p className="text-sm text-gray-500">{track?.artist}</p>
-            <p className="font-bold text-blue-600 mt-1">{formatCurrency(track?.price || 0)}</p>
+            <p className="font-bold text-purple-600 mt-1">{formatCurrency(track?.price || 0)}</p>
           </div>
         </div>
 
@@ -778,7 +1350,7 @@ function PurchaseDialog({ track, open, onOpenChange }) {
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handlePurchase} disabled={loading || !email} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={handlePurchase} disabled={loading || !email} className="bg-purple-600 hover:bg-purple-700">
             {loading ? 'Processing...' : 'Complete Purchase'}
           </Button>
         </DialogFooter>
@@ -790,6 +1362,7 @@ function PurchaseDialog({ track, open, onOpenChange }) {
 // Main App Component
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
   const [projects, setProjects] = useState([])
   const [music, setMusic] = useState([])
   const [selectedProject, setSelectedProject] = useState(null)
@@ -799,7 +1372,19 @@ export default function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+      
+      // Update active section
+      const sections = ['home', 'about', 'projects', 'music', 'learn', 'contact']
+      for (const section of sections.reverse()) {
+        const element = document.getElementById(section)
+        if (element && element.getBoundingClientRect().top <= 100) {
+          setActiveSection(section)
+          break
+        }
+      }
+    }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -807,10 +1392,8 @@ export default function App() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        // Seed data first
         await fetch('/api/seed', { method: 'POST' })
         
-        // Fetch projects and music
         const [projectsRes, musicRes] = await Promise.all([
           fetch('/api/projects'),
           fetch('/api/music')
@@ -843,12 +1426,13 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-blue-950">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Music className="w-8 h-8 text-white" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <Music className="w-10 h-10 text-white" />
           </div>
-          <p className="text-white text-lg">Loading G2 Melody...</p>
+          <h2 className="text-2xl font-bold text-white mb-2">G2 Melody</h2>
+          <p className="text-gray-400">Loading...</p>
         </div>
       </div>
     )
@@ -856,11 +1440,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <Navigation isScrolled={isScrolled} />
+      <Navigation isScrolled={isScrolled} activeSection={activeSection} />
       <HeroSection />
+      <AboutSection />
       <ProjectsSection projects={projects} onDonate={handleDonate} />
       <MusicStoreSection music={music} onPurchase={handlePurchase} />
-      <AboutSection />
+      <LearnMuzikSection />
+      <ContactSection />
       <Footer />
 
       {/* Dialogs */}
