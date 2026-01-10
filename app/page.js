@@ -457,12 +457,17 @@ function ProjectsSection({ projects, onDonate }) {
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="pt-0">
+                  <CardFooter className="pt-0 flex gap-2">
+                    <Link href={`/projects/${project.id}`} className="flex-1">
+                      <Button variant="outline" className="w-full">
+                        View Details
+                      </Button>
+                    </Link>
                     <Button 
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg" 
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg" 
                       onClick={() => onDonate(project)}
                     >
-                      <Heart className="mr-2 h-4 w-4" /> Donate Now
+                      <Heart className="mr-2 h-4 w-4" /> Donate
                     </Button>
                   </CardFooter>
                 </Card>
