@@ -799,7 +799,7 @@ function LearnMuzikSection() {
                 Until then, we offer comprehensive training programs for aspiring musicians and worship leaders.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/register">
+                <Link href="/join">
                   <Button className="bg-white text-blue-600 hover:bg-white/90">
                     <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
                   </Button>
