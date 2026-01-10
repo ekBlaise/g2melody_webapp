@@ -43,14 +43,11 @@ function Navigation({ isScrolled, activeSection }) {
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <Music className="w-6 h-6 text-white" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-[8px] font-bold text-white">G2</span>
-              </div>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="G2 Melody" 
+              className="h-12 w-auto group-hover:scale-105 transition-transform duration-300"
+            />
             <div className="hidden sm:block">
               <span className={`text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
               <p className={`text-[10px] uppercase tracking-widest ${isScrolled ? 'text-gray-500' : 'text-white/70'}`}>Gospel Guardians</p>
