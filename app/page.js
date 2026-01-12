@@ -214,7 +214,7 @@ function HeroSection() {
                 Support Our Mission
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-            </a>
+            </Link>
             <a href="#learn">
               <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-8 py-6 rounded-xl backdrop-blur-sm">
                 <GraduationCap className="mr-2 h-5 w-5" />
