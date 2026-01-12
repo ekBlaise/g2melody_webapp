@@ -188,12 +188,6 @@ function HeroSection() {
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-4xl">
-          {/* Badge */}
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-8 border border-white/20">
-            <Church className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium text-white/90">Since 2016 • Buea, Cameroon</span>
-          </div>
-
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.9]">
             {slides[currentSlide].title}{' '}
