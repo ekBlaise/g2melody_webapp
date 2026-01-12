@@ -3,11 +3,10 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
   Music, Heart, Users, Target, Lightbulb, Church, Shield, HandHeart,
-  Users2, Mic2, BookOpen, GraduationCap, Globe, Sparkles, Award, Calendar,
-  ArrowRight, ChevronRight
+  Users2, Mic2, GraduationCap, Globe, Sparkles, ArrowRight
 } from 'lucide-react'
 
 export default function AboutPage() {
@@ -37,34 +36,26 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="bg-white border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-3">
-              <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
-              <span className="text-xl font-bold">G2 Melody</span>
-            </Link>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">Home</Link>
-              <Link href="/about" className="text-amber-600 font-medium">About</Link>
-              <Link href="/projects" className="text-gray-600 hover:text-gray-900">Projects</Link>
-              <Link href="/music" className="text-gray-600 hover:text-gray-900">Music</Link>
-              <Link href="/learn" className="text-gray-600 hover:text-gray-900">Learn</Link>
-              <Link href="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
-            </div>
-            <Link href="/join">
-              <Button className="bg-gradient-to-r from-amber-500 to-orange-500">Join Us</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <SharedNavigation currentPage="about" />
 
-      {/* Hero */}
-      <section className="relative py-20 bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <Badge className="mb-4 bg-white/20 text-white border-white/30">About Us</Badge>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Gospel Guardians Melody</h1>
+      {/* Hero with Background Image */}
+      <section className="relative py-24 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1593678820334-91d5f99be314?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
+            alt="Gospel Choir"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
+            <Users className="w-4 h-4 text-amber-400" />
+            <span className="text-sm font-medium text-white/90">About Us</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Gospel Guardians <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Melody</span>
+          </h1>
           <p className="text-xl text-white/90 max-w-3xl mx-auto">
             Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea, evolving into a powerful force for musical evangelism and worship excellence.
           </p>
@@ -166,18 +157,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Affiliation */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-gray-500">
-            <Church className="w-5 h-5 inline mr-2" />
-            Affiliated with <span className="font-semibold text-gray-700">The Church of Christ Bomaka</span>
-          </p>
-        </div>
-      </section>
-
       {/* CTA */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Join Us?</h2>
           <p className="text-gray-600 mb-8">Become part of our community and help spread the Gospel through music.</p>
@@ -188,6 +169,8 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+
+      <SharedFooter />
     </div>
   )
 }
