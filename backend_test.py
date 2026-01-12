@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime, timedelta
 
 # Base URL from environment
-BASE_URL = "https://musicportal-5.preview.emergentagent.com/api"
+BASE_URL = "https://musicportal-6.preview.emergentagent.com/api"
 
 class G2MelodyAPITester:
     def __init__(self):
