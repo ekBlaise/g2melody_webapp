@@ -50,6 +50,56 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ id: user.id, email: user.email, name: user.name, role: user.role }))
     }
 
+    // ==================== FORGOT PASSWORD ====================
+    if (route === '/forgot-password' && method === 'POST') {
+      const body = await request.json()
+      const { email } = body
+
+      if (!email) {
+        return handleCORS(NextResponse.json({ error: 'Email is required' }, { status: 400 }))
+      }
+
+      const user = await prisma.user.findUnique({ where: { email } })
+      
+      // Always return success to prevent email enumeration attacks
+      if (!user) {
+        return handleCORS(NextResponse.json({ 
+          success: true, 
+          message: 'If an account with this email exists, a password reset link has been sent.' 
+        }))
+      }
+
+      // In production, you would:
+      // 1. Generate a secure reset token
+      // 2. Store the token with expiration in the database
+      // 3. Send an email with the reset link
+      // For now, we'll mock this behavior
+      
+      const resetToken = uuidv4()
+      // In production: await sendEmail({ to: email, subject: 'Password Reset', ... })
+      
+      console.log(`[MOCK] Password reset requested for ${email}. Token: ${resetToken}`)
+      
+      return handleCORS(NextResponse.json({ 
+        success: true, 
+        message: 'If an account with this email exists, a password reset link has been sent.' 
+      }))
+    }
+
+    // ==================== CONTACT FORM ====================
+    if (route === '/contact' && method === 'POST') {
+      const body = await request.json()
+      const { name, email, subject, message } = body
+
+      // In production, send email or store in database
+      console.log(`[CONTACT] From: ${name} <${email}>, Subject: ${subject}`)
+      
+      return handleCORS(NextResponse.json({ 
+        success: true, 
+        message: 'Your message has been received. We will get back to you soon.' 
+      }))
+    }
+
     // ==================== MEMBERSHIP APPLICATION ====================
     if (route === '/membership-application' && method === 'POST') {
       const body = await request.json()
