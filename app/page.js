@@ -411,10 +411,10 @@ function ProjectsSection({ projects, onDonate }) {
         <Tabs defaultValue="current" className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-12 p-1 bg-gray-100 rounded-xl">
             <TabsTrigger value="current" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow">
-              Active Projects ({currentProjects.length})
+              Active Projects ({allCurrentProjects.length})
             </TabsTrigger>
             <TabsTrigger value="past" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow">
-              Completed ({pastProjects.length})
+              Completed ({allPastProjects.length})
             </TabsTrigger>
           </TabsList>
 
