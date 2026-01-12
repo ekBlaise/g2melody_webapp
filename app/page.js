@@ -1381,6 +1381,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [projects, setProjects] = useState([])
   const [music, setMusic] = useState([])
+  const [siteSettings, setSiteSettings] = useState({ memberCount: 50, studentsCount: 100, programsCount: 6, yearsActive: 8 })
   const [selectedProject, setSelectedProject] = useState(null)
   const [selectedTrack, setSelectedTrack] = useState(null)
   const [donationDialogOpen, setDonationDialogOpen] = useState(false)
@@ -1410,16 +1411,21 @@ export default function App() {
       try {
         await fetch('/api/seed', { method: 'POST' })
         
-        const [projectsRes, musicRes] = await Promise.all([
+        const [projectsRes, musicRes, settingsRes] = await Promise.all([
           fetch('/api/projects'),
-          fetch('/api/music')
+          fetch('/api/music'),
+          fetch('/api/settings')
         ])
         
         const projectsData = await projectsRes.json()
         const musicData = await musicRes.json()
+        const settingsData = await settingsRes.json()
         
         setProjects(projectsData)
         setMusic(musicData)
+        if (settingsData && !settingsData.error) {
+          setSiteSettings(settingsData)
+        }
       } catch (error) {
         console.error('Error initializing data:', error)
       } finally {
