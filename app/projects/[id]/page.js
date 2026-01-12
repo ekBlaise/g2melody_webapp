@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { toast } from 'sonner'
+import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
   Music, Heart, ArrowLeft, Calendar, Users, Target, Clock, Share2,
   Facebook, Twitter, Linkedin, Copy, CheckCircle2, Loader2, MapPin
@@ -35,7 +36,7 @@ export default function ProjectDetailPage() {
         setProject(data)
       } catch (error) {
         toast.error('Project not found')
-        router.push('/')
+        router.push('/projects')
       } finally {
         setLoading(false)
       }
@@ -103,22 +104,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-3">
-              <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
-              <span className="text-xl font-bold hidden sm:block">G2 Melody</span>
-            </Link>
-            <Link href="/#projects">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Projects
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SharedNavigation currentPage="projects" />
 
       {/* Hero Image */}
       <div className="relative h-[40vh] md:h-[50vh]">
@@ -130,6 +116,12 @@ export default function ProjectDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
           <div className="max-w-7xl mx-auto">
+            {/* Back Button */}
+            <Link href="/projects">
+              <Button variant="outline" size="sm" className="mb-4 bg-white/20 border-white/30 text-white hover:bg-white/30">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Projects
+              </Button>
+            </Link>
             <Badge className={project.status === 'CURRENT' ? 'bg-green-500' : 'bg-gray-500'}>
               {project.status === 'CURRENT' ? 'Active Project' : 'Completed'}
             </Badge>
@@ -312,10 +304,11 @@ export default function ProjectDetailPage() {
         open={donationDialogOpen}
         onOpenChange={setDonationDialogOpen}
         onSuccess={() => {
-          // Refresh project data
           window.location.reload()
         }}
       />
+
+      <SharedFooter />
     </div>
   )
 }
