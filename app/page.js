@@ -1463,7 +1463,7 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <Navigation isScrolled={isScrolled} activeSection={activeSection} />
-      <HeroSection />
+      <HeroSection siteSettings={siteSettings} />
       <AboutSection />
       <ProjectsSection projects={projects} onDonate={handleDonate} />
       <MusicStoreSection music={music} onPurchase={handlePurchase} />
