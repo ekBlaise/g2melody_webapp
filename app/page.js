@@ -207,7 +207,7 @@ function HeroSection() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 mb-12">
             <Link href="/projects">
               <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-lg px-8 py-6 rounded-xl shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 group">
                 <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -215,12 +215,12 @@ function HeroSection() {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <a href="#learn">
-              <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-8 py-6 rounded-xl backdrop-blur-sm">
+            <Link href="/learn">
+              <Button size="lg" className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-6 rounded-xl">
                 <GraduationCap className="mr-2 h-5 w-5" />
                 Learn Muzik
               </Button>
-            </a>
+            </Link>
           </div>
 
           {/* Stats */}
