@@ -596,18 +596,10 @@ function ProjectsSection({ projects, onDonate }) {
 
 // Music Store Section
 function MusicStoreSection({ music, onPurchase }) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedGenre, setSelectedGenre] = useState('all')
   const [playingId, setPlayingId] = useState(null)
 
-  const genres = ['all', ...new Set(music.map(m => m.genre).filter(Boolean))]
-
-  const filteredMusic = music.filter(m => {
-    const matchesSearch = m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         m.artist.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesGenre = selectedGenre === 'all' || m.genre === selectedGenre
-    return matchesSearch && matchesGenre
-  })
+  // Limit to 3 music tracks for homepage display
+  const displayedMusic = music.slice(0, 3)
 
   const formatDuration = (seconds) => {
     if (!seconds) return '--:--'
