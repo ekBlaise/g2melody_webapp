@@ -29,12 +29,12 @@ function Navigation({ isScrolled, activeSection }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#projects', label: 'Projects' },
-    { href: '#music', label: 'Music' },
-    { href: '#learn', label: 'Learn Muzik' },
-    { href: '#contact', label: 'Contact' },
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/projects', label: 'Projects' },
+    { href: '/music', label: 'Music' },
+    { href: '/learn', label: 'Learn Muzik' },
+    { href: '/contact', label: 'Contact' },
   ]
 
   return (
@@ -48,33 +48,28 @@ function Navigation({ isScrolled, activeSection }) {
               alt="G2 Melody" 
               className="h-12 w-auto group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="hidden sm:block">
-              <span className={`text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
-              <p className={`text-[10px] uppercase tracking-widest ${isScrolled ? 'text-gray-500' : 'text-white/70'}`}>Gospel Guardians</p>
-            </div>
+            <span className={`hidden sm:block text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                  activeSection === link.href.replace('#', '')
-                    ? isScrolled ? 'bg-amber-100 text-amber-700' : 'bg-white/20 text-white'
-                    : isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             <Link href="/login">
-              <Button variant={isScrolled ? 'ghost' : 'ghost'} size="sm" className={isScrolled ? 'text-gray-700' : 'text-white hover:bg-white/10'}>
+              <Button variant="ghost" size="sm" className={isScrolled ? 'text-gray-700' : 'text-white hover:bg-white/10'}>
                 Sign In
               </Button>
             </Link>
