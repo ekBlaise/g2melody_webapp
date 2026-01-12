@@ -139,6 +139,18 @@ function HeroSection() {
       title: 'Revitalizing',
       highlight: 'Church Music',
       subtitle: 'Preserving acapella heritage while nurturing the next generation of worship leaders'
+    },
+    {
+      image: 'https://images.pexels.com/photos/3971985/pexels-photo-3971985.jpeg',
+      title: 'Training Future',
+      highlight: 'Worship Leaders',
+      subtitle: 'Developing talents through structured music education and spiritual growth'
+    },
+    {
+      image: 'https://images.pexels.com/photos/167636/pexels-photo-167636.jpeg',
+      title: 'Building',
+      highlight: 'Community',
+      subtitle: 'Bringing together individuals from diverse backgrounds united by faith and music'
     }
   ]
 
@@ -179,8 +191,7 @@ function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-5 py-2 mb-8 border border-white/20">
             <Church className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium text-white/90">Gospel Guardians Melody</span>
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-sm font-medium text-white/90">Since 2016 • Buea, Cameroon</span>
           </div>
 
           {/* Main Heading */}
@@ -197,7 +208,7 @@ function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
-            <a href="#projects">
+            <Link href="/projects">
               <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-lg px-8 py-6 rounded-xl shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 group">
                 <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                 Support Our Mission
