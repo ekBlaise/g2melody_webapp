@@ -1,6 +1,7 @@
 import './globals.css'
 import { Toaster } from 'sonner'
 import Providers from '@/components/providers'
+import Chatbot from '@/components/chatbot'
 
 export const metadata = {
   title: 'G2 Melody | Choir Music Platform',
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen antialiased">
         <Providers>
           {children}
+          <Chatbot />
           <Toaster position="top-right" richColors />
         </Providers>
       </body>
