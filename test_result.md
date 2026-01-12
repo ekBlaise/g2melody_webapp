@@ -381,10 +381,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Projects CRUD API"
-    - "Donations API"
-    - "Music CRUD API"
-    - "Purchases API"
+    - "Site Settings GET API"
+    - "Site Settings UPDATE API"
   stuck_tasks:
     - "User Registration API"
   test_all: false
