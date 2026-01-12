@@ -610,8 +610,8 @@ function MusicStoreSection({ music, onPurchase }) {
           </div>
         </div>
 
-        {/* Music Grid - Limited to 3 items */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Music Grid - Limited to 4 items per row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {displayedMusic.map((track) => (
             <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
               <div className="relative aspect-square">
@@ -622,32 +622,28 @@ function MusicStoreSection({ music, onPurchase }) {
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button
-                    className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
+                    className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
                     onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
                   >
                     {playingId === track.id ? (
-                      <Pause className="w-7 h-7 text-purple-600" />
+                      <Pause className="w-5 h-5 text-purple-600" />
                     ) : (
-                      <Play className="w-7 h-7 text-purple-600 ml-1" />
+                      <Play className="w-5 h-5 text-purple-600 ml-0.5" />
                     )}
                   </button>
                 </div>
                 {track.isHymn && (
-                  <Badge className="absolute top-3 left-3 bg-amber-500">Hymn</Badge>
+                  <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
                 )}
               </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">{track.title}</h3>
-                <p className="text-sm text-gray-500 mb-2">{track.artist}</p>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{track.album || 'Single'}</span>
-                  <span className="text-gray-400">{formatDuration(track.duration)}</span>
-                </div>
+              <CardContent className="p-3">
+                <h3 className="font-semibold text-gray-900 line-clamp-1 text-sm mb-1">{track.title}</h3>
+                <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
               </CardContent>
-              <CardFooter className="p-4 pt-0 flex items-center justify-between">
-                <span className="text-lg font-bold text-purple-600">{formatCurrency(track.price)}</span>
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={() => onPurchase(track)}>
-                  <ShoppingCart className="w-4 h-4 mr-1" /> Buy
+              <CardFooter className="p-3 pt-0 flex items-center justify-between">
+                <span className="text-sm font-bold text-purple-600">{formatCurrency(track.price)}</span>
+                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
+                  <ShoppingCart className="w-3 h-3 mr-1" /> Buy
                 </Button>
               </CardFooter>
             </Card>
