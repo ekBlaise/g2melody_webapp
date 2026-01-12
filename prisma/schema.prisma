@@ -239,3 +239,45 @@ model ChoirBooking {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
+
+// Site Settings for admin-editable values
+model SiteSettings {
+  id            String   @id @default("site-settings")
+  memberCount   Int      @default(50)
+  studentsCount Int      @default(100)
+  programsCount Int      @default(6)
+  yearsActive   Int      @default(8)
+  albumDescription String? @db.Text
+  updatedAt     DateTime @updatedAt
+}
+
+// Activity/Event model
+model Activity {
+  id            String   @id @default(uuid())
+  title         String
+  description   String   @db.Text
+  fullDescription String? @db.Text
+  type          String   // concert, workshop, outreach, meeting
+  date          DateTime
+  venue         String?
+  coverImage    String?
+  images        Json?    // Array of image URLs
+  videos        Json?    // Array of video URLs
+  status        String   @default("upcoming") // upcoming, past
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Album model for music organization
+model Album {
+  id            String   @id @default(uuid())
+  name          String
+  artist        String   @default("G2 Melody")
+  description   String?  @db.Text
+  coverImage    String?
+  releaseDate   DateTime?
+  totalTracks   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
