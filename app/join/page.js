@@ -189,7 +189,7 @@ export default function JoinPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-10 p-1.5 bg-white shadow-lg rounded-2xl h-14">
             <TabsTrigger value="supporter" className="rounded-xl text-base font-medium data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <Heart className="w-4 h-4 mr-2" /> Become a Supporter
+              <Heart className="w-4 h-4 mr-2" /> Join our Community
             </TabsTrigger>
             <TabsTrigger value="member" className="rounded-xl text-base font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white">
               <Mic2 className="w-4 h-4 mr-2" /> Join the Choir
