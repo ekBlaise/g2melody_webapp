@@ -764,10 +764,10 @@ function LearnMuzikSection() {
   ]
 
   return (
-    <section id="learn" className="py-24 bg-gradient-to-b from-white to-blue-50">
+    <section id="learn" className="py-16 bg-gradient-to-b from-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <Badge className="mb-4 bg-blue-100 text-blue-700 px-4 py-1.5">
             <GraduationCap className="w-3 h-3 mr-1" /> Learn Muzik
           </Badge>
@@ -781,7 +781,7 @@ function LearnMuzikSection() {
         </div>
 
         {/* Feature Banner */}
-        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white mb-16 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full" />
           <div className="absolute right-20 top-10 w-32 h-32 bg-white/5 rounded-full" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
@@ -797,9 +797,11 @@ function LearnMuzikSection() {
                     <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
                   </Button>
                 </Link>
-                <Button variant="outline" className="border-white text-white hover:bg-white/10">
-                  View Curriculum
-                </Button>
+                <Link href="/learn">
+                  <Button className="bg-white/20 border-2 border-white text-white hover:bg-white/30">
+                    View Curriculum
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="hidden md:grid grid-cols-2 gap-4">
