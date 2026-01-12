@@ -523,6 +523,61 @@ async function handleRoute(request, { params }) {
       }))
     }
 
+    // ==================== SITE SETTINGS ====================
+    if (route === '/settings' && method === 'GET') {
+      // Get site settings (public)
+      let settings = await prisma.siteSettings.findFirst()
+      
+      if (!settings) {
+        // Create default settings if not exists
+        settings = await prisma.siteSettings.create({
+          data: {
+            id: 'site-settings',
+            memberCount: 50,
+            studentsCount: 100,
+            programsCount: 6,
+            yearsActive: 8,
+            albumDescription: 'Our debut album featuring original compositions that showcase the beauty of four-part harmony and acapella worship.'
+          }
+        })
+      }
+      
+      return handleCORS(NextResponse.json(settings))
+    }
+
+    if (route === '/admin/settings' && method === 'PUT') {
+      // Update site settings (admin only - should be protected in production)
+      const body = await request.json()
+      
+      let settings = await prisma.siteSettings.findFirst()
+      
+      if (!settings) {
+        settings = await prisma.siteSettings.create({
+          data: {
+            id: 'site-settings',
+            memberCount: body.memberCount || 50,
+            studentsCount: body.studentsCount || 100,
+            programsCount: body.programsCount || 6,
+            yearsActive: body.yearsActive || 8,
+            albumDescription: body.albumDescription || ''
+          }
+        })
+      } else {
+        settings = await prisma.siteSettings.update({
+          where: { id: 'site-settings' },
+          data: {
+            memberCount: body.memberCount !== undefined ? body.memberCount : settings.memberCount,
+            studentsCount: body.studentsCount !== undefined ? body.studentsCount : settings.studentsCount,
+            programsCount: body.programsCount !== undefined ? body.programsCount : settings.programsCount,
+            yearsActive: body.yearsActive !== undefined ? body.yearsActive : settings.yearsActive,
+            albumDescription: body.albumDescription !== undefined ? body.albumDescription : settings.albumDescription
+          }
+        })
+      }
+      
+      return handleCORS(NextResponse.json(settings))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
