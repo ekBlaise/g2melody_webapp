@@ -4,9 +4,18 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
   Music, Heart, Users, Calendar, ChevronRight, Menu, X, Mail, MapPin, 
-  Facebook, Twitter, Instagram, Youtube, Church
+  Facebook, Instagram, Youtube, Church
 } from 'lucide-react'
 import { useState } from 'react'
+
+// TikTok Icon Component
+function TikTokIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+    </svg>
+  )
+}
 
 // Shared Navigation Component
 export function SharedNavigation({ currentPage = 'home' }) {
@@ -111,6 +120,13 @@ export function SharedNavigation({ currentPage = 'home' }) {
 
 // Shared Footer Component
 export function SharedFooter() {
+  const socialLinks = [
+    { icon: Facebook, href: 'https://www.facebook.com/g2melody', label: 'Facebook' },
+    { icon: Youtube, href: 'https://www.youtube.com/@g2melody', label: 'YouTube' },
+    { icon: Instagram, href: 'https://www.instagram.com/g2melody/', label: 'Instagram' },
+    { icon: TikTokIcon, href: 'https://www.tiktok.com/@g2melody_official', label: 'TikTok' },
+  ]
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -127,9 +143,9 @@ export function SharedFooter() {
               Evangelizing through music, uniting voices in worship, and spreading the Gospel across Cameroon and beyond since 2016.
             </p>
             <div className="flex space-x-3">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
-                <a key={index} href="#" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-amber-500 transition-colors">
-                  <Icon className="w-5 h-5" />
+              {socialLinks.map((social, index) => (
+                <a key={index} href={social.href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-amber-500 transition-colors" title={social.label}>
+                  <social.icon className="w-5 h-5" />
                 </a>
               ))}
             </div>
@@ -193,60 +209,12 @@ export function SharedFooter() {
             <p className="text-gray-500 text-sm">
               &copy; {new Date().getFullYear()} G2 Melody (Gospel Guardians Melody). All rights reserved.
             </p>
+            <p className="text-gray-500 text-sm mt-2 md:mt-0">
+              Affiliated to Church of Christ Bomaka
+            </p>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
-
-// Hero Section with Image Background
-export function HeroSection({ 
-  title, 
-  subtitle, 
-  highlightWord,
-  badgeText, 
-  badgeIcon: BadgeIcon,
-  backgroundImage,
-  gradientFrom = 'amber-500',
-  gradientTo = 'orange-500'
-}) {
-  return (
-    <section className="relative py-24 text-white overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src={backgroundImage}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
-      </div>
-      
-      {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-4 text-center">
-        {BadgeIcon && badgeText && (
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
-            <BadgeIcon className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium text-white/90">{badgeText}</span>
-          </div>
-        )}
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          {highlightWord ? (
-            <>
-              {title.replace(highlightWord, '')}{' '}
-              <span className={`text-transparent bg-clip-text bg-gradient-to-r from-${gradientFrom} to-${gradientTo}`}>
-                {highlightWord}
-              </span>
-            </>
-          ) : (
-            title
-          )}
-        </h1>
-        <p className="text-xl text-white/90 max-w-3xl mx-auto">
-          {subtitle}
-        </p>
-      </div>
-    </section>
   )
 }
