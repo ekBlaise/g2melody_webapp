@@ -560,29 +560,6 @@ function ProjectsSection({ projects, onDonate }) {
             </div>
           </div>
         </div>
-
-        {/* Sub-Projects Grid */}
-        <div className="mt-12">
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">G2 Meloverse Sub-Projects</h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: MapPin, title: 'Land Acquisition', amount: '20M XAF', progress: 25 },
-              { icon: Mic2, title: 'Recording Studio', amount: '33M XAF', progress: 8 },
-              { icon: Video, title: 'Radio Station', amount: '36M XAF', progress: 4 },
-              { icon: GraduationCap, title: 'Music Academy', amount: '15M XAF', progress: 3 }
-            ].map((project, index) => (
-              <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 group hover:border-amber-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-4 group-hover:from-amber-500 group-hover:to-orange-500 transition-all duration-300">
-                  <project.icon className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors" />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-1">{project.title}</h4>
-                <p className="text-sm text-gray-600 mb-3">{project.amount} Goal</p>
-                <Progress value={project.progress} className="h-2" />
-                <p className="text-xs text-gray-500 mt-2">{project.progress}% funded</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   )
