@@ -1111,6 +1111,9 @@ function Footer() {
             <p className="text-gray-500 text-sm">
               &copy; {new Date().getFullYear()} G2 Melody (Gospel Guardians Melody). All rights reserved.
             </p>
+            <p className="text-gray-500 text-sm mt-2 md:mt-0">
+              Affiliated to Church of Christ Bomaka
+            </p>
           </div>
         </div>
       </div>
