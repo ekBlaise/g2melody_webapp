@@ -355,15 +355,6 @@ function AboutSection() {
             ))}
           </div>
         </div>
-
-        {/* Affiliation */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-500 text-sm">
-            <Church className="w-4 h-4 inline mr-2" />
-            Affiliated with <span className="font-semibold text-gray-700">The Church of Christ Bomaka</span> • 
-            Recognized by the <span className="font-semibold text-gray-700">Board of Trustees for Churches of Christ in Cameroon</span>
-          </p>
-        </div>
       </div>
     </section>
   )
