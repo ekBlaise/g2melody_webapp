@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -12,16 +12,93 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
+import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
-  Music, ArrowLeft, GraduationCap, Heart, Users, Mic2, BookOpen,
-  CheckCircle2, Loader2, ArrowRight, Church, Calendar, Phone, Mail, MapPin
+  Music, GraduationCap, Heart, Users, Mic2, BookOpen,
+  CheckCircle2, Loader2, ArrowRight, Church, Eye, EyeOff, Check, X
 } from 'lucide-react'
+
+// Password Strength Component
+function PasswordStrength({ password }) {
+  const [strength, setStrength] = useState(0)
+  const [checks, setChecks] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false
+  })
+
+  useEffect(() => {
+    const newChecks = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    }
+    setChecks(newChecks)
+    
+    const passedChecks = Object.values(newChecks).filter(Boolean).length
+    setStrength((passedChecks / 5) * 100)
+  }, [password])
+
+  const getStrengthColor = () => {
+    if (strength < 40) return 'bg-red-500'
+    if (strength < 70) return 'bg-yellow-500'
+    return 'bg-green-500'
+  }
+
+  const getStrengthText = () => {
+    if (strength < 40) return 'Weak'
+    if (strength < 70) return 'Medium'
+    return 'Strong'
+  }
+
+  if (!password) return null
+
+  return (
+    <div className="mt-2 space-y-2">
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-gray-500">Password Strength</span>
+        <span className={`font-medium ${strength < 40 ? 'text-red-500' : strength < 70 ? 'text-yellow-500' : 'text-green-500'}`}>
+          {getStrengthText()}
+        </span>
+      </div>
+      <Progress value={strength} className={`h-1 ${getStrengthColor()}`} />
+      <div className="grid grid-cols-2 gap-1 text-xs">
+        {[
+          { key: 'length', label: 'At least 8 characters' },
+          { key: 'uppercase', label: 'Uppercase letter' },
+          { key: 'lowercase', label: 'Lowercase letter' },
+          { key: 'number', label: 'Number' },
+          { key: 'special', label: 'Special character' }
+        ].map(item => (
+          <div key={item.key} className={`flex items-center space-x-1 ${checks[item.key] ? 'text-green-600' : 'text-gray-400'}`}>
+            {checks[item.key] ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+            <span>{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Email validation
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
 
 export default function JoinPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('supporter')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [emailError, setEmailError] = useState('')
   
   // Membership application form
   const [memberForm, setMemberForm] = useState({
@@ -41,7 +118,7 @@ export default function JoinPage() {
     agreeToValues: false
   })
 
-  // Supporter registration (simpler form)
+  // Supporter registration form
   const [supporterForm, setSupporterForm] = useState({
     name: '',
     email: '',
@@ -50,8 +127,26 @@ export default function JoinPage() {
     interests: []
   })
 
+  const validateEmail = (email) => {
+    if (!email) {
+      setEmailError('')
+      return true
+    }
+    if (!isValidEmail(email)) {
+      setEmailError('Please enter a valid email address')
+      return false
+    }
+    setEmailError('')
+    return true
+  }
+
   const handleMemberSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!validateEmail(memberForm.email)) {
+      toast.error('Please enter a valid email address')
+      return
+    }
     
     if (!memberForm.commitment || !memberForm.agreeToValues) {
       toast.error('Please confirm your commitment and agreement to our values')
@@ -76,7 +171,6 @@ export default function JoinPage() {
         description: 'We will review your application and contact you soon.'
       })
       
-      // Reset form
       setMemberForm({
         fullName: '', email: '', phone: '', dateOfBirth: '', location: '',
         congregation: '', musicalExperience: '', vocalPart: '', instrument: '',
@@ -91,6 +185,16 @@ export default function JoinPage() {
 
   const handleSupporterSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!validateEmail(supporterForm.email)) {
+      toast.error('Please enter a valid email address')
+      return
+    }
+    
+    if (supporterForm.password.length < 8) {
+      toast.error('Password must be at least 8 characters')
+      return
+    }
     
     if (supporterForm.password !== supporterForm.confirmPassword) {
       toast.error('Passwords do not match')
@@ -143,33 +247,17 @@ export default function JoinPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-3">
-              <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
-              <span className="text-xl font-bold hidden sm:block">G2 Melody</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button variant="outline" size="sm">Sign In</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <SharedNavigation currentPage="join" />
 
-      {/* Hero Section */}
-      <section className="relative py-16 bg-gradient-to-r from-amber-500 to-orange-500 text-white">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
+      {/* Hero Section with Image */}
+      <section className="relative py-20 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1593678820334-91d5f99be314?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
+            alt="Join G2 Melody"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-600/90 via-orange-600/85 to-amber-600/90" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody Family</h1>
@@ -194,30 +282,35 @@ export default function JoinPage() {
 
           {/* Supporter Tab */}
           <TabsContent value="supporter">
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* Benefits */}
-              <div>
-                <h2 className="text-2xl font-bold mb-6">Become a Supporter</h2>
-                <p className="text-gray-600 mb-8">
-                  Join our community of supporters who help us spread the Gospel through music. 
-                  As a supporter, you can donate to projects, purchase music, and access learning resources.
-                </p>
-                <div className="space-y-4">
-                  {benefits.supporter.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
-                      <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-                        <benefit.icon className="w-6 h-6 text-amber-600" />
+            <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+              {/* Left Side - Image with Text Overlay */}
+              <div className="relative rounded-2xl overflow-hidden min-h-[500px]">
+                <img
+                  src="https://images.unsplash.com/photo-1560251445-ba979d304eb9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwzfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
+                  alt="Community"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-gray-900/40" />
+                <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                  <h2 className="text-3xl font-bold text-white mb-4">Become a Supporter</h2>
+                  <p className="text-white/90 mb-6 text-lg leading-relaxed">
+                    Join our community of supporters who help us spread the Gospel through music. 
+                    As a supporter, you can donate to projects, purchase music, and access learning resources.
+                  </p>
+                  <div className="space-y-3">
+                    {benefits.supporter.map((benefit, index) => (
+                      <div key={index} className="flex items-center space-x-3 text-white/90">
+                        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                          <benefit.icon className="w-4 h-4" />
+                        </div>
+                        <span>{benefit.title}</span>
                       </div>
-                      <div>
-                        <h3 className="font-semibold">{benefit.title}</h3>
-                        <p className="text-sm text-gray-600">{benefit.desc}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Registration Form */}
+              {/* Right Side - Registration Form */}
               <Card className="border-0 shadow-xl">
                 <CardHeader>
                   <CardTitle>Create Supporter Account</CardTitle>
@@ -241,37 +334,65 @@ export default function JoinPage() {
                         id="supporterEmail"
                         type="email"
                         value={supporterForm.email}
-                        onChange={(e) => setSupporterForm({...supporterForm, email: e.target.value})}
+                        onChange={(e) => {
+                          setSupporterForm({...supporterForm, email: e.target.value})
+                          validateEmail(e.target.value)
+                        }}
                         placeholder="john@example.com"
+                        className={emailError ? 'border-red-500' : ''}
                         required
                       />
+                      {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
                     </div>
                     <div>
                       <Label htmlFor="supporterPassword">Password</Label>
-                      <Input
-                        id="supporterPassword"
-                        type="password"
-                        value={supporterForm.password}
-                        onChange={(e) => setSupporterForm({...supporterForm, password: e.target.value})}
-                        placeholder="Create a password"
-                        required
-                      />
+                      <div className="relative">
+                        <Input
+                          id="supporterPassword"
+                          type={showPassword ? 'text' : 'password'}
+                          value={supporterForm.password}
+                          onChange={(e) => setSupporterForm({...supporterForm, password: e.target.value})}
+                          placeholder="Create a strong password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      <PasswordStrength password={supporterForm.password} />
                     </div>
                     <div>
                       <Label htmlFor="supporterConfirmPassword">Confirm Password</Label>
-                      <Input
-                        id="supporterConfirmPassword"
-                        type="password"
-                        value={supporterForm.confirmPassword}
-                        onChange={(e) => setSupporterForm({...supporterForm, confirmPassword: e.target.value})}
-                        placeholder="Confirm your password"
-                        required
-                      />
+                      <div className="relative">
+                        <Input
+                          id="supporterConfirmPassword"
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          value={supporterForm.confirmPassword}
+                          onChange={(e) => setSupporterForm({...supporterForm, confirmPassword: e.target.value})}
+                          placeholder="Confirm your password"
+                          className={supporterForm.confirmPassword && supporterForm.password !== supporterForm.confirmPassword ? 'border-red-500' : ''}
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      {supporterForm.confirmPassword && supporterForm.password !== supporterForm.confirmPassword && (
+                        <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
+                      )}
                     </div>
                     <Button 
                       type="submit" 
                       className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
-                      disabled={loading}
+                      disabled={loading || !isValidEmail(supporterForm.email) || supporterForm.password.length < 8}
                     >
                       {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                       Create Account
@@ -287,34 +408,37 @@ export default function JoinPage() {
 
           {/* Member Tab */}
           <TabsContent value="member">
-            <div className="grid lg:grid-cols-5 gap-12">
-              {/* Benefits - Smaller */}
-              <div className="lg:col-span-2">
-                <h2 className="text-2xl font-bold mb-6">Become a Choir Member</h2>
-                <p className="text-gray-600 mb-8">
-                  Join our choir and be part of our mission to evangelize through music. 
-                  Members participate in rehearsals, performances, and receive comprehensive musical training.
-                </p>
-                <div className="space-y-4">
-                  {benefits.member.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl">
-                      <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <benefit.icon className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{benefit.title}</h3>
-                        <p className="text-sm text-gray-600">{benefit.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 p-4 bg-amber-50 rounded-xl">
-                  <h4 className="font-semibold text-amber-800 mb-2">Note</h4>
-                  <p className="text-sm text-amber-700">
-                    Choir membership requires commitment to rehearsals and alignment with our values. 
-                    Your application will be reviewed by our leadership team.
+            <div className="grid lg:grid-cols-5 gap-8">
+              {/* Left Side - Image with Text */}
+              <div className="lg:col-span-2 relative rounded-2xl overflow-hidden min-h-[600px]">
+                <img
+                  src="https://images.unsplash.com/photo-1593678820334-91d5f99be314?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
+                  alt="Choir Members"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/70 to-blue-900/40" />
+                <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                  <h2 className="text-3xl font-bold text-white mb-4">Become a Choir Member</h2>
+                  <p className="text-white/90 mb-6 leading-relaxed">
+                    Join our choir and be part of our mission to evangelize through music. 
+                    Members participate in rehearsals, performances, and receive comprehensive musical training.
                   </p>
+                  <div className="space-y-3 mb-6">
+                    {benefits.member.map((benefit, index) => (
+                      <div key={index} className="flex items-center space-x-3 text-white/90">
+                        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                          <benefit.icon className="w-4 h-4" />
+                        </div>
+                        <span>{benefit.title}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="p-4 bg-white/10 backdrop-blur rounded-xl">
+                    <p className="text-white/90 text-sm">
+                      <strong>Note:</strong> Choir membership requires commitment to rehearsals and alignment with our values. 
+                      Your application will be reviewed by our leadership team.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -340,9 +464,9 @@ export default function JoinPage() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="email">Email *</Label>
+                          <Label htmlFor="memberEmail">Email *</Label>
                           <Input
-                            id="email"
+                            id="memberEmail"
                             type="email"
                             value={memberForm.email}
                             onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
@@ -533,6 +657,8 @@ export default function JoinPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <SharedFooter />
     </div>
   )
 }
