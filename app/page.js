@@ -890,10 +890,10 @@ function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+    <section id="contact" className="py-16 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <Badge className="mb-4 bg-pink-100 text-pink-700 px-4 py-1.5">
             <MessageCircle className="w-3 h-3 mr-1" /> Contact Us
           </Badge>
