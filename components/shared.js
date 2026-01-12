@@ -26,6 +26,7 @@ export function SharedNavigation({ currentPage = 'home' }) {
     { href: '/about', label: 'About', key: 'about' },
     { href: '/projects', label: 'Projects', key: 'projects' },
     { href: '/music', label: 'Music', key: 'music' },
+    { href: '/news', label: 'News', key: 'news' },
     { href: '/learn', label: 'Learn', key: 'learn' },
     { href: '/contact', label: 'Contact', key: 'contact' },
   ]
