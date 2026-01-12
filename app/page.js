@@ -556,8 +556,8 @@ function ProjectsSection({ projects, onDonate }) {
 function MusicStoreSection({ music, onPurchase }) {
   const [playingId, setPlayingId] = useState(null)
 
-  // Limit to 3 music tracks for homepage display
-  const displayedMusic = music.slice(0, 3)
+  // Limit to 4 music tracks for homepage display
+  const displayedMusic = music.slice(0, 4)
 
   const formatDuration = (seconds) => {
     if (!seconds) return '--:--'
