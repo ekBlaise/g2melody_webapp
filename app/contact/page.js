@@ -8,10 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
+import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
-  Music, MessageCircle, MapPin, Mail, Church, Phone, Send, Facebook,
+  MessageCircle, MapPin, Mail, Church, Send, Facebook,
   Twitter, Instagram, Youtube, Calendar
 } from 'lucide-react'
 
@@ -44,36 +44,26 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-3">
-              <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
-              <span className="text-xl font-bold">G2 Melody</span>
-            </Link>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">Home</Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">About</Link>
-              <Link href="/projects" className="text-gray-600 hover:text-gray-900">Projects</Link>
-              <Link href="/music" className="text-gray-600 hover:text-gray-900">Music</Link>
-              <Link href="/learn" className="text-gray-600 hover:text-gray-900">Learn</Link>
-              <Link href="/contact" className="text-pink-600 font-medium">Contact</Link>
-            </div>
-            <Link href="/join">
-              <Button className="bg-gradient-to-r from-amber-500 to-orange-500">Join Us</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <SharedNavigation currentPage="contact" />
 
-      {/* Hero */}
-      <section className="relative py-20 bg-gradient-to-br from-pink-500 to-rose-500 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <Badge className="mb-4 bg-white/20 text-white border-white/30">
-            <MessageCircle className="w-3 h-3 mr-1" /> Contact Us
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Get In Touch</h1>
+      {/* Hero with Background Image */}
+      <section className="relative py-24 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1519937754318-2462db1c429d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
+            alt="Worship Connection"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-900/90 via-pink-900/80 to-pink-900/70" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
+            <MessageCircle className="w-4 h-4 text-pink-400" />
+            <span className="text-sm font-medium text-white/90">Contact Us</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400">Touch</span>
+          </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
             Have questions about our ministry, music, or how to join? We'd love to hear from you!
           </p>
@@ -116,7 +106,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">Affiliated Church</h4>
-                      <p className="text-gray-400">The Church of Christ Bomaka</p>
+                      <p className="text-gray-400">Church of Christ</p>
                     </div>
                   </div>
                   <div className="pt-6 border-t border-white/10">
@@ -198,6 +188,8 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      <SharedFooter />
     </div>
   )
 }
