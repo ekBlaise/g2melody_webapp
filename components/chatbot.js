@@ -108,11 +108,25 @@ export default function Chatbot() {
   ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [isPageLoaded, setIsPageLoaded] = useState(false)
   const messagesEndRef = useRef(null)
+  const pathname = usePathname()
+
+  // Don't show chatbot on admin/dashboard pages
+  const hiddenPaths = ['/admin', '/dashboard', '/member-dashboard']
+  const shouldHide = hiddenPaths.some(path => pathname?.startsWith(path))
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    // Wait for page to fully load before showing chatbot
+    const timer = setTimeout(() => {
+      setIsPageLoaded(true)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     scrollToBottom()
@@ -151,11 +165,16 @@ export default function Chatbot() {
     handleSend(reply)
   }
 
+  // Don't render if page not loaded or on hidden paths
+  if (!isPageLoaded || shouldHide) {
+    return null
+  }
+
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 group"
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 group animate-in fade-in slide-in-from-bottom-4"
       >
         <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
