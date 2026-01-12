@@ -696,12 +696,21 @@ function MusicStoreSection({ music, onPurchase }) {
           ))}
         </div>
 
-        {filteredMusic.length === 0 && (
+        {displayedMusic.length === 0 && (
           <div className="text-center py-16">
             <Music className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No music found matching your search.</p>
+            <p className="text-gray-500">No music available yet.</p>
           </div>
         )}
+
+        {/* View All Music Button */}
+        <div className="text-center mt-10">
+          <Link href="/music">
+            <Button size="lg" variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50">
+              View All Music <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   )
