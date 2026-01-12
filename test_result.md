@@ -222,6 +222,36 @@ backend:
         agent: "main"
         comment: "POST /api/seed creates sample projects, music, and admin user"
 
+  - task: "Site Settings GET API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/settings endpoint (public) for fetching site settings including memberCount, studentsCount, programsCount, yearsActive"
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/settings successfully returns all required fields (memberCount=75, studentsCount=120, programsCount=8, yearsActive=10). API working correctly."
+
+  - task: "Site Settings UPDATE API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "PUT /api/admin/settings endpoint for admin to update site settings"
+      - working: true
+        agent: "testing"
+        comment: "TESTED: PUT /api/admin/settings successfully updated memberCount from 50 to 75. Settings persist correctly after update. API working correctly."
+
 frontend:
   - task: "Homepage with Hero Section"
     implemented: true
