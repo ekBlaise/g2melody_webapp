@@ -191,6 +191,9 @@ backend:
       - working: true
         agent: "main"
         comment: "GET /api/admin/stats returns donations total/count, purchases total/count, users count, projects, recentDonations"
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/admin/stats successfully returned all required fields - 5 donations totaling 145000 XAF, 3 users. All statistics working correctly."
 
   - task: "User Registration API"
     implemented: true
