@@ -377,8 +377,9 @@ function AboutSection() {
 
 // Projects Section
 function ProjectsSection({ projects, onDonate }) {
-  const currentProjects = projects.filter(p => p.status === 'CURRENT')
-  const pastProjects = projects.filter(p => p.status === 'PAST')
+  // Limit to 3 projects for homepage display
+  const currentProjects = projects.filter(p => p.status === 'CURRENT').slice(0, 3)
+  const pastProjects = projects.filter(p => p.status === 'PAST').slice(0, 3)
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount)
