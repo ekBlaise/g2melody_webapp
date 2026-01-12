@@ -272,7 +272,7 @@ function AboutSection() {
   ]
 
   return (
-    <section id="about" className="py-24 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+    <section id="about" className="py-16 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* Decorative Background */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-50 to-transparent opacity-50" />
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl" />
