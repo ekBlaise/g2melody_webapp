@@ -149,6 +149,9 @@ backend:
       - working: true
         agent: "main"
         comment: "POST /api/donations creates donation and updates project currentAmount. GET returns donations list. Tested: donation created, project amount incremented from 2350000 to 2355000"
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/donations successfully created donation of 5000 XAF and updated project amount from 5125000 to 5130000. Donation and project amount update working correctly."
 
   - task: "Music CRUD API"
     implemented: true
