@@ -114,14 +114,18 @@ export default function ProjectDetailPage() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
+        
+        {/* Back Button - Top Right aligned with navbar buttons */}
+        <div className="absolute top-4 right-4 md:top-6 md:right-8">
+          <Link href="/projects">
+            <Button variant="outline" size="sm" className="bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm">
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Projects
+            </Button>
+          </Link>
+        </div>
+        
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
           <div className="max-w-7xl mx-auto">
-            {/* Back Button */}
-            <Link href="/projects">
-              <Button variant="outline" size="sm" className="mb-4 bg-white/20 border-white/30 text-white hover:bg-white/30">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Projects
-              </Button>
-            </Link>
             <Badge className={project.status === 'CURRENT' ? 'bg-green-500' : 'bg-gray-500'}>
               {project.status === 'CURRENT' ? 'Active Project' : 'Completed'}
             </Badge>
