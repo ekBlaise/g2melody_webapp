@@ -1093,7 +1093,7 @@ function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <Church className="w-5 h-5 text-amber-500" />
-                <span>Church of Christ Bomaka</span>
+                <span>Church of Christ</span>
               </li>
             </ul>
           </div>
@@ -1103,9 +1103,6 @@ function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">
               &copy; {new Date().getFullYear()} G2 Melody (Gospel Guardians Melody). All rights reserved.
-            </p>
-            <p className="text-gray-500 text-sm mt-2 md:mt-0">
-              Affiliated with The Church of Christ Bomaka
             </p>
           </div>
         </div>
