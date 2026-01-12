@@ -125,7 +125,7 @@ function Navigation({ isScrolled, activeSection }) {
 }
 
 // Hero Section
-function HeroSection() {
+function HeroSection({ siteSettings }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   
   const slides = [
@@ -218,11 +218,11 @@ function HeroSection() {
             </Link>
           </div>
 
-          {/* Stats */}
+          {/* Stats - Now dynamic from siteSettings */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { value: '2016', label: 'Founded', icon: Calendar },
-              { value: '50+', label: 'Members', icon: Users },
+              { value: `${siteSettings?.memberCount || 50}+`, label: 'Members', icon: Users },
               { value: '4-Part', label: 'Harmony', icon: Music },
               { value: '∞', label: 'Faith', icon: Heart },
             ].map((stat, index) => (
