@@ -1028,6 +1028,13 @@ function ContactSection() {
 
 // Footer
 function Footer() {
+  const socialLinks = [
+    { icon: Facebook, href: 'https://www.facebook.com/g2melody', label: 'Facebook' },
+    { icon: Youtube, href: 'https://www.youtube.com/@g2melody', label: 'YouTube' },
+    { icon: Instagram, href: 'https://www.instagram.com/g2melody/', label: 'Instagram' },
+    { icon: Music, href: 'https://www.tiktok.com/@g2melody_official', label: 'TikTok' }, // Using Music icon for TikTok
+  ]
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -1044,9 +1051,9 @@ function Footer() {
               Evangelizing through music, uniting voices in worship, and spreading the Gospel across Cameroon and beyond since 2016.
             </p>
             <div className="flex space-x-3">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
-                <a key={index} href="#" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-amber-500 transition-colors">
-                  <Icon className="w-5 h-5" />
+              {socialLinks.map((social, index) => (
+                <a key={index} href={social.href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-amber-500 transition-colors" title={social.label}>
+                  <social.icon className="w-5 h-5" />
                 </a>
               ))}
             </div>
