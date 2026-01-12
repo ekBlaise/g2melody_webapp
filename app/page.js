@@ -371,9 +371,13 @@ function AboutSection() {
 
 // Projects Section
 function ProjectsSection({ projects, onDonate }) {
+  // Get total counts for tabs
+  const allCurrentProjects = projects.filter(p => p.status === 'CURRENT')
+  const allPastProjects = projects.filter(p => p.status === 'PAST')
+  
   // Limit to 3 projects for homepage display
-  const currentProjects = projects.filter(p => p.status === 'CURRENT').slice(0, 3)
-  const pastProjects = projects.filter(p => p.status === 'PAST').slice(0, 3)
+  const currentProjects = allCurrentProjects.slice(0, 3)
+  const pastProjects = allPastProjects.slice(0, 3)
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount)
@@ -386,14 +390,6 @@ function ProjectsSection({ projects, onDonate }) {
     const diff = new Date(deadline) - new Date()
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
   }
-
-  // Vision Projects (Future Goals)
-  const visionProjects = [
-    { icon: GraduationCap, title: 'Music Academy', desc: 'Establish a music academy in Cameroon that confers degrees in music studies' },
-    { icon: Video, title: 'Recording Studio', desc: 'Build a permanent recording studio for training and producing quality music' },
-    { icon: Building, title: 'TV & Radio Station', desc: 'Launch media platforms to reach wider audiences with gospel music' },
-    { icon: Building, title: 'Multipurpose Facility', desc: 'Create a dedicated space for rehearsals, events, and community outreach' },
-  ]
 
   return (
     <section id="projects" className="py-16 bg-gradient-to-b from-gray-50 to-white">
