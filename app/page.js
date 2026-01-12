@@ -613,10 +613,10 @@ function MusicStoreSection({ music, onPurchase }) {
   }
 
   return (
-    <section id="music" className="py-24 bg-gradient-to-b from-white via-purple-50/30 to-white">
+    <section id="music" className="py-16 bg-gradient-to-b from-white via-purple-50/30 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <Badge className="mb-4 bg-purple-100 text-purple-700 px-4 py-1.5">
             <Headphones className="w-3 h-3 mr-1" /> Music Store
           </Badge>
@@ -629,7 +629,7 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {/* Album Highlight */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white mb-16 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -638,9 +638,11 @@ function MusicStoreSection({ music, onPurchase }) {
               <p className="text-white/80 mb-6">
                 Our debut album released in 2019, featuring original compositions that showcase the beauty of four-part harmony and acapella worship.
               </p>
-              <Button className="bg-white text-purple-600 hover:bg-white/90">
-                <Play className="mr-2 h-4 w-4" /> Listen Now
-              </Button>
+              <Link href="/music">
+                <Button className="bg-white text-purple-600 hover:bg-white/90">
+                  <Play className="mr-2 h-4 w-4" /> Browse All Music
+                </Button>
+              </Link>
             </div>
             <div className="flex justify-center">
               <div className="w-64 h-64 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
@@ -650,35 +652,9 @@ function MusicStoreSection({ music, onPurchase }) {
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-12 max-w-2xl mx-auto">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              placeholder="Search songs, artists..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 rounded-xl border-gray-200"
-            />
-          </div>
-          <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-            <SelectTrigger className="w-full sm:w-48 h-12 rounded-xl">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Genre" />
-            </SelectTrigger>
-            <SelectContent>
-              {genres.map(genre => (
-                <SelectItem key={genre} value={genre}>
-                  {genre === 'all' ? 'All Genres' : genre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Music Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredMusic.map((track) => (
+        {/* Music Grid - Limited to 3 items */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayedMusic.map((track) => (
             <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
               <div className="relative aspect-square">
                 <img
