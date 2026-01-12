@@ -33,6 +33,7 @@ function Navigation({ isScrolled, activeSection }) {
     { href: '/about', label: 'About' },
     { href: '/projects', label: 'Projects' },
     { href: '/music', label: 'Music' },
+    { href: '/news', label: 'News' },
     { href: '/learn', label: 'Learn Muzik' },
     { href: '/contact', label: 'Contact' },
   ]
