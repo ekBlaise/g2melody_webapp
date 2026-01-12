@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { MessageCircle, X, Send, Bot, User, Loader2, Minimize2, Music } from 'lucide-react'
@@ -19,7 +20,7 @@ const getBotResponse = (message) => {
   
   if (lower.includes('join') || lower.includes('member') || lower.includes('apply')) {
     return {
-      text: "We'd love to have you! You can join G2 Melody in two ways:\n\n1️⃣ **Become a Supporter** - Create a free account to donate, purchase music, and access learning resources.\n\n2️⃣ **Join the Choir** - Apply to become an active choir member and participate in rehearsals and performances.\n\nVisit our Join page to get started!",
+      text: "We'd love to have you! You can join G2 Melody in two ways:\n\n1️⃣ **Join our Community** - Create a free account to donate, purchase music, and access learning resources.\n\n2️⃣ **Join the Choir** - Apply to become an active choir member and participate in rehearsals and performances.\n\nVisit our Join page to get started!",
       link: { url: '/join', label: 'Join Us' }
     }
   }
