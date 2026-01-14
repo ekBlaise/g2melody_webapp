@@ -69,7 +69,7 @@ export default function NewsPage() {
       <SharedNavigation currentPage="news" />
 
       {/* Hero */}
-      <section className="relative py-16 text-white overflow-hidden">
+      <section className="relative pt-24 pb-12 mt-16 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHw0fHxjb25jZXJ0JTIwY3Jvd2R8ZW58MHx8fHwxNzY4MjQ4MTI0fDA&ixlib=rb-4.1.0&q=85"
