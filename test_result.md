@@ -232,7 +232,91 @@ backend:
     status_history:
       - working: true
         agent: "main"
-        comment: "POST /api/seed creates sample projects, music, and admin user"
+        comment: "POST /api/seed creates sample projects, music, admin user, courses, lessons, practice tracks, achievements, schedule items"
+
+  - task: "Courses API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/courses returns all courses. POST creates new courses. Tested manually - returns 4 courses with correct data."
+
+  - task: "Enrollments API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/enrollments?userId=X returns user enrollments with course data. POST enrolls user in course. Tested - enrollment creates successfully."
+
+  - task: "Practice Tracks API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/practice-tracks returns all tracks with filters (type, vocalPart). Tested - returns 10 tracks correctly."
+
+  - task: "Learner Dashboard API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/dashboard/learner?userId=X returns aggregated learner data including progress, courses, practice tracks, achievements, notifications, schedule. Tested - returns correct data structure."
+
+  - task: "Supporter Dashboard API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/dashboard/supporter?userId=X returns supporter stats, donations, leaderboard, impact metrics. Tested - returns correct data."
+
+  - task: "Schedule API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/schedule returns upcoming public events and user-specific items. POST creates new schedule items. Tested - returns 4 events correctly."
+
+  - task: "Achievements API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/achievements returns all achievement definitions. POST /api/user-achievements awards achievement to user. Tested - returns 8 achievements."
 
   - task: "Site Settings GET API"
     implemented: true
