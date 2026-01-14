@@ -20,22 +20,15 @@ function TikTokIcon({ className }) {
 // Shared Navigation Component - Matches Homepage Navigation
 export function SharedNavigation({ currentPage = 'home' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(true) // Default to scrolled state for inner pages
+  const [isScrolled, setIsScrolled] = useState(false) // Start transparent on ALL pages
 
   useEffect(() => {
-    // For inner pages, we want the white navbar by default
-    // Only on homepage it starts transparent
-    if (currentPage === 'home') {
-      setIsScrolled(false)
-      const handleScroll = () => {
-        setIsScrolled(window.scrollY > 50)
-      }
-      window.addEventListener('scroll', handleScroll)
-      return () => window.removeEventListener('scroll', handleScroll)
-    } else {
-      setIsScrolled(true) // Always scrolled (white) for inner pages
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
     }
-  }, [currentPage])
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const navLinks = [
     { href: '/', label: 'Home', key: 'home' },
