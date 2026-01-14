@@ -20,15 +20,17 @@ function TikTokIcon({ className }) {
 // Shared Navigation Component - Matches Homepage Navigation
 export function SharedNavigation({ currentPage = 'home' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false) // Start transparent on ALL pages
+  const [isScrolled, setIsScrolled] = useState(currentPage !== 'home') // Only transparent on homepage
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+    if (currentPage === 'home') {
+      const handleScroll = () => {
+        setIsScrolled(window.scrollY > 50)
+      }
+      window.addEventListener('scroll', handleScroll)
+      return () => window.removeEventListener('scroll', handleScroll)
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [currentPage])
 
   const navLinks = [
     { href: '/', label: 'Home', key: 'home' },
