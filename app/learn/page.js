@@ -59,7 +59,7 @@ export default function LearnPage() {
     <div className="min-h-screen bg-white">
       <SharedNavigation currentPage="learn" />
 
-      {/* Hero with Background Image */}
+      {/* Hero */}
       <section className="relative py-24 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -67,15 +67,15 @@ export default function LearnPage() {
             alt="Music Education"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-900/80 to-blue-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
-            <GraduationCap className="w-4 h-4 text-blue-400" />
+            <GraduationCap className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-medium text-white/90">Learn Muzik</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Develop Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Musical Gift</span>
+            Develop Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Musical Gift</span>
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
             Our structured music education program is designed to nurture your talents and equip you for worship leadership.
@@ -86,7 +86,7 @@ export default function LearnPage() {
       {/* Academy Banner */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white">
+          <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-8 md:p-12 text-white">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h3 className="text-3xl md:text-4xl font-bold mb-4">G2 Melody Music Academy</h3>
@@ -95,7 +95,7 @@ export default function LearnPage() {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link href="/join">
-                    <Button className="bg-white text-blue-600 hover:bg-white/90">
+                    <Button className="bg-white text-amber-600 hover:bg-white/90">
                       <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
                     </Button>
                   </Link>
@@ -137,8 +137,8 @@ export default function LearnPage() {
             {programs.map((program, index) => (
               <Card key={index} className="hover:shadow-xl transition-all group">
                 <CardHeader>
-                  <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-500 transition-colors">
-                    <program.icon className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" />
+                  <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-4 group-hover:bg-amber-500 transition-colors">
+                    <program.icon className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors" />
                   </div>
                   <CardTitle>{program.title}</CardTitle>
                   <CardDescription>{program.desc}</CardDescription>
@@ -151,7 +151,7 @@ export default function LearnPage() {
                 </CardContent>
                 <CardFooter>
                   <Link href="/join" className="w-full">
-                    <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                    <Button variant="outline" className="w-full group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 transition-colors">
                       Learn More <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -168,7 +168,7 @@ export default function LearnPage() {
           <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
           <p className="text-gray-600 mb-8">Join G2 Melody and develop your musical gifts under expert guidance.</p>
           <Link href="/join">
-            <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500">
+            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
               Join G2 Melody <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
