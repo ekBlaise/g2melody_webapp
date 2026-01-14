@@ -339,6 +339,42 @@ backend:
         agent: "testing"
         comment: "TESTED: GET /api/achievements successfully returned 8 achievements as expected. API working correctly."
 
+  - task: "Practice Sessions API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/practice-sessions successfully logged practice session for admin-1 with trackId track-1 and 15 minutes duration. API working correctly."
+
+  - task: "User Stats API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/user-stats successfully returned user statistics including totalPracticeMinutes (15 minutes after practice session). API working correctly."
+
+  - task: "Notifications API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/notifications successfully created test notification for admin-1. GET /api/notifications returned 1 notification. API working correctly."
+
   - task: "Site Settings GET API"
     implemented: true
     working: true
