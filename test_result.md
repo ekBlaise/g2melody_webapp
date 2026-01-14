@@ -330,11 +330,14 @@ backend:
     file: "/app/app/api/[[...path]]/route.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/achievements returns all achievement definitions. POST /api/user-achievements awards achievement to user. Tested - returns 8 achievements."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/achievements successfully returned 8 achievements as expected. API working correctly."
 
   - task: "Site Settings GET API"
     implemented: true
