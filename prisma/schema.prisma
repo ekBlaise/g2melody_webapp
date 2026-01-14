@@ -323,3 +323,15 @@ model ChoirMember {
   updatedAt     DateTime     @updatedAt
 }
 
+// History Timeline model for About Us page
+model HistoryEvent {
+  id            String   @id @default(uuid())
+  year          String   // e.g., "Late 2016", "October 2016", "2017"
+  title         String
+  description   String   @db.Text
+  order         Int      @default(0)
+  colorVariant  String   @default("amber") // amber, orange, rose
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
