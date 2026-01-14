@@ -725,6 +725,745 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ success: true }))
     }
 
+    // ==================== LEARNING PLATFORM APIs ====================
+    
+    // COURSES
+    if (route === '/courses' && method === 'GET') {
+      const url = new URL(request.url)
+      const published = url.searchParams.get('published')
+      
+      const where = {}
+      if (published === 'true') where.isPublished = true
+      
+      const courses = await prisma.course.findMany({
+        where,
+        orderBy: { order: 'asc' },
+        include: {
+          _count: { select: { lessons: true, enrollments: true } }
+        }
+      })
+      return handleCORS(NextResponse.json(courses))
+    }
+
+    if (route === '/courses' && method === 'POST') {
+      const body = await request.json()
+      const course = await prisma.course.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          image: body.image,
+          emoji: body.emoji || '🎵',
+          duration: body.duration,
+          level: body.level || 'Beginner',
+          totalLessons: body.totalLessons || 0,
+          isPublished: body.isPublished ?? true,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(course))
+    }
+
+    const courseMatch = route.match(/^\/courses\/([^/]+)$/)
+    if (courseMatch && method === 'GET') {
+      const course = await prisma.course.findUnique({
+        where: { id: courseMatch[1] },
+        include: {
+          lessons: { orderBy: { order: 'asc' } },
+          _count: { select: { enrollments: true } }
+        }
+      })
+      if (!course) {
+        return handleCORS(NextResponse.json({ error: 'Course not found' }, { status: 404 }))
+      }
+      return handleCORS(NextResponse.json(course))
+    }
+
+    if (courseMatch && method === 'PUT') {
+      const body = await request.json()
+      const course = await prisma.course.update({
+        where: { id: courseMatch[1] },
+        data: body
+      })
+      return handleCORS(NextResponse.json(course))
+    }
+
+    if (courseMatch && method === 'DELETE') {
+      await prisma.course.delete({ where: { id: courseMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // LESSONS
+    if (route === '/lessons' && method === 'GET') {
+      const url = new URL(request.url)
+      const courseId = url.searchParams.get('courseId')
+      
+      const where = {}
+      if (courseId) where.courseId = courseId
+      
+      const lessons = await prisma.lesson.findMany({
+        where,
+        orderBy: { order: 'asc' },
+        include: { course: { select: { title: true } } }
+      })
+      return handleCORS(NextResponse.json(lessons))
+    }
+
+    if (route === '/lessons' && method === 'POST') {
+      const body = await request.json()
+      const lesson = await prisma.lesson.create({
+        data: {
+          id: uuidv4(),
+          courseId: body.courseId,
+          title: body.title,
+          description: body.description,
+          content: body.content,
+          videoUrl: body.videoUrl,
+          audioUrl: body.audioUrl,
+          duration: body.duration,
+          order: body.order || 0,
+          isPublished: body.isPublished ?? true
+        }
+      })
+      
+      // Update course totalLessons count
+      await prisma.course.update({
+        where: { id: body.courseId },
+        data: { totalLessons: { increment: 1 } }
+      })
+      
+      return handleCORS(NextResponse.json(lesson))
+    }
+
+    const lessonMatch = route.match(/^\/lessons\/([^/]+)$/)
+    if (lessonMatch && method === 'GET') {
+      const lesson = await prisma.lesson.findUnique({
+        where: { id: lessonMatch[1] },
+        include: { course: true }
+      })
+      if (!lesson) {
+        return handleCORS(NextResponse.json({ error: 'Lesson not found' }, { status: 404 }))
+      }
+      return handleCORS(NextResponse.json(lesson))
+    }
+
+    if (lessonMatch && method === 'PUT') {
+      const body = await request.json()
+      const lesson = await prisma.lesson.update({
+        where: { id: lessonMatch[1] },
+        data: body
+      })
+      return handleCORS(NextResponse.json(lesson))
+    }
+
+    if (lessonMatch && method === 'DELETE') {
+      const lesson = await prisma.lesson.findUnique({ where: { id: lessonMatch[1] } })
+      if (lesson) {
+        await prisma.lesson.delete({ where: { id: lessonMatch[1] } })
+        // Update course totalLessons count
+        await prisma.course.update({
+          where: { id: lesson.courseId },
+          data: { totalLessons: { decrement: 1 } }
+        })
+      }
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // USER ENROLLMENTS
+    if (route === '/enrollments' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const enrollments = await prisma.enrollment.findMany({
+        where: { userId },
+        include: {
+          course: {
+            include: { lessons: { orderBy: { order: 'asc' } } }
+          }
+        },
+        orderBy: { lastAccessedAt: 'desc' }
+      })
+      return handleCORS(NextResponse.json(enrollments))
+    }
+
+    if (route === '/enrollments' && method === 'POST') {
+      const body = await request.json()
+      
+      // Check if already enrolled
+      const existing = await prisma.enrollment.findUnique({
+        where: { userId_courseId: { userId: body.userId, courseId: body.courseId } }
+      })
+      if (existing) {
+        return handleCORS(NextResponse.json(existing))
+      }
+      
+      const enrollment = await prisma.enrollment.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          courseId: body.courseId
+        },
+        include: { course: true }
+      })
+      return handleCORS(NextResponse.json(enrollment))
+    }
+
+    const enrollmentMatch = route.match(/^\/enrollments\/([^/]+)$/)
+    if (enrollmentMatch && method === 'PUT') {
+      const body = await request.json()
+      const enrollment = await prisma.enrollment.update({
+        where: { id: enrollmentMatch[1] },
+        data: {
+          progress: body.progress,
+          completedLessons: body.completedLessons,
+          lastAccessedAt: new Date(),
+          completedAt: body.progress >= 100 ? new Date() : null
+        }
+      })
+      return handleCORS(NextResponse.json(enrollment))
+    }
+
+    // LESSON PROGRESS
+    if (route === '/lesson-progress' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const lessonId = url.searchParams.get('lessonId')
+      
+      const where = {}
+      if (userId) where.userId = userId
+      if (lessonId) where.lessonId = lessonId
+      
+      const progress = await prisma.lessonProgress.findMany({
+        where,
+        include: { lesson: { select: { title: true, courseId: true } } }
+      })
+      return handleCORS(NextResponse.json(progress))
+    }
+
+    if (route === '/lesson-progress' && method === 'POST') {
+      const body = await request.json()
+      
+      const progress = await prisma.lessonProgress.upsert({
+        where: { userId_lessonId: { userId: body.userId, lessonId: body.lessonId } },
+        update: {
+          completed: body.completed ?? false,
+          watchTime: body.watchTime ? { increment: body.watchTime } : undefined,
+          completedAt: body.completed ? new Date() : null
+        },
+        create: {
+          id: uuidv4(),
+          userId: body.userId,
+          lessonId: body.lessonId,
+          completed: body.completed ?? false,
+          watchTime: body.watchTime || 0,
+          completedAt: body.completed ? new Date() : null
+        }
+      })
+      
+      // Update enrollment progress if lesson completed
+      if (body.completed) {
+        const lesson = await prisma.lesson.findUnique({ where: { id: body.lessonId } })
+        if (lesson) {
+          const course = await prisma.course.findUnique({ where: { id: lesson.courseId } })
+          const completedCount = await prisma.lessonProgress.count({
+            where: { userId: body.userId, completed: true, lesson: { courseId: lesson.courseId } }
+          })
+          const progressPercent = course.totalLessons > 0 
+            ? Math.round((completedCount / course.totalLessons) * 100) 
+            : 0
+          
+          await prisma.enrollment.updateMany({
+            where: { userId: body.userId, courseId: lesson.courseId },
+            data: { 
+              progress: progressPercent, 
+              completedLessons: completedCount,
+              lastAccessedAt: new Date(),
+              completedAt: progressPercent >= 100 ? new Date() : null
+            }
+          })
+        }
+      }
+      
+      return handleCORS(NextResponse.json(progress))
+    }
+
+    // PRACTICE TRACKS
+    if (route === '/practice-tracks' && method === 'GET') {
+      const url = new URL(request.url)
+      const type = url.searchParams.get('type')
+      const vocalPart = url.searchParams.get('vocalPart')
+      
+      const where = { isPublished: true }
+      if (type) where.type = type
+      if (vocalPart) where.vocalPart = vocalPart.toUpperCase()
+      
+      const tracks = await prisma.practiceTrack.findMany({
+        where,
+        orderBy: { order: 'asc' }
+      })
+      return handleCORS(NextResponse.json(tracks))
+    }
+
+    if (route === '/practice-tracks' && method === 'POST') {
+      const body = await request.json()
+      const track = await prisma.practiceTrack.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          audioUrl: body.audioUrl,
+          duration: body.duration,
+          type: body.type || 'Exercise',
+          vocalPart: body.vocalPart || 'NONE',
+          difficulty: body.difficulty || 'Beginner',
+          isPublished: body.isPublished ?? true,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(track))
+    }
+
+    const practiceTrackMatch = route.match(/^\/practice-tracks\/([^/]+)$/)
+    if (practiceTrackMatch && method === 'PUT') {
+      const body = await request.json()
+      const track = await prisma.practiceTrack.update({
+        where: { id: practiceTrackMatch[1] },
+        data: body
+      })
+      return handleCORS(NextResponse.json(track))
+    }
+
+    if (practiceTrackMatch && method === 'DELETE') {
+      await prisma.practiceTrack.delete({ where: { id: practiceTrackMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // PRACTICE SESSIONS (User logging practice)
+    if (route === '/practice-sessions' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const sessions = await prisma.practiceSession.findMany({
+        where: { userId },
+        orderBy: { date: 'desc' },
+        take: 30
+      })
+      return handleCORS(NextResponse.json(sessions))
+    }
+
+    if (route === '/practice-sessions' && method === 'POST') {
+      const body = await request.json()
+      
+      const session = await prisma.practiceSession.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          trackId: body.trackId,
+          duration: body.duration,
+          notes: body.notes
+        }
+      })
+      
+      // Update user stats
+      await prisma.userStats.upsert({
+        where: { userId: body.userId },
+        update: {
+          totalPracticeMinutes: { increment: body.duration },
+          lastPracticeDate: new Date(),
+          currentStreak: { increment: 1 }
+        },
+        create: {
+          id: uuidv4(),
+          userId: body.userId,
+          totalPracticeMinutes: body.duration,
+          lastPracticeDate: new Date(),
+          currentStreak: 1
+        }
+      })
+      
+      return handleCORS(NextResponse.json(session))
+    }
+
+    // USER STATS
+    if (route === '/user-stats' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      let stats = await prisma.userStats.findUnique({ where: { userId } })
+      
+      if (!stats) {
+        // Create default stats
+        stats = await prisma.userStats.create({
+          data: {
+            id: uuidv4(),
+            userId
+          }
+        })
+      }
+      
+      // Also get lesson completion count
+      const completedLessons = await prisma.lessonProgress.count({
+        where: { userId, completed: true }
+      })
+      
+      return handleCORS(NextResponse.json({ ...stats, totalLessonsCompleted: completedLessons }))
+    }
+
+    if (route === '/user-stats' && method === 'PUT') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const body = await request.json()
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const stats = await prisma.userStats.upsert({
+        where: { userId },
+        update: body,
+        create: {
+          id: uuidv4(),
+          userId,
+          ...body
+        }
+      })
+      return handleCORS(NextResponse.json(stats))
+    }
+
+    // ACHIEVEMENTS
+    if (route === '/achievements' && method === 'GET') {
+      const achievements = await prisma.achievement.findMany({
+        orderBy: { createdAt: 'asc' }
+      })
+      return handleCORS(NextResponse.json(achievements))
+    }
+
+    if (route === '/achievements' && method === 'POST') {
+      const body = await request.json()
+      const achievement = await prisma.achievement.create({
+        data: {
+          id: uuidv4(),
+          name: body.name,
+          description: body.description,
+          icon: body.icon,
+          type: body.type || 'milestone',
+          requirement: body.requirement
+        }
+      })
+      return handleCORS(NextResponse.json(achievement))
+    }
+
+    // USER ACHIEVEMENTS
+    if (route === '/user-achievements' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const userAchievements = await prisma.userAchievement.findMany({
+        where: { userId },
+        include: { achievement: true },
+        orderBy: { earnedAt: 'desc' }
+      })
+      
+      // Map to just return achievements with earnedAt
+      const result = userAchievements.map(ua => ({
+        ...ua.achievement,
+        earnedAt: ua.earnedAt
+      }))
+      
+      return handleCORS(NextResponse.json(result))
+    }
+
+    if (route === '/user-achievements' && method === 'POST') {
+      const body = await request.json()
+      
+      // Check if already earned
+      const existing = await prisma.userAchievement.findUnique({
+        where: { userId_achievementId: { userId: body.userId, achievementId: body.achievementId } }
+      })
+      if (existing) {
+        return handleCORS(NextResponse.json({ message: 'Achievement already earned' }))
+      }
+      
+      const userAchievement = await prisma.userAchievement.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          achievementId: body.achievementId
+        },
+        include: { achievement: true }
+      })
+      return handleCORS(NextResponse.json(userAchievement))
+    }
+
+    // NOTIFICATIONS
+    if (route === '/notifications' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const unreadOnly = url.searchParams.get('unreadOnly')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const where = { userId }
+      if (unreadOnly === 'true') where.isRead = false
+      
+      const notifications = await prisma.notification.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: 20
+      })
+      return handleCORS(NextResponse.json(notifications))
+    }
+
+    if (route === '/notifications' && method === 'POST') {
+      const body = await request.json()
+      const notification = await prisma.notification.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          title: body.title,
+          message: body.message,
+          type: body.type || 'info',
+          link: body.link
+        }
+      })
+      return handleCORS(NextResponse.json(notification))
+    }
+
+    const notificationMatch = route.match(/^\/notifications\/([^/]+)\/read$/)
+    if (notificationMatch && method === 'PUT') {
+      const notification = await prisma.notification.update({
+        where: { id: notificationMatch[1] },
+        data: { isRead: true }
+      })
+      return handleCORS(NextResponse.json(notification))
+    }
+
+    if (route === '/notifications/mark-all-read' && method === 'PUT') {
+      const body = await request.json()
+      await prisma.notification.updateMany({
+        where: { userId: body.userId, isRead: false },
+        data: { isRead: true }
+      })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // SCHEDULE ITEMS
+    if (route === '/schedule' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const fromDate = url.searchParams.get('from')
+      
+      // Get both public events and user-specific events
+      const where = {
+        OR: [
+          { isPublic: true },
+          { userId: userId || '' }
+        ],
+        date: fromDate ? { gte: new Date(fromDate) } : { gte: new Date() }
+      }
+      
+      const schedule = await prisma.scheduleItem.findMany({
+        where,
+        orderBy: { date: 'asc' },
+        take: 10
+      })
+      return handleCORS(NextResponse.json(schedule))
+    }
+
+    if (route === '/schedule' && method === 'POST') {
+      const body = await request.json()
+      const item = await prisma.scheduleItem.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          date: new Date(body.date),
+          time: body.time,
+          type: body.type || 'event',
+          isPublic: body.isPublic ?? true,
+          userId: body.userId
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    const scheduleMatch = route.match(/^\/schedule\/([^/]+)$/)
+    if (scheduleMatch && method === 'PUT') {
+      const body = await request.json()
+      const item = await prisma.scheduleItem.update({
+        where: { id: scheduleMatch[1] },
+        data: {
+          title: body.title,
+          description: body.description,
+          date: body.date ? new Date(body.date) : undefined,
+          time: body.time,
+          type: body.type,
+          isPublic: body.isPublic
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    if (scheduleMatch && method === 'DELETE') {
+      await prisma.scheduleItem.delete({ where: { id: scheduleMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // DASHBOARD SUMMARY (aggregated data for dashboard)
+    if (route === '/dashboard/learner' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      // Get all data in parallel
+      const [
+        enrollments,
+        userStats,
+        practiceSessions,
+        userAchievements,
+        notifications,
+        schedule,
+        practiceTracks
+      ] = await Promise.all([
+        prisma.enrollment.findMany({
+          where: { userId },
+          include: { course: { include: { lessons: true } } },
+          orderBy: { lastAccessedAt: 'desc' }
+        }),
+        prisma.userStats.findUnique({ where: { userId } }),
+        prisma.practiceSession.findMany({
+          where: { userId },
+          orderBy: { date: 'desc' },
+          take: 10
+        }),
+        prisma.userAchievement.findMany({
+          where: { userId },
+          include: { achievement: true }
+        }),
+        prisma.notification.findMany({
+          where: { userId },
+          orderBy: { createdAt: 'desc' },
+          take: 5
+        }),
+        prisma.scheduleItem.findMany({
+          where: {
+            OR: [{ isPublic: true }, { userId }],
+            date: { gte: new Date() }
+          },
+          orderBy: { date: 'asc' },
+          take: 5
+        }),
+        prisma.practiceTrack.findMany({
+          where: { isPublished: true },
+          orderBy: { order: 'asc' },
+          take: 10
+        })
+      ])
+      
+      // Calculate overall progress
+      const totalLessons = enrollments.reduce((sum, e) => sum + (e.course?.totalLessons || 0), 0)
+      const completedLessons = enrollments.reduce((sum, e) => sum + (e.completedLessons || 0), 0)
+      const overallProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+      
+      return handleCORS(NextResponse.json({
+        progress: {
+          overallProgress,
+          totalLessons,
+          completedLessons,
+          practiceHours: userStats ? Math.round(userStats.totalPracticeMinutes / 60 * 10) / 10 : 0,
+          currentStreak: userStats?.currentStreak || 0,
+          nextMilestone: completedLessons < 10 ? 'Complete 10 lessons' : 
+                         completedLessons < 25 ? 'Complete 25 lessons' : 'Complete 50 lessons'
+        },
+        courses: enrollments.map(e => ({
+          id: e.course.id,
+          title: e.course.title,
+          emoji: e.course.emoji,
+          progress: e.progress,
+          totalLessons: e.course.totalLessons,
+          completedLessons: e.completedLessons
+        })),
+        practiceTracks,
+        achievements: userAchievements.map(ua => ({
+          ...ua.achievement,
+          earnedAt: ua.earnedAt
+        })),
+        notifications,
+        schedule,
+        stats: userStats || { currentStreak: 0, totalPracticeMinutes: 0, vocalPart: 'NONE' }
+      }))
+    }
+
+    // SUPPORTER DASHBOARD
+    if (route === '/dashboard/supporter' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const [userDonations, topDonors] = await Promise.all([
+        prisma.donation.findMany({
+          where: { userId, status: 'COMPLETED' },
+          include: { project: { select: { title: true } } },
+          orderBy: { createdAt: 'desc' }
+        }),
+        prisma.donation.groupBy({
+          by: ['donorName'],
+          where: { status: 'COMPLETED', anonymous: false },
+          _sum: { amount: true },
+          orderBy: { _sum: { amount: 'desc' } },
+          take: 10
+        })
+      ])
+      
+      const totalDonations = userDonations.reduce((sum, d) => sum + d.amount, 0)
+      
+      return handleCORS(NextResponse.json({
+        stats: {
+          totalDonations,
+          donationCount: userDonations.length,
+          studentsSupported: Math.floor(totalDonations / 50000), // Estimate
+          badgesEarned: totalDonations >= 100000 ? 3 : totalDonations >= 50000 ? 2 : totalDonations > 0 ? 1 : 0
+        },
+        donations: userDonations,
+        leaderboard: topDonors.map((d, i) => ({
+          rank: i + 1,
+          name: d.donorName || 'Anonymous',
+          amount: d._sum.amount,
+          badge: d._sum.amount >= 500000 ? 'Gold Patron' : 
+                 d._sum.amount >= 250000 ? 'Silver Patron' : 'Bronze Patron'
+        })),
+        impact: {
+          learnersSupported: Math.floor(totalDonations / 50000),
+          lessonsEnabled: Math.floor(totalDonations / 5000),
+          songsRecorded: Math.floor(totalDonations / 100000)
+        }
+      }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
