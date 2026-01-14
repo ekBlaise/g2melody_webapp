@@ -1005,6 +1005,13 @@ export default function AdminDashboard() {
         onOpenChange={setCreateMemberDialogOpen}
         onSubmit={handleCreateChoirMember}
       />
+
+      {/* Create History Dialog */}
+      <CreateHistoryDialog
+        open={createHistoryDialogOpen}
+        onOpenChange={setCreateHistoryDialogOpen}
+        onSubmit={handleCreateHistory}
+      />
     </div>
   )
 }
