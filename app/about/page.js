@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
   Music, Heart, Users, Target, Lightbulb, Shield, HandHeart,
   Users2, Mic2, GraduationCap, Globe, Sparkles, ArrowRight,
-  Calendar, Award, Star, User
+  Calendar, Award, User
 } from 'lucide-react'
 
 export default function AboutPage() {
@@ -61,15 +61,6 @@ export default function AboutPage() {
     { icon: Globe, title: 'Global Outreach', desc: 'Spreading worship across Cameroon and beyond' },
   ]
 
-  const timeline = [
-    { year: '2016', title: 'The Beginning', desc: 'G2 Melody was founded from "Melodious Voices" of The Church of Christ Muea. Started with approximately 30 members from Muea, Bomaka, and Mile 16.' },
-    { year: '2017', title: 'Perseverance', desc: 'Despite dwindling to just 2-3 members due to challenges in music instruction, the founding members persevered through numerous reorganization attempts.' },
-    { year: '2018', title: 'Breakthrough', desc: 'A pivotal breakthrough led to redefinition of the choir\'s goals and objectives, providing a clearer identity beyond just the TV program.' },
-    { year: '2019', title: 'Debut Album', desc: 'Produced inaugural album "Unfathomable Love" comprising 6 songs. Introduced new initiatives like camping, visits, and outreach activities.' },
-    { year: '2020', title: 'Growth & Equipment', desc: 'Purchased a professional PA system with funding championed by Sister Mafani Patricia. Expanded membership significantly.' },
-    { year: '2024', title: 'Constitution & Vision', desc: 'Adopted official constitution. Launched G2 Meloverse project for a permanent multi-purpose facility including music academy and recording studios.' },
-  ]
-
   const memberTabs = [
     { id: 'all', label: 'All' },
     { id: 'active', label: 'Active' },
@@ -84,29 +75,34 @@ export default function AboutPage() {
 
   const getVocalPartColor = (part) => {
     switch(part) {
-      case 'SOPRANO': return 'bg-pink-100 text-pink-700'
-      case 'ALTO': return 'bg-purple-100 text-purple-700'
-      case 'TENOR': return 'bg-blue-100 text-blue-700'
-      case 'BASS': return 'bg-green-100 text-green-700'
+      case 'SOPRANO': return 'bg-amber-100 text-amber-700'
+      case 'ALTO': return 'bg-orange-100 text-orange-700'
+      case 'TENOR': return 'bg-amber-100 text-amber-700'
+      case 'BASS': return 'bg-orange-100 text-orange-700'
       default: return 'bg-gray-100 text-gray-700'
     }
   }
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'ACTIVE': return 'bg-green-500'
-      case 'ALUMNI': return 'bg-blue-500'
-      case 'THEOSORTIAN': return 'bg-amber-500'
-      case 'SPONSOR': return 'bg-purple-500'
+      case 'ACTIVE': return 'bg-amber-500'
+      case 'ALUMNI': return 'bg-gray-500'
+      case 'THEOSORTIAN': return 'bg-orange-500'
+      case 'SPONSOR': return 'bg-amber-600'
       default: return 'bg-gray-500'
     }
   }
+
+  // Get founder by name for timeline
+  const getFounder = (name) => founders.find(f => f.name.toLowerCase().includes(name.toLowerCase()))
+  const andyLeroy = getFounder('andy') || { name: 'Minister Andy Leroy', bio: 'Conceived the idea of G2 Melody', image: null }
+  const ekwogeBlaise = getFounder('blaise') || { name: 'Ekwoge Blaise', bio: 'Co-founder and director', image: null }
 
   return (
     <div className="min-h-screen bg-white">
       <SharedNavigation currentPage="about" />
 
-      {/* Hero with Background Image */}
+      {/* Hero */}
       <section className="relative py-24 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -135,27 +131,23 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="border-0 shadow-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-              <CardHeader>
+              <CardContent className="p-8">
                 <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
                   <Target className="w-7 h-7" />
                 </div>
-                <CardTitle className="text-2xl">Our Mission</CardTitle>
-              </CardHeader>
-              <CardContent>
+                <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
                 <p className="text-white/90 leading-relaxed">
                   Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music, and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
-              <CardHeader>
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+              <CardContent className="p-8">
                 <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
                   <Lightbulb className="w-7 h-7" />
                 </div>
-                <CardTitle className="text-2xl">Our Vision</CardTitle>
-              </CardHeader>
-              <CardContent>
+                <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
                 <p className="text-white/90 leading-relaxed">
                   A future where the musical landscape of the Church is revitalized, young choirs are nurtured, and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond.
                 </p>
@@ -165,135 +157,134 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Founders Section */}
-      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center space-x-2 bg-amber-100 rounded-full px-4 py-2 mb-4">
-              <Star className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-medium text-amber-700">The Visionaries</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Founders</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              The visionary leaders who conceived and nurtured G2 Melody from a simple idea to a powerful movement for musical evangelism.
-            </p>
-          </div>
-          
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
-            </div>
-          ) : founders.length > 0 ? (
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {founders.map((founder, index) => (
-                <Card key={founder.id} className="border-0 shadow-lg hover:shadow-xl transition-all overflow-hidden">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/3 bg-gradient-to-br from-amber-500 to-orange-500 p-6 flex items-center justify-center">
-                      {founder.image ? (
-                        <img src={founder.image} alt={founder.name} className="w-24 h-24 rounded-full object-cover border-4 border-white/30" />
-                      ) : (
-                        <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
-                          <User className="w-12 h-12 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="md:w-2/3 p-6">
-                      <h3 className="text-xl font-bold text-gray-900">{founder.name}</h3>
-                      <p className="text-amber-600 font-medium text-sm mb-3">{founder.role}</p>
-                      <p className="text-gray-600 text-sm leading-relaxed">{founder.bio}</p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Fallback static founders if none in DB */}
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all overflow-hidden">
-                <div className="flex flex-col md:flex-row">
-                  <div className="md:w-1/3 bg-gradient-to-br from-amber-500 to-orange-500 p-6 flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
-                      <User className="w-12 h-12 text-white" />
-                    </div>
-                  </div>
-                  <div className="md:w-2/3 p-6">
-                    <h3 className="text-xl font-bold text-gray-900">Minister Andy Leroy</h3>
-                    <p className="text-amber-600 font-medium text-sm mb-3">Co-Founder & Visionary</p>
-                    <p className="text-gray-600 text-sm leading-relaxed">Conceived the idea of a unified choir dedicated to the TV program "Gospel Guardians" in late 2016.</p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all overflow-hidden">
-                <div className="flex flex-col md:flex-row">
-                  <div className="md:w-1/3 bg-gradient-to-br from-amber-500 to-orange-500 p-6 flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
-                      <User className="w-12 h-12 text-white" />
-                    </div>
-                  </div>
-                  <div className="md:w-2/3 p-6">
-                    <h3 className="text-xl font-bold text-gray-900">Ekwoge Blaise</h3>
-                    <p className="text-amber-600 font-medium text-sm mb-3">Co-Founder & Director</p>
-                    <p className="text-gray-600 text-sm leading-relaxed">Co-conceived the idea and has been instrumental in G2 Melody's growth, serving as a founding member and leader.</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Extended History / Timeline */}
-      <section className="py-16">
+      {/* Our History with Founders Integrated */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center space-x-2 bg-blue-100 rounded-full px-4 py-2 mb-4">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-700">Our History</span>
+            <div className="inline-flex items-center space-x-2 bg-amber-100 rounded-full px-4 py-2 mb-4">
+              <Calendar className="w-4 h-4 text-amber-600" />
+              <span className="text-sm font-medium text-amber-700">Our History</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The G2 Journey</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              From humble beginnings with just a few dedicated voices to a thriving community of musical evangelists.
+              From a simple idea between two visionaries to a thriving community of musical evangelists.
             </p>
           </div>
           
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-amber-500 via-blue-500 to-amber-500 transform md:-translate-x-1/2"></div>
-            
-            <div className="space-y-12">
-              {timeline.map((item, index) => (
-                <div key={index} className={`relative flex items-start ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                  {/* Timeline dot */}
-                  <div className="absolute left-4 md:left-1/2 w-8 h-8 bg-white border-4 border-amber-500 rounded-full transform -translate-x-1/2 flex items-center justify-center z-10">
-                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+          <div className="space-y-8">
+            {/* 2016 - The Beginning with Founders */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2016</span>
+                <h3 className="text-xl font-bold text-gray-900">The Beginning</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                In late 2016, G2 Melody was born from a conversation between two visionaries who shared a dream of creating a unified choir dedicated to musical evangelism through the TV program "Gospel Guardians."
+              </p>
+              
+              {/* Founders Cards */}
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-xl">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    {andyLeroy.image ? (
+                      <img src={andyLeroy.image} alt={andyLeroy.name} className="w-16 h-16 rounded-full object-cover" />
+                    ) : (
+                      <User className="w-8 h-8 text-white" />
+                    )}
                   </div>
-                  
-                  {/* Content */}
-                  <div className={`ml-16 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                    <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
-                      <CardContent className="p-6">
-                        <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-bold mb-3">
-                          {item.year}
-                        </span>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                        <p className="text-gray-600">{item.desc}</p>
-                      </CardContent>
-                    </Card>
+                  <div>
+                    <h4 className="font-bold text-gray-900">{andyLeroy.name}</h4>
+                    <p className="text-sm text-amber-600 font-medium">Co-Founder & Visionary</p>
+                    <p className="text-xs text-gray-500 mt-1">Conceived the idea of G2 Melody</p>
                   </div>
                 </div>
-              ))}
+                
+                <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-xl">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    {ekwogeBlaise.image ? (
+                      <img src={ekwogeBlaise.image} alt={ekwogeBlaise.name} className="w-16 h-16 rounded-full object-cover" />
+                    ) : (
+                      <User className="w-8 h-8 text-white" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900">{ekwogeBlaise.name}</h4>
+                    <p className="text-sm text-amber-600 font-medium">Co-Founder & Director</p>
+                    <p className="text-xs text-gray-500 mt-1">Persevered through early challenges</p>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-gray-600">
+                Originally named "Melodious Voices" from The Church of Christ Muea, the choir commenced in October 2016 with approximately 30 members from Muea, Bomaka, and Mile 16.
+              </p>
+            </div>
+
+            {/* 2017 - Perseverance */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2017</span>
+                <h3 className="text-xl font-bold text-gray-900">Perseverance Through Trials</h3>
+              </div>
+              <p className="text-gray-600">
+                Due to challenges in music instruction and understanding principles of four-part harmony, membership dwindled to just 2-3 dedicated members: <strong>Eweh Ivo</strong>, <strong>Ngoberi Falyne</strong>, and <strong>Ekwoge Blaise</strong>. Despite numerous reorganization attempts, these founding members persevered, keeping the dream alive.
+              </p>
+            </div>
+
+            {/* 2018 - Breakthrough */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2018</span>
+                <h3 className="text-xl font-bold text-gray-900">The Breakthrough</h3>
+              </div>
+              <p className="text-gray-600">
+                A pivotal breakthrough led to a redefinition of the choir's goals and objectives. Moving beyond just serving a TV program, G2 Melody established a clearer identity focused on musical evangelism, unity, and church music revitalization.
+              </p>
+            </div>
+
+            {/* 2019 - Growth */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2019</span>
+                <h3 className="text-xl font-bold text-gray-900">Debut Album & New Initiatives</h3>
+              </div>
+              <p className="text-gray-600">
+                G2 Melody achieved significant progress, producing the inaugural album <strong>"Unfathomable Love"</strong> comprising 6 songs. New initiatives like camping, visits, and outreach activities were introduced - the first of its kind in the church.
+              </p>
+            </div>
+
+            {/* 2020 - Equipment */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2020</span>
+                <h3 className="text-xl font-bold text-gray-900">Growth & Professional Equipment</h3>
+              </div>
+              <p className="text-gray-600">
+                In November 2020, G2 Melody purchased a professional PA system - one of the best the church has had - with funding championed by <strong>Sister Mafani Patricia</strong>, one of our matrons. Membership expanded significantly as the choir's reputation grew.
+              </p>
+            </div>
+
+            {/* 2024 - Vision */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2024</span>
+                <h3 className="text-xl font-bold text-gray-900">Constitution & Vision Projects</h3>
+              </div>
+              <p className="text-gray-600">
+                G2 Melody officially adopted its constitution on August 27th, 2024. The ambitious <strong>G2 Meloverse</strong> project was launched - a vision for a permanent multi-purpose facility including a Music Academy, Recording Studios, and Radio Station in Buea, Cameroon.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Objectives / What We Do */}
-      <section className="py-16 bg-gray-50">
+      {/* What We Do */}
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">What We Do</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {objectives.map((obj, index) => (
-              <div key={index} className="p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all">
+              <div key={index} className="p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all border border-gray-100">
                 <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
                   <obj.icon className="w-6 h-6 text-amber-600" />
                 </div>
@@ -324,12 +315,12 @@ export default function AboutPage() {
       </section>
 
       {/* Members Since 2016 */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center space-x-2 bg-green-100 rounded-full px-4 py-2 mb-4">
-              <Users className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">Our Family</span>
+            <div className="inline-flex items-center space-x-2 bg-amber-100 rounded-full px-4 py-2 mb-4">
+              <Users className="w-4 h-4 text-amber-600" />
+              <span className="text-sm font-medium text-amber-700">Our Family</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Members Since 2016</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -346,7 +337,7 @@ export default function AboutPage() {
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   activeTab === tab.id
                     ? 'bg-amber-500 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                 }`}
               >
                 {tab.label}
@@ -414,7 +405,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Join Us?</h2>
           <p className="text-gray-600 mb-8">Become part of our community and help spread the Gospel through music.</p>
