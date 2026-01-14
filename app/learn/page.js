@@ -71,7 +71,7 @@ export default function LearnPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Develop Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Musical Gift</span>
+            Develop Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Musical Gift</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Our structured music education program is designed to nurture your talents and equip you for worship leadership.
