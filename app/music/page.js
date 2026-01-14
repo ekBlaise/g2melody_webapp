@@ -110,7 +110,7 @@ export default function MusicPage() {
       <SharedNavigation currentPage="music" />
 
       {/* Hero */}
-      <section className="relative py-20 text-white overflow-hidden">
+      <section className="relative pt-32 pb-20 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1551696785-927d4ac2d35b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwzfHxjb25jZXJ0JTIwcGVyZm9ybWFuY2V8ZW58MHx8fHwxNzY4MjQ4MTI0fDA&ixlib=rb-4.1.0&q=85"
