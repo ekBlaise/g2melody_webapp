@@ -1828,13 +1828,315 @@ async function handleRoute(request, { params }) {
         })
       ])
 
+      // ==================== LEARNING PLATFORM SEED DATA ====================
+      
+      // Create courses
+      const courses = await Promise.all([
+        prisma.course.upsert({
+          where: { id: 'course-1' },
+          update: {},
+          create: {
+            id: 'course-1',
+            title: 'Vocal Fundamentals',
+            description: 'Learn the basics of vocal technique, breathing, and voice control. Perfect for beginners starting their musical journey.',
+            emoji: '🎤',
+            duration: '8 weeks',
+            level: 'Beginner',
+            totalLessons: 12,
+            isPublished: true,
+            order: 1
+          }
+        }),
+        prisma.course.upsert({
+          where: { id: 'course-2' },
+          update: {},
+          create: {
+            id: 'course-2',
+            title: 'Four-Part Harmony',
+            description: 'Master the art of four-part harmony singing. Learn how Soprano, Alto, Tenor, and Bass voices blend together.',
+            emoji: '🎵',
+            duration: '10 weeks',
+            level: 'Intermediate',
+            totalLessons: 8,
+            isPublished: true,
+            order: 2
+          }
+        }),
+        prisma.course.upsert({
+          where: { id: 'course-3' },
+          update: {},
+          create: {
+            id: 'course-3',
+            title: 'Sight Reading Basics',
+            description: 'Learn to read music notation and develop your sight-reading skills. Essential for any serious musician.',
+            emoji: '📖',
+            duration: '6 weeks',
+            level: 'Beginner',
+            totalLessons: 10,
+            isPublished: true,
+            order: 3
+          }
+        }),
+        prisma.course.upsert({
+          where: { id: 'course-4' },
+          update: {},
+          create: {
+            id: 'course-4',
+            title: 'Gospel Music Mastery',
+            description: 'Dive deep into gospel music styles, techniques, and performance. Learn from the G2 Melody tradition.',
+            emoji: '🙏',
+            duration: '12 weeks',
+            level: 'Advanced',
+            totalLessons: 15,
+            isPublished: true,
+            order: 4
+          }
+        })
+      ])
+
+      // Create lessons for Vocal Fundamentals course
+      const vocalLessons = await Promise.all([
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-1' },
+          update: {},
+          create: { id: 'lesson-1-1', courseId: 'course-1', title: 'Introduction to Singing', description: 'Welcome to vocal training! Learn about your voice and what to expect.', duration: 15, order: 1 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-2' },
+          update: {},
+          create: { id: 'lesson-1-2', courseId: 'course-1', title: 'Breathing Techniques', description: 'Learn proper diaphragmatic breathing for powerful singing.', duration: 20, order: 2 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-3' },
+          update: {},
+          create: { id: 'lesson-1-3', courseId: 'course-1', title: 'Posture and Stance', description: 'Correct posture is essential for optimal vocal performance.', duration: 15, order: 3 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-4' },
+          update: {},
+          create: { id: 'lesson-1-4', courseId: 'course-1', title: 'Warm-up Exercises', description: 'Essential warm-up routines to prepare your voice.', duration: 20, order: 4 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-5' },
+          update: {},
+          create: { id: 'lesson-1-5', courseId: 'course-1', title: 'Finding Your Range', description: 'Discover your vocal range and comfortable singing zones.', duration: 25, order: 5 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-6' },
+          update: {},
+          create: { id: 'lesson-1-6', courseId: 'course-1', title: 'Pitch Control', description: 'Develop accurate pitch and intonation skills.', duration: 20, order: 6 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-7' },
+          update: {},
+          create: { id: 'lesson-1-7', courseId: 'course-1', title: 'Vowel Shapes', description: 'Master vowel formation for clear, resonant singing.', duration: 20, order: 7 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-8' },
+          update: {},
+          create: { id: 'lesson-1-8', courseId: 'course-1', title: 'Consonant Articulation', description: 'Clear consonants for better diction and understanding.', duration: 20, order: 8 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-9' },
+          update: {},
+          create: { id: 'lesson-1-9', courseId: 'course-1', title: 'Dynamics and Expression', description: 'Add emotion and dynamics to your singing.', duration: 25, order: 9 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-10' },
+          update: {},
+          create: { id: 'lesson-1-10', courseId: 'course-1', title: 'Practice Song #1', description: 'Apply your skills to your first practice song.', duration: 30, order: 10 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-11' },
+          update: {},
+          create: { id: 'lesson-1-11', courseId: 'course-1', title: 'Cool-down Exercises', description: 'Important vocal cool-down routines after singing.', duration: 15, order: 11 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-12' },
+          update: {},
+          create: { id: 'lesson-1-12', courseId: 'course-1', title: 'Course Recap & Next Steps', description: 'Review what you learned and plan your continued journey.', duration: 20, order: 12 }
+        })
+      ])
+
+      // Create lessons for Four-Part Harmony course
+      const harmonyLessons = await Promise.all([
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-1' },
+          update: {},
+          create: { id: 'lesson-2-1', courseId: 'course-2', title: 'Introduction to Harmony', description: 'Understanding how voices combine to create harmony.', duration: 20, order: 1 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-2' },
+          update: {},
+          create: { id: 'lesson-2-2', courseId: 'course-2', title: 'Soprano Voice Role', description: 'The melody line and its importance in four-part harmony.', duration: 25, order: 2 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-3' },
+          update: {},
+          create: { id: 'lesson-2-3', courseId: 'course-2', title: 'Alto Voice Role', description: 'Supporting harmonies from the alto section.', duration: 25, order: 3 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-4' },
+          update: {},
+          create: { id: 'lesson-2-4', courseId: 'course-2', title: 'Tenor Voice Role', description: 'The middle ground of male voices in harmony.', duration: 25, order: 4 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-5' },
+          update: {},
+          create: { id: 'lesson-2-5', courseId: 'course-2', title: 'Bass Voice Role', description: 'The foundation of four-part harmony.', duration: 25, order: 5 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-6' },
+          update: {},
+          create: { id: 'lesson-2-6', courseId: 'course-2', title: 'Blending Voices', description: 'Techniques for achieving perfect vocal blend.', duration: 30, order: 6 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-7' },
+          update: {},
+          create: { id: 'lesson-2-7', courseId: 'course-2', title: 'Harmony Practice Song', description: 'Practice all four parts together on a classic hymn.', duration: 35, order: 7 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-8' },
+          update: {},
+          create: { id: 'lesson-2-8', courseId: 'course-2', title: 'Advanced Harmony Techniques', description: 'Take your harmony skills to the next level.', duration: 30, order: 8 }
+        })
+      ])
+
+      // Create practice tracks
+      const practiceTracks = await Promise.all([
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-1' },
+          update: {},
+          create: { id: 'track-1', title: 'Soprano Scale Practice', description: 'Major and minor scales for soprano voices', duration: '5:30', type: 'Exercise', vocalPart: 'SOPRANO', difficulty: 'Beginner', order: 1 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-2' },
+          update: {},
+          create: { id: 'track-2', title: 'Alto Harmony Drills', description: 'Practice harmony lines for alto section', duration: '6:15', type: 'Exercise', vocalPart: 'ALTO', difficulty: 'Intermediate', order: 2 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-3' },
+          update: {},
+          create: { id: 'track-3', title: 'Tenor Range Exercises', description: 'Expand your tenor range with these exercises', duration: '4:45', type: 'Exercise', vocalPart: 'TENOR', difficulty: 'Beginner', order: 3 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-4' },
+          update: {},
+          create: { id: 'track-4', title: 'Bass Foundation Drills', description: 'Strengthen your bass voice fundamentals', duration: '5:00', type: 'Exercise', vocalPart: 'BASS', difficulty: 'Beginner', order: 4 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-5' },
+          update: {},
+          create: { id: 'track-5', title: 'Breathing Exercises', description: 'Diaphragmatic breathing for all voice types', duration: '3:00', type: 'Warm-up', vocalPart: 'NONE', difficulty: 'Beginner', order: 5 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-6' },
+          update: {},
+          create: { id: 'track-6', title: 'Unfathomable Love - Soprano Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'SOPRANO', difficulty: 'Intermediate', order: 6 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-7' },
+          update: {},
+          create: { id: 'track-7', title: 'Unfathomable Love - Alto Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'ALTO', difficulty: 'Intermediate', order: 7 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-8' },
+          update: {},
+          create: { id: 'track-8', title: 'Unfathomable Love - Tenor Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'TENOR', difficulty: 'Intermediate', order: 8 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-9' },
+          update: {},
+          create: { id: 'track-9', title: 'Unfathomable Love - Bass Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'BASS', difficulty: 'Intermediate', order: 9 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-10' },
+          update: {},
+          create: { id: 'track-10', title: 'Harmony Drill #3', description: 'Four-part harmony practice exercise', duration: '6:45', type: 'Exercise', vocalPart: 'NONE', difficulty: 'Advanced', order: 10 }
+        })
+      ])
+
+      // Create achievements
+      const achievements = await Promise.all([
+        prisma.achievement.upsert({
+          where: { id: 'achieve-1' },
+          update: {},
+          create: { id: 'achieve-1', name: '7 Day Streak', description: 'Practice for 7 days in a row', icon: '🔥', type: 'streak' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-2' },
+          update: {},
+          create: { id: 'achieve-2', name: 'First Song', description: 'Complete your first song lesson', icon: '🎵', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-3' },
+          update: {},
+          create: { id: 'achieve-3', name: 'Quick Learner', description: 'Complete 5 lessons in a week', icon: '⭐', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-4' },
+          update: {},
+          create: { id: 'achieve-4', name: 'Dedicated Student', description: 'Complete 10 lessons total', icon: '📚', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-5' },
+          update: {},
+          create: { id: 'achieve-5', name: 'Practice Champion', description: 'Log 10 hours of practice', icon: '🏆', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-6' },
+          update: {},
+          create: { id: 'achieve-6', name: 'Course Graduate', description: 'Complete your first course', icon: '🎓', type: 'course' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-7' },
+          update: {},
+          create: { id: 'achieve-7', name: 'Early Bird', description: 'Practice before 8 AM', icon: '🌅', type: 'special' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-8' },
+          update: {},
+          create: { id: 'achieve-8', name: 'Night Owl', description: 'Practice after 10 PM', icon: '🦉', type: 'special' }
+        })
+      ])
+
+      // Create schedule items
+      const scheduleItems = await Promise.all([
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-1' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 6) }, // 6 hours from now
+          create: { id: 'schedule-1', title: 'Online Rehearsal', description: 'Weekly choir rehearsal via Zoom', date: new Date(Date.now() + 1000 * 60 * 60 * 6), time: '6:00 PM', type: 'rehearsal', isPublic: true }
+        }),
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-2' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 24) }, // 1 day from now
+          create: { id: 'schedule-2', title: 'Vocal Training Session', description: 'Weekly vocal training with Bro. Blaise', date: new Date(Date.now() + 1000 * 60 * 60 * 24), time: '4:00 PM', type: 'lesson', isPublic: true }
+        }),
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-3' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 72) }, // 3 days from now
+          create: { id: 'schedule-3', title: 'Assignment Due: Harmony Exercise', description: 'Submit your four-part harmony assignment', date: new Date(Date.now() + 1000 * 60 * 60 * 72), time: '11:59 PM', type: 'deadline', isPublic: true }
+        }),
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-4' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 168) }, // 7 days from now
+          create: { id: 'schedule-4', title: 'Sunday Service Performance', description: 'G2 Melody leading worship at Church of Christ, Buea', date: new Date(Date.now() + 1000 * 60 * 60 * 168), time: '10:00 AM', type: 'event', isPublic: true }
+        })
+      ])
+
       return handleCORS(NextResponse.json({ 
         success: true, 
         projects: projects.length, 
         music: music.length, 
         admin: admin.email,
         founders: founders.length,
-        choirMembers: choirMembers.length
+        choirMembers: choirMembers.length,
+        // Learning platform data
+        courses: courses.length,
+        lessons: vocalLessons.length + harmonyLessons.length,
+        practiceTracks: practiceTracks.length,
+        achievements: achievements.length,
+        scheduleItems: scheduleItems.length
       }))
     }
 
