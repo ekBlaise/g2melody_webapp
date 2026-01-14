@@ -283,20 +283,24 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, projectsRes, musicRes, usersRes, settingsRes] = await Promise.all([
+        const [statsRes, projectsRes, musicRes, usersRes, settingsRes, foundersRes, membersRes] = await Promise.all([
           fetch('/api/admin/stats'),
           fetch('/api/projects'),
           fetch('/api/music'),
           fetch('/api/admin/users'),
-          fetch('/api/settings')
+          fetch('/api/settings'),
+          fetch('/api/founders'),
+          fetch('/api/choir-members')
         ])
 
-        const [statsData, projectsData, musicData, usersData, settingsData] = await Promise.all([
+        const [statsData, projectsData, musicData, usersData, settingsData, foundersData, membersData] = await Promise.all([
           statsRes.json(),
           projectsRes.json(),
           musicRes.json(),
           usersRes.json(),
-          settingsRes.json()
+          settingsRes.json(),
+          foundersRes.json(),
+          membersRes.json()
         ])
 
         setStats(statsData)
@@ -304,6 +308,8 @@ export default function AdminDashboard() {
         setMusic(Array.isArray(musicData) ? musicData : [])
         setUsers(Array.isArray(usersData) ? usersData : [])
         setSiteSettings(settingsData || {})
+        setFounders(Array.isArray(foundersData) ? foundersData : [])
+        setChoirMembers(Array.isArray(membersData) ? membersData : [])
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
