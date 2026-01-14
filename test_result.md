@@ -240,11 +240,14 @@ backend:
     file: "/app/app/api/[[...path]]/route.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/courses returns all courses. POST creates new courses. Tested manually - returns 4 courses with correct data."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/courses successfully returned 4 courses as expected. API working correctly."
 
   - task: "Enrollments API"
     implemented: true
