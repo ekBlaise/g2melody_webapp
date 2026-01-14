@@ -447,6 +447,57 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleCreateHistory = async (formData) => {
+    try {
+      const res = await fetch('/api/admin/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const event = await res.json()
+        setHistoryEvents([...historyEvents, event].sort((a, b) => a.order - b.order))
+        toast.success('History event added!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to add history event')
+    }
+    return false
+  }
+
+  const handleUpdateHistory = async (eventId, formData) => {
+    try {
+      const res = await fetch(`/api/admin/history/${eventId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setHistoryEvents(historyEvents.map(e => e.id === eventId ? updated : e).sort((a, b) => a.order - b.order))
+        toast.success('History event updated!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to update history event')
+    }
+    return false
+  }
+
+  const handleDeleteHistory = async (eventId) => {
+    if (!confirm('Are you sure you want to delete this history event?')) return
+    try {
+      const res = await fetch(`/api/admin/history/${eventId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setHistoryEvents(historyEvents.filter(e => e.id !== eventId))
+        toast.success('History event deleted!')
+      }
+    } catch (error) {
+      toast.error('Failed to delete history event')
+    }
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
