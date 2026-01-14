@@ -1282,7 +1282,7 @@ function DonationDialog({ project, open, onOpenChange }) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-green-600 hover:bg-green-700">
+            <Button type="submit" disabled={loading} className="bg-amber-600 hover:bg-amber-700">
               {loading ? 'Processing...' : 'Complete Donation'}
             </Button>
           </DialogFooter>
