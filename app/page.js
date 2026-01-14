@@ -580,7 +580,7 @@ function MusicStoreSection({ music, onPurchase }) {
             <Headphones className="w-3 h-3 mr-1" /> Music Store
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Music Collection</span>
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">Music Collection</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Experience the power of acapella worship. Purchase and download our original compositions, hymns, and gospel tracks.
@@ -588,7 +588,7 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {/* Album Highlight */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -598,7 +598,7 @@ function MusicStoreSection({ music, onPurchase }) {
                 Our debut album released in 2019, featuring original compositions that showcase the beauty of four-part harmony and acapella worship.
               </p>
               <Link href="/music">
-                <Button className="bg-white text-purple-600 hover:bg-white/90">
+                <Button className="bg-white text-rose-600 hover:bg-white/90">
                   <Play className="mr-2 h-4 w-4" /> Browse All Music
                 </Button>
               </Link>
@@ -627,9 +627,9 @@ function MusicStoreSection({ music, onPurchase }) {
                     onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
                   >
                     {playingId === track.id ? (
-                      <Pause className="w-5 h-5 text-purple-600" />
+                      <Pause className="w-5 h-5 text-rose-600" />
                     ) : (
-                      <Play className="w-5 h-5 text-purple-600 ml-0.5" />
+                      <Play className="w-5 h-5 text-rose-600 ml-0.5" />
                     )}
                   </button>
                 </div>
@@ -642,8 +642,8 @@ function MusicStoreSection({ music, onPurchase }) {
                 <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
               </CardContent>
               <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                <span className="text-sm font-bold text-purple-600">{formatCurrency(track.price)}</span>
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
+                <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
+                <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
                   <ShoppingCart className="w-3 h-3 mr-1" /> Buy
                 </Button>
               </CardFooter>
@@ -661,7 +661,7 @@ function MusicStoreSection({ music, onPurchase }) {
         {/* View All Music Button */}
         <div className="text-center mt-10">
           <Link href="/music">
-            <Button size="lg" variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50">
+            <Button size="lg" variant="outline" className="border-rose-500 text-rose-600 hover:bg-rose-50">
               View All Music <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
