@@ -285,11 +285,14 @@ backend:
     file: "/app/app/api/[[...path]]/route.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/dashboard/learner?userId=X returns aggregated learner data including progress, courses, practice tracks, achievements, notifications, schedule. Tested - returns correct data structure."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/dashboard/learner successfully returned all required fields (progress, courses, practiceTracks, achievements, notifications, schedule, stats). Aggregated learner dashboard API working correctly."
 
   - task: "Supporter Dashboard API"
     implemented: true
