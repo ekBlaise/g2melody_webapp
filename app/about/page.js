@@ -131,15 +131,11 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
-            <Users className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium text-white/90">About Us</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Gospel Guardians <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Melody</span>
           </h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" — Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea, evolving into a powerful force for musical evangelism.
+          <p className="text-lg text-white/90 max-w-3xl mx-auto">
+            "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" — Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea.
           </p>
         </div>
       </section>
