@@ -315,11 +315,14 @@ backend:
     file: "/app/app/api/[[...path]]/route.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/schedule returns upcoming public events and user-specific items. POST creates new schedule items. Tested - returns 4 events correctly."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/schedule successfully returned 4 schedule items as expected. API working correctly."
 
   - task: "Achievements API"
     implemented: true
