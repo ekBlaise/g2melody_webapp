@@ -681,6 +681,50 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ success: true }))
     }
 
+    // ==================== HISTORY EVENTS ====================
+    if (route === '/history' && method === 'GET') {
+      const events = await prisma.historyEvent.findMany({
+        orderBy: { order: 'asc' }
+      })
+      return handleCORS(NextResponse.json(events))
+    }
+
+    if (route === '/admin/history' && method === 'POST') {
+      const body = await request.json()
+      const event = await prisma.historyEvent.create({
+        data: {
+          id: uuidv4(),
+          year: body.year,
+          title: body.title,
+          description: body.description,
+          colorVariant: body.colorVariant || 'amber',
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(event))
+    }
+
+    const historyMatch = route.match(/^\/admin\/history\/([^/]+)$/)
+    if (historyMatch && method === 'PUT') {
+      const body = await request.json()
+      const event = await prisma.historyEvent.update({
+        where: { id: historyMatch[1] },
+        data: {
+          year: body.year,
+          title: body.title,
+          description: body.description,
+          colorVariant: body.colorVariant,
+          order: body.order
+        }
+      })
+      return handleCORS(NextResponse.json(event))
+    }
+
+    if (historyMatch && method === 'DELETE') {
+      await prisma.historyEvent.delete({ where: { id: historyMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
