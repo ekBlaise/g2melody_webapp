@@ -167,17 +167,17 @@ export default function JoinPage() {
       <SharedNavigation currentPage="join" />
 
       {/* Hero Section */}
-      <section className="relative py-16 text-white overflow-hidden">
+      <section className="relative pt-24 pb-12 mt-16 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1593678820334-91d5f99be314?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
             alt="Join G2 Melody"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-600/90 to-orange-600/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody Family</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Family</span></h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Whether you want to support our mission or become an active choir member, there's a place for you.
           </p>
