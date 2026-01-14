@@ -50,13 +50,13 @@ function PasswordStrength({ password }) {
     <div className="mt-3 p-3 bg-gray-50 rounded-lg">
       <div className="flex items-center justify-between text-sm mb-2">
         <span className="text-gray-600 font-medium">Password Strength</span>
-        <span className={`font-semibold ${strength < 40 ? 'text-red-500' : strength < 70 ? 'text-yellow-600' : 'text-green-600'}`}>
+        <span className={`font-semibold ${strength < 40 ? 'text-gray-500' : strength < 70 ? 'text-orange-500' : 'text-amber-600'}`}>
           {strength < 40 ? 'Weak' : strength < 70 ? 'Medium' : 'Strong'}
         </span>
       </div>
       <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
         <div 
-          className={`h-full transition-all duration-300 ${strength < 40 ? 'bg-red-500' : strength < 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+          className={`h-full transition-all duration-300 ${strength < 40 ? 'bg-gray-400' : strength < 70 ? 'bg-orange-400' : 'bg-amber-500'}`}
           style={{ width: `${strength}%` }}
         />
       </div>
@@ -68,7 +68,7 @@ function PasswordStrength({ password }) {
           { key: 'number', label: 'One number' },
           { key: 'special', label: 'One special character (!@#$...)' }
         ].map(item => (
-          <div key={item.key} className={`flex items-center gap-2 text-sm ${checks[item.key] ? 'text-green-600' : 'text-gray-400'}`}>
+          <div key={item.key} className={`flex items-center gap-2 text-sm ${checks[item.key] ? 'text-amber-600' : 'text-gray-400'}`}>
             {checks[item.key] ? <CheckCircle2 className="w-4 h-4" /> : <div className="w-4 h-4 rounded-full border-2 border-current" />}
             <span>{item.label}</span>
           </div>
