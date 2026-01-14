@@ -10,21 +10,31 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from 'sonner'
 import {
-  Music, Heart, Users, Home, BookOpen, MessageCircle, Bell, Settings,
+  Music, Heart, Users, Home, BookOpen, Bell, Settings,
   Play, Pause, Trophy, Target, Calendar, Clock, Star, TrendingUp,
   Headphones, Mic2, Award, ChevronRight, Gift, DollarSign, BarChart3,
-  Volume2, CheckCircle2, Circle, Flame, Zap, GraduationCap, LogOut, Loader2
+  Volume2, CheckCircle2, Circle, Flame, Zap, GraduationCap, LogOut, Loader2,
+  Search, Filter, ExternalLink, User, MessageSquare, Megaphone, ArrowLeft,
+  ChevronDown, Lock, Unlock, Video, FileText, Download, Share2
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [activeSection, setActiveSection] = useState('overview')
   const [activeTab, setActiveTab] = useState('overview')
   const [playingTrack, setPlayingTrack] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [selectedCourse, setSelectedCourse] = useState(null)
+  const [selectedLesson, setSelectedLesson] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterVocalPart, setFilterVocalPart] = useState('all')
   
   // Dashboard data state
   const [dashboardData, setDashboardData] = useState({
@@ -51,6 +61,11 @@ export default function DashboardPage() {
     impact: { learnersSupported: 0, lessonsEnabled: 0, songsRecorded: 0 }
   })
 
+  // All available courses (for browsing)
+  const [allCourses, setAllCourses] = useState([])
+  const [allAchievements, setAllAchievements] = useState([])
+  const [announcements, setAnnouncements] = useState([])
+
   // Fetch learner dashboard data
   const fetchLearnerData = async (userId) => {
     try {
@@ -60,7 +75,6 @@ export default function DashboardPage() {
       setDashboardData(data)
     } catch (err) {
       console.error('Error fetching learner data:', err)
-      // Keep default state on error
     }
   }
 
@@ -76,6 +90,32 @@ export default function DashboardPage() {
     }
   }
 
+  // Fetch all courses
+  const fetchAllCourses = async () => {
+    try {
+      const response = await fetch('/api/courses?published=true')
+      if (response.ok) {
+        const data = await response.json()
+        setAllCourses(data)
+      }
+    } catch (err) {
+      console.error('Error fetching courses:', err)
+    }
+  }
+
+  // Fetch all achievements
+  const fetchAllAchievements = async () => {
+    try {
+      const response = await fetch('/api/achievements')
+      if (response.ok) {
+        const data = await response.json()
+        setAllAchievements(data)
+      }
+    } catch (err) {
+      console.error('Error fetching achievements:', err)
+    }
+  }
+
   // Enroll in a course
   const enrollInCourse = async (courseId) => {
     if (!session?.user?.id) return
@@ -86,10 +126,12 @@ export default function DashboardPage() {
         body: JSON.stringify({ userId: session.user.id, courseId })
       })
       if (response.ok) {
+        toast.success('Successfully enrolled in course!')
         fetchLearnerData(session.user.id)
+        fetchAllCourses()
       }
     } catch (err) {
-      console.error('Error enrolling:', err)
+      toast.error('Failed to enroll in course')
     }
   }
 
@@ -140,7 +182,9 @@ export default function DashboardPage() {
       setLoading(true)
       Promise.all([
         fetchLearnerData(session.user.id),
-        fetchSupporterData(session.user.id)
+        fetchSupporterData(session.user.id),
+        fetchAllCourses(),
+        fetchAllAchievements()
       ]).finally(() => setLoading(false))
     }
   }, [status, session, router])
@@ -163,7 +207,7 @@ export default function DashboardPage() {
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase()
 
   // Destructure dashboard data
-  const { progress, courses, practiceTracks, achievements, notifications, schedule, stats } = dashboardData
+  const { progress, courses: enrolledCourses, practiceTracks, achievements: userAchievements, notifications, schedule, stats } = dashboardData
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount)
@@ -189,597 +233,876 @@ export default function DashboardPage() {
     NONE: 'Not Set'
   }
 
+  // Filter practice tracks
+  const filteredTracks = practiceTracks.filter(track => {
+    const matchesSearch = track.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesFilter = filterVocalPart === 'all' || track.vocalPart === filterVocalPart
+    return matchesSearch && matchesFilter
+  })
+
+  // Get unenrolled courses
+  const enrolledCourseIds = enrolledCourses.map(c => c.id)
+  const availableCourses = allCourses.filter(c => !enrolledCourseIds.includes(c.id))
+
+  // Navigation items for sidebar
+  const navItems = [
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'courses', label: 'My Courses', icon: GraduationCap },
+    { id: 'browse', label: 'Browse Courses', icon: Search },
+    { id: 'practice', label: 'Practice', icon: Headphones },
+    { id: 'achievements', label: 'Achievements', icon: Trophy },
+    { id: 'schedule', label: 'Schedule', icon: Calendar },
+    { id: 'support', label: 'Support & Donate', icon: Heart },
+    { id: 'community', label: 'Community', icon: Users },
+  ]
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3">
-              <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
-              <span className="text-xl font-bold text-gray-900">G2 Melody</span>
-            </Link>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar Navigation */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
+        {/* Logo */}
+        <div className="flex items-center h-16 px-6 border-b border-gray-200">
+          <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
+          <span className="ml-3 text-xl font-bold text-gray-900">G2 Melody</span>
+        </div>
 
-            {/* Main Nav Links */}
-            <div className="hidden md:flex items-center space-x-1">
-              <Link href="/" className="px-4 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium text-sm flex items-center">
-                <Home className="w-4 h-4 mr-2" /> Home
-              </Link>
-              <Link href="/learn" className="px-4 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium text-sm flex items-center">
-                <BookOpen className="w-4 h-4 mr-2" /> Lessons
-              </Link>
-              <Link href="/music" className="px-4 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium text-sm flex items-center">
-                <Music className="w-4 h-4 mr-2" /> Resources
-              </Link>
-              <Link href="/news" className="px-4 py-4 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium text-sm flex items-center">
-                <Users className="w-4 h-4 mr-2" /> Community
-              </Link>
+        {/* User Info */}
+        <div className="px-4 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={session.user?.image} />
+              <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white text-sm font-semibold">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+              <div className="flex items-center gap-1 text-xs text-amber-600">
+                <Flame className="w-3 h-3" />
+                <span>{progress.currentStreak} day streak</span>
+              </div>
             </div>
+          </div>
+        </div>
 
-            {/* Right Side */}
-            <div className="flex items-center space-x-4">
-              {/* Notifications */}
-              <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveSection(item.id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                activeSection === item.id
+                  ? 'bg-amber-50 text-amber-700 border-l-4 border-amber-500'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Bottom Actions */}
+        <div className="p-4 border-t border-gray-200 space-y-2">
+          <Link href="/" className="w-full">
+            <Button variant="outline" className="w-full justify-start gap-2 text-gray-600">
+              <ExternalLink className="w-4 h-4" /> Visit Website
+            </Button>
+          </Link>
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={() => signOut({ callbackUrl: '/' })}
+          >
+            <LogOut className="w-4 h-4" /> Sign Out
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="lg:pl-64 flex flex-col flex-1">
+        {/* Top Header (Mobile) */}
+        <header className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-200">
+          <div className="flex items-center justify-between h-16 px-4">
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="G2 Melody" className="h-8 w-auto" />
+              <span className="font-bold text-gray-900">G2 Melody</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="relative p-2 rounded-full hover:bg-gray-100">
                 <Bell className="w-5 h-5 text-gray-600" />
                 {notifications.filter(n => !n.isRead).length > 0 && (
                   <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
                 )}
               </button>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={session.user?.image} />
+                <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white text-xs font-semibold">
+                  {userInitials}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+          
+          {/* Mobile Navigation */}
+          <div className="flex overflow-x-auto px-4 py-2 gap-2 border-t border-gray-100">
+            {navItems.slice(0, 5).map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  activeSection === item.id
+                    ? 'bg-amber-500 text-white'
+                    : 'bg-gray-100 text-gray-600'
+                }`}
+              >
+                <item.icon className="w-4 h-4" />
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </header>
 
-              {/* User Menu */}
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={session.user?.image} />
-                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white text-sm font-semibold">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden md:block">
-                  <p className="text-sm font-medium text-gray-900">{userName}</p>
-                  <p className="text-xs text-gray-500">Learner</p>
+        {/* Desktop Header */}
+        <header className="hidden lg:flex sticky top-0 z-40 bg-white border-b border-gray-200 h-16 items-center justify-between px-8">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">
+              {navItems.find(n => n.id === activeSection)?.label || 'Dashboard'}
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+              <Bell className="w-5 h-5 text-gray-600" />
+              {notifications.filter(n => !n.isRead).length > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
+              )}
+            </button>
+            <div className="flex items-center gap-2 bg-amber-50 rounded-full px-3 py-1.5">
+              <Flame className="w-4 h-4 text-amber-500" />
+              <span className="text-sm font-semibold text-amber-700">{progress.currentStreak} Day Streak</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <main className="flex-1 p-4 lg:p-8">
+          {/* Overview Section */}
+          {activeSection === 'overview' && (
+            <div className="space-y-6">
+              {/* Welcome */}
+              <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 text-white">
+                <h2 className="text-2xl font-bold">Welcome back, {userName.split(' ')[0]}! 👋</h2>
+                <p className="text-white/80 mt-1">Continue your musical journey with G2 Melody</p>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <div className="bg-white/20 rounded-lg px-4 py-2">
+                    <p className="text-sm text-white/80">Overall Progress</p>
+                    <p className="text-2xl font-bold">{progress.overallProgress}%</p>
+                  </div>
+                  <div className="bg-white/20 rounded-lg px-4 py-2">
+                    <p className="text-sm text-white/80">Lessons Completed</p>
+                    <p className="text-2xl font-bold">{progress.completedLessons}/{progress.totalLessons}</p>
+                  </div>
+                  <div className="bg-white/20 rounded-lg px-4 py-2">
+                    <p className="text-sm text-white/80">Practice Hours</p>
+                    <p className="text-2xl font-bold">{progress.practiceHours}h</p>
+                  </div>
                 </div>
               </div>
 
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Welcome back, {userName.split(' ')[0]}! 👋</h1>
-              <p className="text-gray-600 mt-1">Continue your musical journey with G2 Melody</p>
-            </div>
-            <div className="hidden md:flex items-center space-x-2 bg-amber-50 rounded-full px-4 py-2">
-              <Flame className="w-5 h-5 text-amber-500" />
-              <span className="text-sm font-semibold text-amber-700">{progress.currentStreak} Day Streak!</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Dashboard Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white border border-gray-200 rounded-xl p-1 h-auto">
-            <TabsTrigger value="overview" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <BarChart3 className="w-4 h-4 mr-2" /> Overview
-            </TabsTrigger>
-            <TabsTrigger value="learning" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <GraduationCap className="w-4 h-4 mr-2" /> Learning
-            </TabsTrigger>
-            <TabsTrigger value="practice" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <Headphones className="w-4 h-4 mr-2" /> Practice
-            </TabsTrigger>
-            <TabsTrigger value="support" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <Heart className="w-4 h-4 mr-2" /> Support
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            {/* Progress Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="border-0 shadow-md bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                      <Target className="w-6 h-6" />
-                    </div>
-                    <span className="text-3xl font-bold">{progress.overallProgress}%</span>
-                  </div>
-                  <p className="text-white/90 font-medium">Overall Progress</p>
-                  <Progress value={progress.overallProgress} className="mt-2 h-2 bg-white/30" />
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                      <BookOpen className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <span className="text-3xl font-bold text-gray-900">{progress.completedLessons}/{progress.totalLessons}</span>
-                  </div>
-                  <p className="text-gray-600 font-medium">Lessons Completed</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-rose-600" />
-                    </div>
-                    <span className="text-3xl font-bold text-gray-900">{progress.practiceHours}h</span>
-                  </div>
-                  <p className="text-gray-600 font-medium">Practice Hours</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-                      <Trophy className="w-6 h-6 text-amber-600" />
-                    </div>
-                    <span className="text-3xl font-bold text-gray-900">{achievements.length}</span>
-                  </div>
-                  <p className="text-gray-600 font-medium">Achievements</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Main Content Grid */}
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Active Courses */}
-              <div className="lg:col-span-2">
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card className="border-0 shadow-md">
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                      <CardTitle>Active Courses</CardTitle>
-                      <CardDescription>Continue where you left off</CardDescription>
-                    </div>
-                    <Link href="/learn">
-                      <Button variant="outline" size="sm">View All</Button>
-                    </Link>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {courses.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <GraduationCap className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>No courses enrolled yet</p>
-                        <Button className="mt-4 bg-amber-500 hover:bg-amber-600" onClick={() => setActiveTab('learning')}>
-                          Browse Courses
-                        </Button>
-                      </div>
-                    ) : (
-                      courses.map((course) => (
-                        <div key={course.id} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-2xl">
-                            {course.emoji || '🎵'}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">{course.title}</h4>
-                            <p className="text-sm text-gray-500">{course.completedLessons || 0} of {course.totalLessons} lessons</p>
-                            <Progress value={course.progress || 0} className="mt-2 h-2" />
-                          </div>
-                          <div className="text-right">
-                            <span className="text-lg font-bold text-amber-600">{course.progress || 0}%</span>
-                            <ChevronRight className="w-5 h-5 text-gray-400 mt-1 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Upcoming Schedule */}
-              <div>
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Calendar className="w-5 h-5 mr-2 text-amber-500" />
-                      Upcoming Schedule
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {schedule.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4">No upcoming events</p>
-                    ) : (
-                      schedule.map((item) => (
-                        <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
-                          <div className={`w-2 h-2 rounded-full mt-2 ${
-                            item.type === 'rehearsal' ? 'bg-blue-500' :
-                            item.type === 'lesson' ? 'bg-amber-500' : 'bg-rose-500'
-                          }`}></div>
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900 text-sm">{item.title}</p>
-                            <p className="text-xs text-gray-500">{formatDate(item.date)} • {item.time}</p>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                    <Button variant="outline" className="w-full mt-2">
-                      <Calendar className="w-4 h-4 mr-2" /> View Full Schedule
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Next Milestone */}
-                <Card className="border-0 shadow-md mt-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
-                        <Zap className="w-5 h-5 text-white" />
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <BookOpen className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-sm text-gray-400">Next Milestone</p>
-                        <p className="font-semibold">{progress.nextMilestone}</p>
+                        <p className="text-2xl font-bold text-gray-900">{enrolledCourses.length}</p>
+                        <p className="text-xs text-gray-500">Active Courses</p>
                       </div>
                     </div>
-                    <Progress value={Math.min((progress.completedLessons / 10) * 100, 100)} className="h-2 bg-gray-700" />
-                    <p className="text-xs text-gray-400 mt-2">
-                      {10 - progress.completedLessons > 0 
-                        ? `${10 - progress.completedLessons} more lessons to go!` 
-                        : 'Milestone complete!'}
-                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                        <Trophy className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-gray-900">{userAchievements.length}</p>
+                        <p className="text-xs text-gray-500">Achievements</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
+                        <Headphones className="w-5 h-5 text-rose-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-gray-900">{practiceTracks.length}</p>
+                        <p className="text-xs text-gray-500">Practice Tracks</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                        <Calendar className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-gray-900">{schedule.length}</p>
+                        <p className="text-xs text-gray-500">Upcoming Events</p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
-            </div>
 
-            {/* Notifications */}
-            <Card className="border-0 shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center">
-                  <Bell className="w-5 h-5 mr-2 text-amber-500" />
-                  Notifications
-                </CardTitle>
-                <Button variant="ghost" size="sm" onClick={markAllNotificationsRead}>Mark all as read</Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {notifications.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">No notifications</p>
-                  ) : (
-                    notifications.map((notif) => (
-                      <div 
-                        key={notif.id} 
-                        className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer ${!notif.isRead ? 'bg-amber-50' : 'bg-gray-50'}`}
-                        onClick={() => !notif.isRead && markNotificationRead(notif.id)}
-                      >
-                        <div className={`w-2 h-2 rounded-full mt-2 ${!notif.isRead ? 'bg-amber-500' : 'bg-gray-300'}`}></div>
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{notif.title}</p>
-                          <p className="text-sm text-gray-500">{notif.message}</p>
+              {/* Continue Learning & Schedule */}
+              <div className="grid lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle>Continue Learning</CardTitle>
+                        <CardDescription>Pick up where you left off</CardDescription>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => setActiveSection('courses')}>
+                        View All
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {enrolledCourses.length === 0 ? (
+                        <div className="text-center py-8">
+                          <GraduationCap className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                          <p className="text-gray-500">No courses enrolled yet</p>
+                          <Button className="mt-4 bg-amber-500 hover:bg-amber-600" onClick={() => setActiveSection('browse')}>
+                            Browse Courses
+                          </Button>
                         </div>
-                        <span className="text-xs text-gray-400">
-                          {new Date(notif.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Learning Tab */}
-          <TabsContent value="learning" className="space-y-6">
-            <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                {/* Continue Learning */}
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle>Continue Learning</CardTitle>
-                    <CardDescription>Pick up where you left off</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {courses.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>Start your first course to begin learning!</p>
-                      </div>
-                    ) : (
-                      courses.map((course) => (
-                        <div key={course.id} className="p-4 rounded-xl border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer">
-                          <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                      ) : (
+                        enrolledCourses.slice(0, 3).map((course) => (
+                          <div 
+                            key={course.id} 
+                            className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                            onClick={() => {
+                              setSelectedCourse(course)
+                              setActiveSection('courses')
+                            }}
+                          >
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-2xl">
                               {course.emoji || '🎵'}
                             </div>
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <h4 className="font-semibold text-gray-900">{course.title}</h4>
-                              <p className="text-sm text-gray-500 mb-2">{course.completedLessons || 0} of {course.totalLessons} lessons completed</p>
-                              <Progress value={course.progress || 0} className="h-2" />
+                              <p className="text-sm text-gray-500">{course.completedLessons || 0} of {course.totalLessons} lessons</p>
+                              <Progress value={course.progress || 0} className="mt-2 h-2" />
                             </div>
-                            <Button className="bg-amber-500 hover:bg-amber-600">
-                              <Play className="w-4 h-4 mr-2" /> Continue
-                            </Button>
+                            <ChevronRight className="w-5 h-5 text-gray-400" />
                           </div>
-                        </div>
-                      ))
-                    )}
-                  </CardContent>
-                </Card>
+                        ))
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
 
-                {/* Available Courses to Enroll */}
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Star className="w-5 h-5 mr-2 text-amber-500" />
-                      Available Courses
-                    </CardTitle>
-                    <CardDescription>Enroll in new courses to expand your skills</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <AvailableCourses 
-                      enrolledCourseIds={courses.map(c => c.id)} 
-                      onEnroll={enrollInCourse} 
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Learning Stats Sidebar */}
-              <div className="space-y-6">
-                <Card className="border-0 shadow-md bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-                  <CardContent className="p-6">
-                    <Mic2 className="w-8 h-8 mb-4 opacity-80" />
-                    <h3 className="text-lg font-bold mb-2">Your Vocal Part</h3>
-                    <p className="text-3xl font-bold mb-1">{vocalPartLabels[stats.vocalPart] || 'Not Set'}</p>
-                    <p className="text-sm text-white/80">
-                      {stats.vocalPart !== 'NONE' 
-                        ? `Focus on ${stats.vocalPart.toLowerCase()} exercises` 
-                        : 'Set your vocal part in settings'}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="text-base">Achievements</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {achievements.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4">Complete lessons to earn achievements!</p>
-                    ) : (
-                      achievements.slice(0, 3).map((achievement) => (
-                        <div key={achievement.id} className="flex items-center gap-3 p-3 rounded-lg bg-amber-50">
-                          <span className="text-2xl">{achievement.icon}</span>
-                          <div>
-                            <p className="font-medium text-gray-900 text-sm">{achievement.name}</p>
-                            <p className="text-xs text-gray-500">{achievement.description}</p>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Practice Tab */}
-          <TabsContent value="practice" className="space-y-6">
-            <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Headphones className="w-5 h-5 mr-2 text-rose-500" />
-                      Practice Tracks
-                    </CardTitle>
-                    <CardDescription>Audio tracks for your practice sessions</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {practiceTracks.length === 0 ? (
-                        <p className="text-gray-500 text-center py-8">No practice tracks available</p>
+                <div>
+                  <Card className="border-0 shadow-md">
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-base">
+                        <Calendar className="w-5 h-5 mr-2 text-amber-500" />
+                        Upcoming
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {schedule.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4 text-sm">No upcoming events</p>
                       ) : (
-                        practiceTracks.map((track) => (
-                          <div key={track.id} className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
-                            playingTrack === track.id ? 'bg-rose-50 border border-rose-200' : 'bg-gray-50 hover:bg-gray-100'
-                          }`}>
-                            <button
-                              className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                                playingTrack === track.id 
-                                  ? 'bg-rose-500 text-white' 
-                                  : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500'
-                              }`}
-                              onClick={() => {
-                                if (playingTrack === track.id) {
-                                  setPlayingTrack(null)
-                                } else {
-                                  setPlayingTrack(track.id)
-                                  // Log 5 minutes of practice when playing a track
-                                  setTimeout(() => logPractice(track.id, 5), 5000)
-                                }
-                              }}
-                            >
-                              {playingTrack === track.id ? (
-                                <Pause className="w-5 h-5" />
-                              ) : (
-                                <Play className="w-5 h-5 ml-0.5" />
-                              )}
-                            </button>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{track.title}</h4>
-                              <p className="text-sm text-gray-500">
-                                {track.duration} • {track.type}
-                                {track.vocalPart !== 'NONE' && ` • ${vocalPartLabels[track.vocalPart]}`}
-                              </p>
-                            </div>
-                            <div className="flex gap-2">
-                              {track.vocalPart !== 'NONE' && (
-                                <Badge variant="outline" className="text-xs">{vocalPartLabels[track.vocalPart]}</Badge>
-                              )}
-                              <Badge variant="outline">{track.difficulty}</Badge>
+                        schedule.slice(0, 4).map((item) => (
+                          <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+                            <div className={`w-2 h-2 rounded-full mt-2 ${
+                              item.type === 'rehearsal' ? 'bg-blue-500' :
+                              item.type === 'lesson' ? 'bg-amber-500' : 'bg-rose-500'
+                            }`}></div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-900 text-sm">{item.title}</p>
+                              <p className="text-xs text-gray-500">{formatDate(item.date)} • {item.time}</p>
                             </div>
                           </div>
                         ))
                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveSection('schedule')}>
+                        View Full Schedule
+                      </Button>
+                    </CardContent>
+                  </Card>
 
-              <div className="space-y-6">
-                <Card className="border-0 shadow-md bg-gradient-to-br from-rose-500 to-pink-500 text-white">
-                  <CardContent className="p-6">
-                    <Volume2 className="w-8 h-8 mb-4 opacity-80" />
-                    <h3 className="text-lg font-bold mb-2">Daily Practice Goal</h3>
-                    <p className="text-4xl font-bold mb-1">30 min</p>
-                    <p className="text-sm text-white/80">
-                      {Math.round(stats.totalPracticeMinutes % 30)} min completed today
-                    </p>
-                    <Progress 
-                      value={Math.min((stats.totalPracticeMinutes % 30) / 30 * 100, 100)} 
-                      className="mt-4 h-2 bg-white/30" 
-                    />
-                  </CardContent>
-                </Card>
-
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="text-base">Practice Checklist</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {[
-                      { title: 'Warm-up exercises', done: stats.totalPracticeMinutes > 0 },
-                      { title: 'Scale practice', done: stats.totalPracticeMinutes >= 10 },
-                      { title: 'Song rehearsal', done: stats.totalPracticeMinutes >= 20 },
-                      { title: 'Cool-down', done: stats.totalPracticeMinutes >= 30 },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        {item.done ? (
-                          <CheckCircle2 className="w-5 h-5 text-amber-500" />
-                        ) : (
-                          <Circle className="w-5 h-5 text-gray-300" />
-                        )}
-                        <span className={item.done ? 'text-gray-500 line-through' : 'text-gray-900'}>{item.title}</span>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
+                  {/* Notifications */}
+                  <Card className="border-0 shadow-md mt-4">
+                    <CardHeader className="flex flex-row items-center justify-between py-3">
+                      <CardTitle className="text-base flex items-center">
+                        <Bell className="w-5 h-5 mr-2 text-amber-500" />
+                        Notifications
+                      </CardTitle>
+                      {notifications.filter(n => !n.isRead).length > 0 && (
+                        <Button variant="ghost" size="sm" className="text-xs" onClick={markAllNotificationsRead}>
+                          Mark all read
+                        </Button>
+                      )}
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      {notifications.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4 text-sm">No notifications</p>
+                      ) : (
+                        notifications.slice(0, 3).map((notif) => (
+                          <div 
+                            key={notif.id} 
+                            className={`p-3 rounded-lg cursor-pointer ${!notif.isRead ? 'bg-amber-50' : 'bg-gray-50'}`}
+                            onClick={() => !notif.isRead && markNotificationRead(notif.id)}
+                          >
+                            <p className="font-medium text-gray-900 text-sm">{notif.title}</p>
+                            <p className="text-xs text-gray-500 line-clamp-1">{notif.message}</p>
+                          </div>
+                        ))
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             </div>
-          </TabsContent>
+          )}
 
-          {/* Support Tab */}
-          <TabsContent value="support" className="space-y-6">
-            {/* Impact Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="border-0 shadow-md bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-                <CardContent className="p-6">
-                  <DollarSign className="w-8 h-8 mb-2 opacity-80" />
-                  <p className="text-3xl font-bold">{formatCurrency(supporterData.stats.totalDonations)}</p>
-                  <p className="text-white/80 text-sm">Total Contributions</p>
-                </CardContent>
-              </Card>
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <Users className="w-8 h-8 mb-2 text-blue-500" />
-                  <p className="text-3xl font-bold text-gray-900">{supporterData.stats.studentsSupported}</p>
-                  <p className="text-gray-500 text-sm">Learners Supported</p>
-                </CardContent>
-              </Card>
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <BookOpen className="w-8 h-8 mb-2 text-rose-500" />
-                  <p className="text-3xl font-bold text-gray-900">{supporterData.impact.lessonsEnabled}</p>
-                  <p className="text-gray-500 text-sm">Lessons Enabled</p>
-                </CardContent>
-              </Card>
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <Award className="w-8 h-8 mb-2 text-amber-500" />
-                  <p className="text-3xl font-bold text-gray-900">{supporterData.stats.badgesEarned}</p>
-                  <p className="text-gray-500 text-sm">Badges Earned</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Impact Highlights */}
-              <div className="lg:col-span-2">
-                <Card className="border-0 shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <TrendingUp className="w-5 h-5 mr-2 text-amber-500" />
-                      Your Impact
-                    </CardTitle>
-                    <CardDescription>See how your support is making a difference</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-3 gap-4 mb-6">
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-center">
-                        <p className="text-2xl font-bold text-amber-600">{supporterData.impact.learnersSupported} Learners</p>
-                        <p className="text-sm text-gray-600">directly supported</p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 text-center">
-                        <p className="text-2xl font-bold text-blue-600">{supporterData.impact.lessonsEnabled} Lessons</p>
-                        <p className="text-sm text-gray-600">enabled</p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-rose-50 to-pink-50 text-center">
-                        <p className="text-2xl font-bold text-rose-600">{supporterData.impact.songsRecorded} Songs</p>
-                        <p className="text-sm text-gray-600">recorded</p>
-                      </div>
-                    </div>
-
-                    {/* Testimonial */}
-                    <div className="p-6 rounded-xl bg-gray-900 text-white">
-                      <p className="italic text-lg mb-4">
-                        "Thanks to our supporters, I was able to complete my vocal training and now lead the soprano section. Your generosity changes lives!"
-                      </p>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center font-bold">NC</div>
+          {/* My Courses Section */}
+          {activeSection === 'courses' && (
+            <div className="space-y-6">
+              {selectedCourse ? (
+                // Course Detail View
+                <div>
+                  <Button variant="ghost" className="mb-4" onClick={() => setSelectedCourse(null)}>
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Courses
+                  </Button>
+                  <Card className="border-0 shadow-lg">
+                    <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center text-4xl">
+                          {selectedCourse.emoji || '🎵'}
+                        </div>
                         <div>
-                          <p className="font-semibold">Ngeh Canisia</p>
-                          <p className="text-sm text-gray-400">Soprano Section Lead</p>
+                          <CardTitle className="text-2xl text-white">{selectedCourse.title}</CardTitle>
+                          <CardDescription className="text-white/80">
+                            {selectedCourse.completedLessons || 0} of {selectedCourse.totalLessons} lessons completed
+                          </CardDescription>
+                          <Progress value={selectedCourse.progress || 0} className="mt-2 h-2 bg-white/30" />
                         </div>
                       </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-gray-900 mb-4">Course Lessons</h3>
+                      <div className="space-y-3">
+                        {/* Placeholder lessons - in a real app, these would come from the API */}
+                        {Array.from({ length: selectedCourse.totalLessons || 5 }).map((_, i) => (
+                          <div 
+                            key={i} 
+                            className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                              i < (selectedCourse.completedLessons || 0) 
+                                ? 'bg-green-50 border-green-200' 
+                                : 'bg-gray-50 border-gray-200 hover:border-amber-300'
+                            }`}
+                          >
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                              i < (selectedCourse.completedLessons || 0) 
+                                ? 'bg-green-500 text-white' 
+                                : 'bg-gray-200 text-gray-500'
+                            }`}>
+                              {i < (selectedCourse.completedLessons || 0) ? (
+                                <CheckCircle2 className="w-5 h-5" />
+                              ) : (
+                                <span className="font-semibold">{i + 1}</span>
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-medium text-gray-900">Lesson {i + 1}</p>
+                              <p className="text-sm text-gray-500">
+                                {i < (selectedCourse.completedLessons || 0) ? 'Completed' : 'Not started'}
+                              </p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant={i < (selectedCourse.completedLessons || 0) ? 'outline' : 'default'}
+                              className={i < (selectedCourse.completedLessons || 0) ? '' : 'bg-amber-500 hover:bg-amber-600'}
+                            >
+                              {i < (selectedCourse.completedLessons || 0) ? 'Review' : 'Start'}
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                // Courses List View
+                <div>
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900">My Courses</h2>
+                    <p className="text-gray-500">Your enrolled courses and progress</p>
+                  </div>
+                  
+                  {enrolledCourses.length === 0 ? (
+                    <Card className="border-0 shadow-md">
+                      <CardContent className="py-16 text-center">
+                        <GraduationCap className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No courses yet</h3>
+                        <p className="text-gray-500 mb-6">Start your musical journey by enrolling in a course</p>
+                        <Button className="bg-amber-500 hover:bg-amber-600" onClick={() => setActiveSection('browse')}>
+                          Browse Available Courses
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {enrolledCourses.map((course) => (
+                        <Card 
+                          key={course.id} 
+                          className="border-0 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                          onClick={() => setSelectedCourse(course)}
+                        >
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-4">
+                              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl flex-shrink-0">
+                                {course.emoji || '🎵'}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-gray-900 mb-1">{course.title}</h3>
+                                <p className="text-sm text-gray-500 mb-3">
+                                  {course.completedLessons || 0} of {course.totalLessons} lessons completed
+                                </p>
+                                <div className="flex items-center gap-2">
+                                  <Progress value={course.progress || 0} className="h-2 flex-1" />
+                                  <span className="text-sm font-semibold text-amber-600">{course.progress || 0}%</span>
+                                </div>
+                              </div>
+                            </div>
+                            <Button className="w-full mt-4 bg-amber-500 hover:bg-amber-600">
+                              <Play className="w-4 h-4 mr-2" /> Continue Learning
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Browse Courses Section */}
+          {activeSection === 'browse' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Browse Courses</h2>
+                <p className="text-gray-500">Explore and enroll in new courses</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {allCourses.map((course) => {
+                  const isEnrolled = enrolledCourseIds.includes(course.id)
+                  return (
+                    <Card key={course.id} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="w-full h-32 rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mb-4">
+                          <span className="text-5xl">{course.emoji || '🎵'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="text-xs">{course.level}</Badge>
+                          <span className="text-xs text-gray-500">{course.totalLessons} lessons</span>
+                        </div>
+                        <h3 className="font-semibold text-gray-900 mb-2">{course.title}</h3>
+                        <p className="text-sm text-gray-500 line-clamp-2 mb-4">{course.description}</p>
+                        {isEnrolled ? (
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => {
+                              const enrolled = enrolledCourses.find(c => c.id === course.id)
+                              if (enrolled) {
+                                setSelectedCourse(enrolled)
+                                setActiveSection('courses')
+                              }
+                            }}
+                          >
+                            <CheckCircle2 className="w-4 h-4 mr-2 text-green-500" /> Enrolled - Continue
+                          </Button>
+                        ) : (
+                          <Button 
+                            className="w-full bg-blue-600 hover:bg-blue-700"
+                            onClick={() => enrollInCourse(course.id)}
+                          >
+                            <GraduationCap className="w-4 h-4 mr-2" /> Enroll Now
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Practice Section */}
+          {activeSection === 'practice' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Practice Tracks</h2>
+                  <p className="text-gray-500">Audio tracks for your practice sessions</p>
+                </div>
+                <div className="flex gap-2">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input 
+                      placeholder="Search tracks..." 
+                      className="pl-9 w-48"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <Select value={filterVocalPart} onValueChange={setFilterVocalPart}>
+                    <SelectTrigger className="w-36">
+                      <SelectValue placeholder="Filter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Parts</SelectItem>
+                      <SelectItem value="SOPRANO">Soprano</SelectItem>
+                      <SelectItem value="ALTO">Alto</SelectItem>
+                      <SelectItem value="TENOR">Tenor</SelectItem>
+                      <SelectItem value="BASS">Bass</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Practice Stats */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="border-0 shadow-md bg-gradient-to-br from-rose-500 to-pink-500 text-white">
+                  <CardContent className="p-4">
+                    <Volume2 className="w-6 h-6 mb-2 opacity-80" />
+                    <p className="text-2xl font-bold">{Math.round(stats.totalPracticeMinutes / 60 * 10) / 10}h</p>
+                    <p className="text-sm text-white/80">Total Practice</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <Flame className="w-6 h-6 mb-2 text-amber-500" />
+                    <p className="text-2xl font-bold text-gray-900">{stats.currentStreak}</p>
+                    <p className="text-sm text-gray-500">Day Streak</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <Mic2 className="w-6 h-6 mb-2 text-blue-500" />
+                    <p className="text-2xl font-bold text-gray-900">{vocalPartLabels[stats.vocalPart]}</p>
+                    <p className="text-sm text-gray-500">Your Part</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <Target className="w-6 h-6 mb-2 text-green-500" />
+                    <p className="text-2xl font-bold text-gray-900">30 min</p>
+                    <p className="text-sm text-gray-500">Daily Goal</p>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Supporter Leaderboard */}
-              <div>
+              {/* Practice Tracks List */}
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6">
+                  <div className="space-y-3">
+                    {filteredTracks.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <Headphones className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No tracks found</p>
+                      </div>
+                    ) : (
+                      filteredTracks.map((track) => (
+                        <div 
+                          key={track.id} 
+                          className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
+                            playingTrack === track.id 
+                              ? 'bg-rose-50 border border-rose-200' 
+                              : 'bg-gray-50 hover:bg-gray-100'
+                          }`}
+                        >
+                          <button
+                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                              playingTrack === track.id 
+                                ? 'bg-rose-500 text-white' 
+                                : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500'
+                            }`}
+                            onClick={() => {
+                              if (playingTrack === track.id) {
+                                setPlayingTrack(null)
+                              } else {
+                                setPlayingTrack(track.id)
+                                setTimeout(() => logPractice(track.id, 5), 5000)
+                              }
+                            }}
+                          >
+                            {playingTrack === track.id ? (
+                              <Pause className="w-5 h-5" />
+                            ) : (
+                              <Play className="w-5 h-5 ml-0.5" />
+                            )}
+                          </button>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-gray-900">{track.title}</h4>
+                            <p className="text-sm text-gray-500">
+                              {track.duration} • {track.type}
+                              {track.description && ` • ${track.description}`}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            {track.vocalPart !== 'NONE' && (
+                              <Badge variant="outline" className={`text-xs ${
+                                track.vocalPart === 'SOPRANO' ? 'bg-pink-50 text-pink-700 border-pink-200' :
+                                track.vocalPart === 'ALTO' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                track.vocalPart === 'TENOR' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                track.vocalPart === 'BASS' ? 'bg-green-50 text-green-700 border-green-200' :
+                                ''
+                              }`}>
+                                {vocalPartLabels[track.vocalPart]}
+                              </Badge>
+                            )}
+                            <Badge variant="outline" className="text-xs">{track.difficulty}</Badge>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Achievements Section */}
+          {activeSection === 'achievements' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Achievements</h2>
+                <p className="text-gray-500">Your badges and milestones</p>
+              </div>
+
+              {/* Earned Achievements */}
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Trophy className="w-5 h-5 mr-2 text-amber-500" />
+                    Earned ({userAchievements.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {userAchievements.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>No achievements yet. Keep learning!</p>
+                    </div>
+                  ) : (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {userAchievements.map((achievement) => (
+                        <div key={achievement.id} className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 text-center">
+                          <span className="text-4xl mb-2 block">{achievement.icon}</span>
+                          <h4 className="font-semibold text-gray-900">{achievement.name}</h4>
+                          <p className="text-xs text-gray-500 mt-1">{achievement.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* All Achievements */}
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Star className="w-5 h-5 mr-2 text-gray-400" />
+                    All Achievements ({allAchievements.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {allAchievements.map((achievement) => {
+                      const isEarned = userAchievements.some(ua => ua.id === achievement.id)
+                      return (
+                        <div 
+                          key={achievement.id} 
+                          className={`p-4 rounded-xl text-center ${
+                            isEarned 
+                              ? 'bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200' 
+                              : 'bg-gray-50 border border-gray-200 opacity-60'
+                          }`}
+                        >
+                          <span className={`text-4xl mb-2 block ${!isEarned ? 'grayscale' : ''}`}>{achievement.icon}</span>
+                          <h4 className="font-semibold text-gray-900">{achievement.name}</h4>
+                          <p className="text-xs text-gray-500 mt-1">{achievement.description}</p>
+                          {isEarned && (
+                            <Badge className="mt-2 bg-amber-500 text-white text-xs">Earned!</Badge>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Schedule Section */}
+          {activeSection === 'schedule' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Schedule</h2>
+                <p className="text-gray-500">Upcoming events and deadlines</p>
+              </div>
+
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6">
+                  {schedule.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <Calendar className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No upcoming events</h3>
+                      <p>Check back later for rehearsals, lessons, and deadlines</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {schedule.map((item) => (
+                        <div key={item.id} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                            item.type === 'rehearsal' ? 'bg-blue-100 text-blue-600' :
+                            item.type === 'lesson' ? 'bg-amber-100 text-amber-600' :
+                            item.type === 'deadline' ? 'bg-rose-100 text-rose-600' :
+                            'bg-green-100 text-green-600'
+                          }`}>
+                            {item.type === 'rehearsal' ? <Users className="w-6 h-6" /> :
+                             item.type === 'lesson' ? <BookOpen className="w-6 h-6" /> :
+                             item.type === 'deadline' ? <Clock className="w-6 h-6" /> :
+                             <Calendar className="w-6 h-6" />}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                            <p className="text-sm text-gray-500">{item.description}</p>
+                            <div className="flex items-center gap-4 mt-2 text-sm">
+                              <span className="text-gray-600">
+                                <Calendar className="w-4 h-4 inline mr-1" />
+                                {formatDate(item.date)}
+                              </span>
+                              <span className="text-gray-600">
+                                <Clock className="w-4 h-4 inline mr-1" />
+                                {item.time}
+                              </span>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="capitalize">{item.type}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Support & Donate Section */}
+          {activeSection === 'support' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Support & Donate</h2>
+                <p className="text-gray-500">Support the G2 Melody ministry and see your impact</p>
+              </div>
+
+              {/* Impact Stats */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="border-0 shadow-md bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                  <CardContent className="p-4">
+                    <DollarSign className="w-6 h-6 mb-2 opacity-80" />
+                    <p className="text-2xl font-bold">{formatCurrency(supporterData.stats.totalDonations)}</p>
+                    <p className="text-sm text-white/80">Your Contributions</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <Users className="w-6 h-6 mb-2 text-blue-500" />
+                    <p className="text-2xl font-bold text-gray-900">{supporterData.stats.studentsSupported}</p>
+                    <p className="text-sm text-gray-500">Learners Supported</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <BookOpen className="w-6 h-6 mb-2 text-rose-500" />
+                    <p className="text-2xl font-bold text-gray-900">{supporterData.impact.lessonsEnabled}</p>
+                    <p className="text-sm text-gray-500">Lessons Enabled</p>
+                  </CardContent>
+                </Card>
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-4">
+                    <Award className="w-6 h-6 mb-2 text-amber-500" />
+                    <p className="text-2xl font-bold text-gray-900">{supporterData.stats.badgesEarned}</p>
+                    <p className="text-sm text-gray-500">Supporter Badges</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-6">
+                {/* Donation CTA */}
+                <Card className="border-0 shadow-md lg:col-span-2">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                      <Heart className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">Make a Difference</h3>
+                    <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                      Your donation helps train musicians, produce recordings, and spread the gospel through music across Cameroon.
+                    </p>
+                    <Link href="/projects">
+                      <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                        <Gift className="w-5 h-5 mr-2" /> Donate Now
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                    <p className="text-xs text-gray-400 mt-4">Opens donation page on main website</p>
+                  </CardContent>
+                </Card>
+
+                {/* Top Supporters */}
                 <Card className="border-0 shadow-md">
                   <CardHeader>
-                    <CardTitle className="flex items-center">
+                    <CardTitle className="flex items-center text-base">
                       <Trophy className="w-5 h-5 mr-2 text-amber-500" />
                       Top Supporters
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {supporterData.leaderboard.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4">Be the first to donate!</p>
+                      <p className="text-gray-500 text-center py-4 text-sm">Be the first to donate!</p>
                     ) : (
                       supporterData.leaderboard.slice(0, 5).map((supporter) => (
-                        <div key={supporter.rank} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
+                        <div key={supporter.rank} className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
                             supporter.rank === 1 ? 'bg-amber-500 text-white' :
                             supporter.rank === 2 ? 'bg-gray-400 text-white' :
-                            'bg-amber-700 text-white'
+                            supporter.rank === 3 ? 'bg-amber-700 text-white' :
+                            'bg-gray-200 text-gray-600'
                           }`}>
                             {supporter.rank}
                           </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900 text-sm">{supporter.name}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 text-sm truncate">{supporter.name}</p>
                             <Badge className="text-xs bg-amber-100 text-amber-700">{supporter.badge}</Badge>
                           </div>
                         </div>
@@ -787,91 +1110,157 @@ export default function DashboardPage() {
                     )}
                   </CardContent>
                 </Card>
+              </div>
 
-                <Card className="border-0 shadow-md mt-6">
-                  <CardContent className="p-6 text-center">
-                    <Gift className="w-12 h-12 mx-auto mb-4 text-amber-500" />
-                    <h3 className="font-bold text-gray-900 mb-2">Make a Donation</h3>
-                    <p className="text-sm text-gray-500 mb-4">Support our learners and ministry</p>
-                    <Link href="/projects">
-                      <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                        <Heart className="w-4 h-4 mr-2" /> Donate Now
-                      </Button>
-                    </Link>
+              {/* Donation History */}
+              {supporterData.donations.length > 0 && (
+                <Card className="border-0 shadow-md">
+                  <CardHeader>
+                    <CardTitle>Your Donation History</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {supporterData.donations.map((donation) => (
+                        <div key={donation.id} className="flex items-center justify-between p-4 rounded-xl bg-gray-50">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
+                              <Heart className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{donation.project?.title || 'General Donation'}</p>
+                              <p className="text-sm text-gray-500">{new Date(donation.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          <p className="font-bold text-emerald-600">{formatCurrency(donation.amount)}</p>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
+              )}
+            </div>
+          )}
+
+          {/* Community Section */}
+          {activeSection === 'community' && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Community</h2>
+                <p className="text-gray-500">Connect with fellow learners and the G2 Melody family</p>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-6 mb-4 md:mb-0">
-              <Link href="/contact" className="text-sm text-gray-500 hover:text-gray-700">Help</Link>
-              <Link href="/contact" className="text-sm text-gray-500 hover:text-gray-700">Contact Us</Link>
-              <Link href="/about" className="text-sm text-gray-500 hover:text-gray-700">About G2 Melody</Link>
-            </div>
-            <p className="text-sm text-gray-400">© {new Date().getFullYear()} G2 Melody. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  )
-}
+              <div className="grid lg:grid-cols-3 gap-6">
+                {/* Announcements */}
+                <Card className="border-0 shadow-md lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Megaphone className="w-5 h-5 mr-2 text-amber-500" />
+                      Announcements
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-white flex-shrink-0">
+                            <Megaphone className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Welcome to G2 Melody Learning Platform!</h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              We're excited to have you here. Start by enrolling in your first course and joining our practice sessions.
+                            </p>
+                            <p className="text-xs text-gray-400 mt-2">G2 Melody Team • Just now</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white flex-shrink-0">
+                            <Calendar className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Weekly Online Rehearsal</h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Join us every Saturday at 6:00 PM for our online rehearsal session via Zoom.
+                            </p>
+                            <p className="text-xs text-gray-400 mt-2">Recurring Event</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-// Component to show available courses for enrollment
-function AvailableCourses({ enrolledCourseIds, onEnroll }) {
-  const [courses, setCourses] = useState([])
-  const [loading, setLoading] = useState(true)
+                {/* Community Stats */}
+                <div className="space-y-4">
+                  <Card className="border-0 shadow-md">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">Community Stats</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Active Learners</span>
+                        <span className="font-bold text-gray-900">150+</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Courses Available</span>
+                        <span className="font-bold text-gray-900">{allCourses.length}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Practice Tracks</span>
+                        <span className="font-bold text-gray-900">{practiceTracks.length}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Achievements</span>
+                        <span className="font-bold text-gray-900">{allAchievements.length}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-  useEffect(() => {
-    fetch('/api/courses?published=true')
-      .then(res => res.json())
-      .then(data => {
-        setCourses(data.filter(c => !enrolledCourseIds.includes(c.id)))
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [enrolledCourseIds])
-
-  if (loading) {
-    return <div className="text-center py-4"><Loader2 className="w-6 h-6 animate-spin mx-auto" /></div>
-  }
-
-  if (courses.length === 0) {
-    return <p className="text-gray-500 text-center py-4">You're enrolled in all available courses!</p>
-  }
-
-  return (
-    <div className="grid md:grid-cols-2 gap-4">
-      {courses.map((course) => (
-        <div key={course.id} className="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-          <div className="flex items-start gap-3 mb-3">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center text-2xl">
-              {course.emoji || '🎵'}
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-900">{course.title}</h4>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className="text-xs">{course.level}</Badge>
-                <span className="text-xs text-gray-500">{course.totalLessons} lessons</span>
+                  <Card className="border-0 shadow-md bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+                    <CardContent className="p-6 text-center">
+                      <MessageSquare className="w-10 h-10 mx-auto mb-4 opacity-80" />
+                      <h3 className="font-bold mb-2">Need Help?</h3>
+                      <p className="text-sm text-gray-300 mb-4">Contact the G2 Melody team</p>
+                      <Link href="/contact">
+                        <Button variant="secondary" size="sm" className="w-full">
+                          Contact Us <ExternalLink className="w-3 h-3 ml-1" />
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
+
+              {/* About G2 Melody */}
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6 items-center">
+                    <img 
+                      src="https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg" 
+                      alt="G2 Melody Choir"
+                      className="w-full md:w-64 h-48 object-cover rounded-xl"
+                    />
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">About G2 Melody</h3>
+                      <p className="text-gray-600 mb-4">
+                        G2 Melody is an acapella choir founded in Cameroon, dedicated to spreading the gospel through 
+                        four-part harmony singing. Our mission is to train musicians and bring the joy of music to communities.
+                      </p>
+                      <Link href="/about">
+                        <Button variant="outline">
+                          Learn More About Us <ExternalLink className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </div>
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description}</p>
-          <Button 
-            size="sm" 
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            onClick={() => onEnroll(course.id)}
-          >
-            <GraduationCap className="w-4 h-4 mr-2" /> Enroll Now
-          </Button>
-        </div>
-      ))}
+          )}
+        </main>
+      </div>
     </div>
   )
 }
