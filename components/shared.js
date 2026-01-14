@@ -6,7 +6,7 @@ import {
   Music, Heart, Users, Calendar, ChevronRight, Menu, X, Mail, MapPin, 
   Facebook, Instagram, Youtube, Church
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // TikTok Icon Component
 function TikTokIcon({ className }) {
@@ -17,9 +17,25 @@ function TikTokIcon({ className }) {
   )
 }
 
-// Shared Navigation Component
+// Shared Navigation Component - Matches Homepage Navigation
 export function SharedNavigation({ currentPage = 'home' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(true) // Default to scrolled state for inner pages
+
+  useEffect(() => {
+    // For inner pages, we want the white navbar by default
+    // Only on homepage it starts transparent
+    if (currentPage === 'home') {
+      setIsScrolled(false)
+      const handleScroll = () => {
+        setIsScrolled(window.scrollY > 50)
+      }
+      window.addEventListener('scroll', handleScroll)
+      return () => window.removeEventListener('scroll', handleScroll)
+    } else {
+      setIsScrolled(true) // Always scrolled (white) for inner pages
+    }
+  }, [currentPage])
 
   const navLinks = [
     { href: '/', label: 'Home', key: 'home' },
@@ -27,30 +43,34 @@ export function SharedNavigation({ currentPage = 'home' }) {
     { href: '/projects', label: 'Projects', key: 'projects' },
     { href: '/music', label: 'Music', key: 'music' },
     { href: '/news', label: 'News', key: 'news' },
-    { href: '/learn', label: 'Learn', key: 'learn' },
+    { href: '/learn', label: 'Learn Muzik', key: 'learn' },
     { href: '/contact', label: 'Contact', key: 'contact' },
   ]
 
   return (
-    <nav className="bg-white border-b sticky top-0 z-50">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-100' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <img src="/logo.png" alt="G2 Melody" className="h-10 w-auto" />
-            <span className="text-xl font-bold">G2 Melody</span>
+          <Link href="/" className="flex items-center space-x-3 group">
+            <img 
+              src="/logo.png" 
+              alt="G2 Melody" 
+              className="h-12 w-auto group-hover:scale-105 transition-transform duration-300"
+            />
+            <span className={`hidden sm:block text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
-                key={link.key}
+                key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
                   currentPage === link.key 
-                    ? 'text-amber-600' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? (isScrolled ? 'text-amber-600 bg-amber-50' : 'text-amber-400 bg-white/10')
+                    : (isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10')
                 }`}
               >
                 {link.label}
@@ -61,37 +81,37 @@ export function SharedNavigation({ currentPage = 'home' }) {
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-gray-700">
+              <Button variant="ghost" size="sm" className={isScrolled ? 'text-gray-700' : 'text-white hover:bg-white/10'}>
                 Sign In
               </Button>
             </Link>
             <Link href="/join">
-              <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">
-                Join Us
+              <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                Join G2 Melody
               </Button>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6 text-gray-900" />
+              <X className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
             ) : (
-              <Menu className="w-6 h-6 text-gray-900" />
+              <Menu className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
             )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white rounded-2xl shadow-2xl p-6 mt-2 mb-4">
+          <div className="lg:hidden bg-white rounded-2xl shadow-2xl p-6 mt-2 mb-4 animate-in slide-in-from-top-5">
             <div className="space-y-2">
               {navLinks.map((link) => (
                 <Link
-                  key={link.key}
+                  key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block py-3 px-4 rounded-xl font-medium transition-colors ${
