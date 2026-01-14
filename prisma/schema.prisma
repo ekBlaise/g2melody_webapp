@@ -444,6 +444,8 @@ model Achievement {
   type          String   @default("milestone") // milestone, streak, course, special
   requirement   String?  // JSON string for conditions
   createdAt     DateTime @default(now())
+
+  userAchievements UserAchievement[]
 }
 
 // User earned achievements
@@ -452,6 +454,8 @@ model UserAchievement {
   userId        String
   achievementId String
   earnedAt      DateTime @default(now())
+
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
 
   @@unique([userId, achievementId])
 }
