@@ -260,12 +260,16 @@ export default function AdminDashboard() {
   const [projects, setProjects] = useState([])
   const [music, setMusic] = useState([])
   const [users, setUsers] = useState([])
+  const [founders, setFounders] = useState([])
+  const [choirMembers, setChoirMembers] = useState([])
   const [siteSettings, setSiteSettings] = useState({})
   const [loading, setLoading] = useState(true)
   const [darkMode, setDarkMode] = useState(false)
   const [activeTab, setActiveTab] = useState('overview')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [createMusicDialogOpen, setCreateMusicDialogOpen] = useState(false)
+  const [createFounderDialogOpen, setCreateFounderDialogOpen] = useState(false)
+  const [createMemberDialogOpen, setCreateMemberDialogOpen] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
