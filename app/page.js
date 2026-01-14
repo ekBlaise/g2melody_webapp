@@ -1186,7 +1186,7 @@ function DonationDialog({ project, open, onOpenChange }) {
                   type="button"
                   variant={formData.amount === amount.toString() ? 'default' : 'outline'}
                   size="sm"
-                  className={formData.amount === amount.toString() ? 'bg-green-600 hover:bg-green-700' : ''}
+                  className={formData.amount === amount.toString() ? 'bg-amber-600 hover:bg-amber-700' : ''}
                   onClick={() => setFormData({ ...formData, amount: amount.toString() })}
                 >
                   {(amount / 1000)}k
