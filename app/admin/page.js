@@ -22,7 +22,7 @@ import {
   Edit, Trash2, Loader2, Target, TrendingUp, Calendar, CreditCard, Settings,
   Eye, CheckCircle2, Clock, AlertCircle, Activity, PieChart, Shield, Bell,
   FileText, Mic2, BookOpen, Video, Search, Filter, MoreVertical, Download,
-  RefreshCw, Zap, Globe, Building, Radio, ChevronRight, ArrowUpRight, Crown
+  RefreshCw, Zap, Globe, Building, Radio, ChevronRight, ArrowUpRight, Crown, Star, User
 } from 'lucide-react'
 
 // Animated Stats Card Component
