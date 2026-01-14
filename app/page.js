@@ -307,7 +307,7 @@ function AboutSection() {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-rose-500 to-rose-600 text-white overflow-hidden group hover:shadow-2xl transition-all duration-300">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-gray-800 to-gray-900 text-white overflow-hidden group hover:shadow-2xl transition-all duration-300">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
             <CardHeader>
               <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
