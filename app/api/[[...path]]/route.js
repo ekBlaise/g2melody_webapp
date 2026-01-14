@@ -901,7 +901,158 @@ async function handleRoute(request, { params }) {
         }
       })
 
-      return handleCORS(NextResponse.json({ success: true, projects: projects.length, music: music.length, admin: admin.email }))
+      // Create founders
+      const founders = await Promise.all([
+        prisma.founder.upsert({
+          where: { id: 'founder-1' },
+          update: {},
+          create: {
+            id: 'founder-1',
+            name: 'Minister Andy Leroy',
+            role: 'Co-Founder & Visionary',
+            bio: 'Minister Andy Leroy conceived the idea of a unified choir dedicated to the TV program "Gospel Guardians" in a conversation with Ekwoge Blaise in late 2016. His vision for musical evangelism laid the foundation for what G2 Melody has become today.',
+            image: null,
+            order: 1
+          }
+        }),
+        prisma.founder.upsert({
+          where: { id: 'founder-2' },
+          update: {},
+          create: {
+            id: 'founder-2',
+            name: 'Ekwoge Blaise',
+            role: 'Co-Founder & Director',
+            bio: 'Ekwoge Blaise co-conceived the idea of G2 Melody and has been instrumental in its growth. He persevered through the early challenges when membership dwindled to just 2-3 members, and continues to serve as a founding member and leader of the choir.',
+            image: null,
+            order: 2
+          }
+        })
+      ])
+
+      // Create choir members from the documents
+      const choirMembers = await Promise.all([
+        // Founding members still serving
+        prisma.choirMember.upsert({
+          where: { id: 'member-1' },
+          update: {},
+          create: { id: 'member-1', name: 'Ngeh Canisia', vocalPart: 'SOPRANO', yearJoined: 2016, status: 'ACTIVE', isFounding: true, order: 1 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-2' },
+          update: {},
+          create: { id: 'member-2', name: 'Tambe Faith', vocalPart: 'SOPRANO', yearJoined: 2016, status: 'ACTIVE', isFounding: true, order: 2 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-3' },
+          update: {},
+          create: { id: 'member-3', name: 'Abeh Nadia', vocalPart: 'ALTO', yearJoined: 2016, status: 'ACTIVE', isFounding: true, order: 3 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-4' },
+          update: {},
+          create: { id: 'member-4', name: 'Ekwoge Blaise', vocalPart: 'TENOR', yearJoined: 2016, status: 'ACTIVE', isFounding: true, role: 'Director', order: 4 }
+        }),
+        // Sopranos
+        prisma.choirMember.upsert({
+          where: { id: 'member-5' },
+          update: {},
+          create: { id: 'member-5', name: 'Ngobiri Falyne', vocalPart: 'SOPRANO', yearJoined: 2016, status: 'ALUMNI', isFounding: true, order: 5 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-6' },
+          update: {},
+          create: { id: 'member-6', name: 'Mokwe Vanel', vocalPart: 'SOPRANO', yearJoined: 2019, status: 'ACTIVE', order: 6 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-7' },
+          update: {},
+          create: { id: 'member-7', name: 'Ojage Naomi', vocalPart: 'SOPRANO', yearJoined: 2020, status: 'ACTIVE', order: 7 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-8' },
+          update: {},
+          create: { id: 'member-8', name: 'Tambe Marie', vocalPart: 'SOPRANO', yearJoined: 2018, status: 'ACTIVE', order: 8 }
+        }),
+        // Altos
+        prisma.choirMember.upsert({
+          where: { id: 'member-9' },
+          update: {},
+          create: { id: 'member-9', name: 'Abuarah Karein', vocalPart: 'ALTO', yearJoined: 2019, status: 'ACTIVE', order: 9 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-10' },
+          update: {},
+          create: { id: 'member-10', name: 'Babanema Diane', vocalPart: 'ALTO', yearJoined: 2020, status: 'ACTIVE', order: 10 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-11' },
+          update: {},
+          create: { id: 'member-11', name: 'Tifang Susan', vocalPart: 'ALTO', yearJoined: 2018, status: 'ACTIVE', order: 11 }
+        }),
+        // Tenors
+        prisma.choirMember.upsert({
+          where: { id: 'member-12' },
+          update: {},
+          create: { id: 'member-12', name: 'Etta Brandon', vocalPart: 'TENOR', yearJoined: 2019, status: 'ACTIVE', order: 12 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-13' },
+          update: {},
+          create: { id: 'member-13', name: 'Leku Eric', vocalPart: 'TENOR', yearJoined: 2020, status: 'ACTIVE', order: 13 }
+        }),
+        // Bass
+        prisma.choirMember.upsert({
+          where: { id: 'member-14' },
+          update: {},
+          create: { id: 'member-14', name: 'Eweh Ivo', vocalPart: 'BASS', yearJoined: 2016, status: 'ALUMNI', isFounding: true, order: 14 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-15' },
+          update: {},
+          create: { id: 'member-15', name: 'Desmon Kappie', vocalPart: 'BASS', yearJoined: 2019, status: 'ACTIVE', order: 15 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-16' },
+          update: {},
+          create: { id: 'member-16', name: 'Ayuk Salathiel', vocalPart: 'BASS', yearJoined: 2020, status: 'ACTIVE', order: 16 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-17' },
+          update: {},
+          create: { id: 'member-17', name: 'Akumtoh Derick', vocalPart: 'BASS', yearJoined: 2020, status: 'ACTIVE', order: 17 }
+        }),
+        // Theosortians
+        prisma.choirMember.upsert({
+          where: { id: 'member-18' },
+          update: {},
+          create: { id: 'member-18', name: 'Ndenge Gerald', vocalPart: 'NONE', yearJoined: 2020, status: 'THEOSORTIAN', role: 'Theosortian', order: 18 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-19' },
+          update: {},
+          create: { id: 'member-19', name: 'Oliver Peyele', vocalPart: 'NONE', yearJoined: 2020, status: 'THEOSORTIAN', role: 'Theosortian', order: 19 }
+        }),
+        prisma.choirMember.upsert({
+          where: { id: 'member-20' },
+          update: {},
+          create: { id: 'member-20', name: 'Bechem Manfred', vocalPart: 'NONE', yearJoined: 2020, status: 'THEOSORTIAN', role: 'Theosortian', order: 20 }
+        }),
+        // Sponsor example
+        prisma.choirMember.upsert({
+          where: { id: 'member-21' },
+          update: {},
+          create: { id: 'member-21', name: 'Sister Mafani Patricia', vocalPart: 'NONE', yearJoined: 2020, status: 'SPONSOR', role: 'Matron & Sponsor', order: 21 }
+        })
+      ])
+
+      return handleCORS(NextResponse.json({ 
+        success: true, 
+        projects: projects.length, 
+        music: music.length, 
+        admin: admin.email,
+        founders: founders.length,
+        choirMembers: choirMembers.length
+      }))
     }
 
     return handleCORS(NextResponse.json({ error: `Route ${route} not found` }, { status: 404 }))
