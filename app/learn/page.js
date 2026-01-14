@@ -86,7 +86,7 @@ export default function LearnPage() {
       {/* Academy Banner */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-8 md:p-12 text-white">
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h3 className="text-3xl md:text-4xl font-bold mb-4">G2 Melody Music Academy</h3>
@@ -95,7 +95,7 @@ export default function LearnPage() {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link href="/join">
-                    <Button className="bg-white text-amber-600 hover:bg-white/90">
+                    <Button className="bg-white text-blue-600 hover:bg-white/90">
                       <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
                     </Button>
                   </Link>
