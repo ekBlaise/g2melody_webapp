@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
                   disabled={loading}
                 >
                   {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
           <CardFooter className="flex flex-col space-y-4 pt-2">
             <p className="text-center text-sm text-gray-600">
               Remember your password?{' '}
-              <Link href="/login" className="text-amber-600 hover:text-amber-700 font-semibold">
+              <Link href="/login" className="text-[#1e40af]-600 hover:text-[#1e40af]-700 font-semibold">
                 Sign In
               </Link>
             </p>
@@ -140,3 +140,4 @@ export default function ForgotPasswordPage() {
     </div>
   )
 }
+

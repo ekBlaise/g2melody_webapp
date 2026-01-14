@@ -133,8 +133,8 @@ export default function LearnPage() {
             {programs.map((program, index) => (
               <Card key={index} className="hover:shadow-xl transition-all group">
                 <CardHeader>
-                  <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-4 group-hover:bg-amber-500 transition-colors">
-                    <program.icon className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors" />
+                  <div className="w-14 h-14 rounded-2xl bg-[#1e40af]-100 flex items-center justify-center mb-4 group-hover:bg-[#1e40af]-500 transition-colors">
+                    <program.icon className="w-7 h-7 text-[#1e40af]-600 group-hover:text-white transition-colors" />
                   </div>
                   <CardTitle>{program.title}</CardTitle>
                   <CardDescription>{program.desc}</CardDescription>
@@ -147,7 +147,7 @@ export default function LearnPage() {
                 </CardContent>
                 <CardFooter>
                   <Link href="/join" className="w-full">
-                    <Button variant="outline" className="w-full group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 transition-colors">
+                    <Button variant="outline" className="w-full group-hover:bg-[#1e40af]-500 group-hover:text-white group-hover:border-amber-500 transition-colors">
                       Learn More <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -164,7 +164,7 @@ export default function LearnPage() {
           <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
           <p className="text-gray-600 mb-8">Join G2 Melody and develop your musical gifts under expert guidance.</p>
           <Link href="/join">
-            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+            <Button size="lg" className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
               Join G2 Melody <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
@@ -175,3 +175,4 @@ export default function LearnPage() {
     </div>
   )
 }
+

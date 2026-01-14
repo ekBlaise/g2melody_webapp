@@ -50,13 +50,13 @@ function PasswordStrength({ password }) {
     <div className="mt-3 p-3 bg-gray-50 rounded-lg">
       <div className="flex items-center justify-between text-sm mb-2">
         <span className="text-gray-600 font-medium">Password Strength</span>
-        <span className={`font-semibold ${strength < 40 ? 'text-gray-500' : strength < 70 ? 'text-orange-500' : 'text-amber-600'}`}>
+        <span className={`font-semibold ${strength < 40 ? 'text-gray-500' : strength < 70 ? 'text-[#0891b2]-500' : 'text-[#1e40af]-600'}`}>
           {strength < 40 ? 'Weak' : strength < 70 ? 'Medium' : 'Strong'}
         </span>
       </div>
       <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
         <div 
-          className={`h-full transition-all duration-300 ${strength < 40 ? 'bg-gray-400' : strength < 70 ? 'bg-orange-400' : 'bg-amber-500'}`}
+          className={`h-full transition-all duration-300 ${strength < 40 ? 'bg-gray-400' : strength < 70 ? 'bg-[#0891b2]-400' : 'bg-[#1e40af]-500'}`}
           style={{ width: `${strength}%` }}
         />
       </div>
@@ -68,7 +68,7 @@ function PasswordStrength({ password }) {
           { key: 'number', label: 'One number' },
           { key: 'special', label: 'One special character (!@#$...)' }
         ].map(item => (
-          <div key={item.key} className={`flex items-center gap-2 text-sm ${checks[item.key] ? 'text-amber-600' : 'text-gray-400'}`}>
+          <div key={item.key} className={`flex items-center gap-2 text-sm ${checks[item.key] ? 'text-[#1e40af]-600' : 'text-gray-400'}`}>
             {checks[item.key] ? <CheckCircle2 className="w-4 h-4" /> : <div className="w-4 h-4 rounded-full border-2 border-current" />}
             <span>{item.label}</span>
           </div>
@@ -174,10 +174,10 @@ export default function JoinPage() {
             alt="Join G2 Melody"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
+          <div className="absolute inset-0 bg-[#1e40af]/70" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Family</span></h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Family</span></h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Whether you want to support our mission or become an active choir member, there's a place for you.
           </p>
@@ -188,7 +188,7 @@ export default function JoinPage() {
       <div className="max-w-6xl mx-auto px-4 py-12 -mt-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-10 p-1.5 bg-white shadow-lg rounded-2xl h-14">
-            <TabsTrigger value="supporter" className="rounded-xl text-base font-medium data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+            <TabsTrigger value="supporter" className="rounded-xl text-base font-medium data-[state=active]:bg-[#1e40af]-500 data-[state=active]:text-white">
               <Heart className="w-4 h-4 mr-2" /> Join our Community
             </TabsTrigger>
             <TabsTrigger value="member" className="rounded-xl text-base font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white">
@@ -206,10 +206,10 @@ export default function JoinPage() {
                   alt="Community"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/60" />
+                <div className="absolute inset-0 bg-[#1e40af]/70" />
                 <div className="absolute inset-0 p-8 flex flex-col justify-between">
                   <div>
-                    <span className="inline-block px-3 py-1 bg-amber-500 text-white text-sm font-medium rounded-full mb-4">
+                    <span className="inline-block px-3 py-1 bg-[#1e40af]-500 text-white text-sm font-medium rounded-full mb-4">
                       Free Account
                     </span>
                     <h2 className="text-3xl font-bold text-white mb-3">Become a Supporter</h2>
@@ -328,7 +328,7 @@ export default function JoinPage() {
                     
                     <Button 
                       type="submit" 
-                      className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                      className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600"
                       disabled={loading}
                     >
                       {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
@@ -339,7 +339,7 @@ export default function JoinPage() {
                 <CardFooter className="justify-center pt-2 pb-6">
                   <p className="text-gray-500">
                     Already have an account?{' '}
-                    <Link href="/login" className="text-amber-600 font-semibold hover:underline">Sign In</Link>
+                    <Link href="/login" className="text-[#1e40af]-600 font-semibold hover:underline">Sign In</Link>
                   </p>
                 </CardFooter>
               </Card>
@@ -356,7 +356,7 @@ export default function JoinPage() {
                   alt="Choir"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/80 to-blue-900/60" />
+                <div className="absolute inset-0 bg-[#1e40af]/70" />
                 <div className="absolute inset-0 p-8 flex flex-col justify-between">
                   <div>
                     <span className="inline-block px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full mb-4">
@@ -522,3 +522,4 @@ export default function JoinPage() {
     </div>
   )
 }
+

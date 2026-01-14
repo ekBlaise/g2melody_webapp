@@ -51,7 +51,7 @@ export default function ProjectsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#1e40af]-600" />
       </div>
     )
   }
@@ -72,7 +72,7 @@ export default function ProjectsPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Mission</span>
+            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Mission</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
@@ -89,7 +89,7 @@ export default function ProjectsPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-transparent" />
               <div className="absolute inset-0 p-8 md:p-16 flex items-center">
                 <div className="max-w-2xl">
-                  <Badge className="mb-4 bg-amber-500">Vision Project</Badge>
+                  <Badge className="mb-4 bg-[#1e40af]-500">Vision Project</Badge>
                   <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">G2 Meloverse</h2>
                   <p className="text-gray-300 mb-6">Our flagship vision project - a multi-purpose facility housing the Music Academy, Recording Studios, and Radio Station.</p>
                   <div className="flex flex-wrap gap-4 mb-6">
@@ -103,7 +103,7 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                   <Link href={`/projects/${meloverse.id}`}>
-                    <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                    <Button className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
                       Learn More <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -130,7 +130,7 @@ export default function ProjectsPage() {
                     <div className="relative h-48">
                       <img src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'} alt={project.title} className="w-full h-full object-cover" />
                       {project.deadline && (
-                        <Badge className="absolute top-3 right-3 bg-orange-500">
+                        <Badge className="absolute top-3 right-3 bg-[#0891b2]-500">
                           <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days
                         </Badge>
                       )}
@@ -142,7 +142,7 @@ export default function ProjectsPage() {
                     <CardContent>
                       <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 mb-2" />
                       <div className="flex justify-between text-sm">
-                        <span className="font-semibold text-amber-600">{formatCurrency(project.currentAmount)}</span>
+                        <span className="font-semibold text-[#1e40af]-600">{formatCurrency(project.currentAmount)}</span>
                         <span className="text-gray-500">of {formatCurrency(project.goalAmount)}</span>
                       </div>
                     </CardContent>
@@ -151,7 +151,7 @@ export default function ProjectsPage() {
                         <Button variant="outline" className="w-full">View Details</Button>
                       </Link>
                       <Link href={`/projects/${project.id}`} className="flex-1">
-                        <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                        <Button className="w-full bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
                           <Heart className="w-4 h-4 mr-1" /> Donate
                         </Button>
                       </Link>
@@ -167,13 +167,13 @@ export default function ProjectsPage() {
                   <Card key={project.id} className="overflow-hidden">
                     <div className="relative h-48">
                       <img src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'} alt={project.title} className="w-full h-full object-cover grayscale-[30%]" />
-                      <Badge className="absolute top-3 right-3 bg-amber-500">
+                      <Badge className="absolute top-3 right-3 bg-[#1e40af]-500">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                       </Badge>
                     </div>
                     <CardHeader>
                       <CardTitle className="text-lg">{project.title}</CardTitle>
-                      <p className="text-amber-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
+                      <p className="text-[#1e40af]-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
                     </CardHeader>
                   </Card>
                 ))}
@@ -187,3 +187,4 @@ export default function ProjectsPage() {
     </div>
   )
 }
+

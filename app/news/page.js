@@ -59,7 +59,7 @@ export default function NewsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#1e40af]-600" />
       </div>
     )
   }
@@ -80,7 +80,7 @@ export default function NewsPage() {
         </div>
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Activities & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Events</span>
+            Activities & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Events</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Stay updated with our concerts, workshops, community outreach, and special events.
@@ -92,7 +92,7 @@ export default function NewsPage() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-10 p-1.5 bg-white shadow-lg rounded-2xl h-14">
-            <TabsTrigger value="upcoming" className="rounded-xl text-base font-medium data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+            <TabsTrigger value="upcoming" className="rounded-xl text-base font-medium data-[state=active]:bg-[#1e40af]-500 data-[state=active]:text-white">
               <Sparkles className="w-4 h-4 mr-2" /> Upcoming
             </TabsTrigger>
             <TabsTrigger value="past" className="rounded-xl text-base font-medium data-[state=active]:bg-gray-700 data-[state=active]:text-white">
@@ -146,9 +146,9 @@ function ActivityCard({ activity, formatDate, formatTime, isPast }) {
   // Use amber for all badges to keep color consistency
   const getBadgeStyle = (type) => {
     switch(type) {
-      case 'concert': return 'bg-amber-500'
-      case 'workshop': return 'bg-orange-500'
-      case 'outreach': return 'bg-amber-600'
+      case 'concert': return 'bg-[#1e40af]-500'
+      case 'workshop': return 'bg-[#0891b2]-500'
+      case 'outreach': return 'bg-[#1e40af]-600'
       default: return 'bg-gray-700'
     }
   }
@@ -164,7 +164,7 @@ function ActivityCard({ activity, formatDate, formatTime, isPast }) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-[#1e40af]-400 to-[#0891b2]-500 flex items-center justify-center">
               <CalendarDays className="w-16 h-16 text-white/50" />
             </div>
           )}
@@ -205,7 +205,7 @@ function ActivityCard({ activity, formatDate, formatTime, isPast }) {
         </div>
 
         <CardContent className="p-5">
-          <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-2">
+          <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-[#1e40af]-600 transition-colors line-clamp-2">
             {activity.title}
           </h3>
           <p className="text-gray-600 text-sm line-clamp-2 mb-4">
@@ -214,12 +214,12 @@ function ActivityCard({ activity, formatDate, formatTime, isPast }) {
           
           <div className="space-y-2 text-sm text-gray-500">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-500" />
+              <Clock className="w-4 h-4 text-[#1e40af]-500" />
               <span>{formatTime(activity.date)}</span>
             </div>
             {activity.venue && (
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-amber-500" />
+                <MapPin className="w-4 h-4 text-[#1e40af]-500" />
                 <span className="line-clamp-1">{activity.venue}</span>
               </div>
             )}
@@ -227,7 +227,7 @@ function ActivityCard({ activity, formatDate, formatTime, isPast }) {
         </CardContent>
 
         <CardFooter className="px-5 pb-5 pt-0">
-          <Button variant="ghost" className="w-full group-hover:bg-amber-50 group-hover:text-amber-600">
+          <Button variant="ghost" className="w-full group-hover:bg-[#1e40af]-50 group-hover:text-[#1e40af]-600">
             View Details <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </CardFooter>
@@ -305,3 +305,4 @@ const sampleActivities = [
     videos: ['highlight.mp4', 'performance.mp4']
   }
 ]
+

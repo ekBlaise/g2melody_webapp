@@ -174,7 +174,7 @@ export default function Chatbot() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 group animate-in fade-in slide-in-from-bottom-4"
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#1e40af] text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 group animate-in fade-in slide-in-from-bottom-4 hover:bg-[#1e3a8a]"
       >
         <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
@@ -186,7 +186,7 @@ export default function Chatbot() {
     <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${isMinimized ? 'w-72' : 'w-96'}`}>
       <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border">
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-4">
+        <div className="bg-[#1e40af] p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -225,7 +225,7 @@ export default function Chatbot() {
                 >
                   <div className={`flex gap-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse' : ''}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      message.type === 'user' ? 'bg-amber-500' : 'bg-gray-200'
+                      message.type === 'user' ? 'bg-[#1e40af]' : 'bg-gray-200'
                     }`}>
                       {message.type === 'user' ? (
                         <User className="w-4 h-4 text-white" />
@@ -236,7 +236,7 @@ export default function Chatbot() {
                     <div>
                       <div className={`rounded-2xl px-4 py-2.5 ${
                         message.type === 'user' 
-                          ? 'bg-amber-500 text-white rounded-tr-sm' 
+                          ? 'bg-[#1e40af] text-white rounded-tr-sm' 
                           : 'bg-white shadow-sm rounded-tl-sm'
                       }`}>
                         <p className="text-sm whitespace-pre-line">{message.text}</p>
@@ -244,7 +244,7 @@ export default function Chatbot() {
                       {message.link && (
                         <a 
                           href={message.link.url}
-                          className="inline-flex items-center gap-1 mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium"
+                          className="inline-flex items-center gap-1 mt-2 text-sm text-[#1e40af] hover:text-[#1e3a8a] font-medium"
                         >
                           {message.link.label} →
                         </a>
@@ -283,7 +283,7 @@ export default function Chatbot() {
                     <button
                       key={i}
                       onClick={() => handleQuickReply(reply)}
-                      className="text-xs px-3 py-1.5 bg-white border rounded-full hover:bg-amber-50 hover:border-amber-300 transition-colors"
+                      className="text-xs px-3 py-1.5 bg-white border rounded-full hover:bg-[#1e40af]/10 hover:border-[#1e40af] transition-colors"
                     >
                       {reply}
                     </button>
@@ -304,7 +304,7 @@ export default function Chatbot() {
                 <Button 
                   type="submit" 
                   size="icon"
-                  className="rounded-xl bg-amber-500 hover:bg-amber-600"
+                  className="rounded-xl bg-[#1e40af] hover:bg-[#1e3a8a]"
                   disabled={!input.trim() || isTyping}
                 >
                   <Send className="w-4 h-4" />

@@ -23,7 +23,7 @@ export default function LoginPage() {
 // Loading skeleton
 function LoginSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-white to-orange-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1e40af]-50 via-white to-[#0891b2]-50">
       <div className="w-full max-w-md p-8">
         <div className="animate-pulse">
           <div className="h-14 w-32 bg-gray-200 rounded mx-auto mb-8" />
@@ -83,9 +83,9 @@ function LoginContent() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593678820334-91d5f99be314?w=1200')] bg-cover bg-center opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-amber-900/80 via-transparent to-transparent" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#1e40af]-500 via-[#1e40af]-500 to-[#1e3a8a]-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593678820334-91d5f99be314?w=1200')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[#1e40af]/70" />
         
         <div className="relative z-10 p-12 flex flex-col justify-between">
           <Link href="/" className="flex items-center space-x-3">
@@ -191,7 +191,7 @@ function LoginContent() {
                 <div>
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                    <Link href="/forgot-password" className="text-sm text-amber-600 hover:text-amber-700">
+                    <Link href="/forgot-password" className="text-sm text-[#1e40af]-600 hover:text-[#1e40af]-700">
                       Forgot Password?
                     </Link>
                   </div>
@@ -218,7 +218,7 @@ function LoginContent() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
                   disabled={loading}
                 >
                   {loading ? (
@@ -236,7 +236,7 @@ function LoginContent() {
             <CardFooter className="flex flex-col space-y-4 pb-8 pt-2">
               <p className="text-center text-sm text-gray-600">
                 Don't have an account?{' '}
-                <Link href="/join" className="text-amber-600 hover:text-amber-700 font-semibold">
+                <Link href="/join" className="text-[#1e40af]-600 hover:text-[#1e40af]-700 font-semibold">
                   Join G2 Melody
                 </Link>
               </p>
@@ -252,3 +252,4 @@ function LoginContent() {
     </div>
   )
 }
+

@@ -75,7 +75,7 @@ function Navigation({ isScrolled, activeSection }) {
               </Button>
             </Link>
             <Link href="/join">
-              <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button size="sm" className="bg-[#1e40af] hover:bg-[#1e3a8a] text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 Join G2 Melody
               </Button>
             </Link>
@@ -103,7 +103,7 @@ function Navigation({ isScrolled, activeSection }) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-medium transition-colors"
+                  className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-[#1e40af]/10 hover:text-[#1e40af] font-medium transition-colors"
                 >
                   {link.label}
                 </a>
@@ -114,7 +114,7 @@ function Navigation({ isScrolled, activeSection }) {
                 <Button variant="outline" className="w-full">Sign In</Button>
               </Link>
               <Link href="/register" className="flex-1">
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">Join Us</Button>
+                <Button className="w-full bg-[#1e40af] hover:bg-[#1e3a8a]">Join Us</Button>
               </Link>
             </div>
           </div>
@@ -183,8 +183,8 @@ function HeroSection({ siteSettings }) {
       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-gray-900/30" />
       
       {/* Decorative Elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-20 left-10 w-72 h-72 bg-[#1e40af]/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#1e40af]/15 rounded-full blur-3xl animate-pulse delay-1000" />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -192,7 +192,7 @@ function HeroSection({ siteSettings }) {
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.9]">
             {slides[currentSlide].title}{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400">
+            <span className="text-white font-bold">
               {slides[currentSlide].highlight}
             </span>
           </h1>
@@ -204,7 +204,7 @@ function HeroSection({ siteSettings }) {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-12">
             <Link href="/projects">
-              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-lg px-8 py-6 rounded-xl shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 group">
+              <Button size="lg" className="bg-[#1e40af] hover:bg-[#1e3a8a] text-white text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-lg transition-all duration-300 group">
                 <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                 Support Our Mission
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -227,7 +227,7 @@ function HeroSection({ siteSettings }) {
               { value: '∞', label: 'Faith', icon: Heart },
             ].map((stat, index) => (
               <div key={index} className="text-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-                <stat.icon className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                <stat.icon className="w-6 h-6 text-[#1e40af] mx-auto mb-2" />
                 <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
                 <div className="text-sm text-gray-400">{stat.label}</div>
               </div>
@@ -269,18 +269,18 @@ function AboutSection() {
   return (
     <section id="about" className="py-16 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* Decorative Background */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-50 to-transparent opacity-50" />
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gray-50 to-transparent opacity-50" />
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#1e40af]/10 rounded-full blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-amber-100 text-amber-700 px-4 py-1.5 text-sm font-medium">
+          <Badge className="mb-4 bg-[#0891b2]/20 text-[#0891b2] px-4 py-1.5 text-sm font-medium border border-[#0891b2]/30">
             About Us
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Gospel Guardians{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Melody</span>
+            <span className="text-[#1e40af] font-bold">Melody</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea, 
@@ -290,7 +290,7 @@ function AboutSection() {
 
         {/* Mission & Vision Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-20">
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white overflow-hidden group hover:shadow-2xl transition-all duration-300">
+          <Card className="border-0 shadow-xl bg-[#1e40af] text-white overflow-hidden group hover:shadow-2xl transition-all duration-300">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
             <CardHeader>
               <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
@@ -331,8 +331,8 @@ function AboutSection() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {objectives.map((obj, index) => (
               <div key={index} className="group p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl border border-gray-100 hover:border-amber-200 transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <obj.icon className="w-6 h-6 text-amber-600" />
+                <div className="w-12 h-12 rounded-xl bg-[#1e40af]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <obj.icon className="w-6 h-6 text-[#1e40af]" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">{obj.title}</h4>
                 <p className="text-gray-600 text-sm">{obj.desc}</p>
@@ -347,8 +347,8 @@ function AboutSection() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {coreValues.map((value, index) => (
               <div key={index} className="text-center group">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-3 group-hover:from-amber-500 group-hover:to-orange-500 transition-all duration-300">
-                  <value.icon className="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" />
+                <div className="w-16 h-16 rounded-2xl bg-[#1e40af]/20 flex items-center justify-center mx-auto mb-3 group-hover:bg-[#1e40af] transition-all duration-300">
+                  <value.icon className="w-7 h-7 text-[#1e40af] group-hover:text-white transition-colors" />
                 </div>
                 <h4 className="font-semibold mb-1">{value.title}</h4>
                 <p className="text-xs text-gray-400">{value.desc}</p>
@@ -388,11 +388,11 @@ function ProjectsSection({ projects, onDonate }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-amber-100 text-amber-700 px-4 py-1.5">
+          <Badge className="mb-4 bg-[#0891b2]/20 text-[#0891b2] px-4 py-1.5 border border-[#0891b2]/30">
             <Target className="w-3 h-3 mr-1" /> Our Projects
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Mission</span>
+            Support Our <span className="text-[#1e40af]">Mission</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
@@ -422,7 +422,7 @@ function ProjectsSection({ projects, onDonate }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     {project.deadline && (
-                      <Badge className="absolute top-4 right-4 bg-orange-500 shadow-lg">
+                      <Badge className="absolute top-4 right-4 bg-[#1e40af] shadow-lg">
                         <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days left
                       </Badge>
                     )}
@@ -437,7 +437,7 @@ function ProjectsSection({ projects, onDonate }) {
                   <CardContent>
                     <div className="flex justify-between items-end mb-4">
                       <div>
-                        <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
+                        <p className="text-2xl font-bold text-[#1e40af]">{formatCurrency(project.currentAmount)}</p>
                         <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
                       </div>
                       <div className="text-right">
@@ -453,7 +453,7 @@ function ProjectsSection({ projects, onDonate }) {
                       </Button>
                     </Link>
                     <Button 
-                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg" 
+                      className="flex-1 bg-[#1e40af] hover:bg-[#1e3a8a] shadow-lg" 
                       onClick={() => onDonate(project)}
                     >
                       <Heart className="mr-2 h-4 w-4" /> Donate
@@ -474,13 +474,13 @@ function ProjectsSection({ projects, onDonate }) {
                       alt={project.title}
                       className="w-full h-full object-cover grayscale-[30%]"
                     />
-                    <Badge className="absolute top-4 right-4 bg-amber-500">
+                    <Badge className="absolute top-4 right-4 bg-[#1e40af]">
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                     </Badge>
                   </div>
                   <CardHeader>
                     <CardTitle className="text-lg">{project.title}</CardTitle>
-                    <p className="text-amber-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
+                    <p className="text-[#1e40af] font-semibold">{formatCurrency(project.goalAmount)} raised</p>
                   </CardHeader>
                 </Card>
               ))}
@@ -491,7 +491,7 @@ function ProjectsSection({ projects, onDonate }) {
         {/* View All Projects Button */}
         <div className="text-center mt-10">
           <Link href="/projects">
-            <Button size="lg" variant="outline" className="border-amber-500 text-amber-600 hover:bg-amber-50">
+            <Button size="lg" variant="outline" className="border-[#1e40af] text-[#1e40af] hover:bg-[#1e40af]/10">
               View All Projects <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -505,11 +505,11 @@ function ProjectsSection({ projects, onDonate }) {
               alt="G2 Meloverse" 
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
+            <div className="absolute inset-0 bg-[#1e40af]/70" />
           </div>
           <div className="relative p-8 md:p-16">
             <div className="max-w-3xl">
-              <Badge className="mb-4 bg-amber-500/20 text-amber-300 border-amber-400/30">
+              <Badge className="mb-4 bg-[#1e40af]/20 text-white border-[#1e40af]/30">
                 <Building className="w-3 h-3 mr-1" /> Vision Project
               </Badge>
               <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">G2 Meloverse</h3>
@@ -524,8 +524,8 @@ function ProjectsSection({ projects, onDonate }) {
                   { icon: Building, title: 'Multi-purpose Hall', desc: 'Events & community space' }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start space-x-3 bg-white/10 backdrop-blur rounded-xl p-4">
-                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-5 h-5 text-amber-400" />
+                    <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-white">{item.title}</h4>
@@ -536,7 +536,7 @@ function ProjectsSection({ projects, onDonate }) {
               </div>
               <div className="flex flex-wrap gap-4">
                 <Link href="/projects/proj-meloverse">
-                  <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                  <Button size="lg" className="bg-white text-[#1e40af] hover:bg-gray-100">
                     Learn More <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -576,11 +576,11 @@ function MusicStoreSection({ music, onPurchase }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-purple-100 text-purple-700 px-4 py-1.5">
+          <Badge className="mb-4 bg-[#0891b2]/20 text-[#0891b2] px-4 py-1.5 border border-[#0891b2]/30">
             <Headphones className="w-3 h-3 mr-1" /> Music Store
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">Music Collection</span>
+            Our <span className="text-[#0891b2]">Music Collection</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Experience the power of acapella worship. Purchase and download our original compositions, hymns, and gospel tracks.
@@ -588,7 +588,7 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {/* Album Highlight */}
-        <div className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
+        <div className="bg-[#1e40af] rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -627,14 +627,14 @@ function MusicStoreSection({ music, onPurchase }) {
                     onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
                   >
                     {playingId === track.id ? (
-                      <Pause className="w-5 h-5 text-rose-600" />
+                      <Pause className="w-5 h-5 text-[#1e40af]" />
                     ) : (
-                      <Play className="w-5 h-5 text-rose-600 ml-0.5" />
+                      <Play className="w-5 h-5 text-[#1e40af] ml-0.5" />
                     )}
                   </button>
                 </div>
                 {track.isHymn && (
-                  <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
+                  <Badge className="absolute top-2 left-2 bg-[#1e40af]-500 text-xs">Hymn</Badge>
                 )}
               </div>
               <CardContent className="p-3">
@@ -642,8 +642,8 @@ function MusicStoreSection({ music, onPurchase }) {
                 <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
               </CardContent>
               <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
-                <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
+                <span className="text-sm font-bold text-[#1e40af]">{formatCurrency(track.price)}</span>
+                <Button size="sm" className="bg-[#1e40af] hover:bg-[#1e3a8a] h-7 text-xs px-2" onClick={() => onPurchase(track)}>
                   <ShoppingCart className="w-3 h-3 mr-1" /> Buy
                 </Button>
               </CardFooter>
@@ -661,7 +661,7 @@ function MusicStoreSection({ music, onPurchase }) {
         {/* View All Music Button */}
         <div className="text-center mt-10">
           <Link href="/music">
-            <Button size="lg" variant="outline" className="border-rose-500 text-rose-600 hover:bg-rose-50">
+            <Button size="lg" variant="outline" className="border-[#1e40af] text-[#1e40af] hover:bg-[#1e40af]/10">
               View All Music <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -723,12 +723,12 @@ function LearnMuzikSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-blue-100 text-blue-700 px-4 py-1.5">
+          <Badge className="mb-4 bg-[#0891b2]/20 text-[#0891b2] px-4 py-1.5 border border-[#0891b2]/30">
             <GraduationCap className="w-3 h-3 mr-1" /> Learn Muzik
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Develop Your{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-500">Musical Gift</span>
+            <span className="text-[#0891b2]">Musical Gift</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Our structured music education program is designed to nurture your talents and equip you for worship leadership.
@@ -736,7 +736,7 @@ function LearnMuzikSection() {
         </div>
 
         {/* Feature Banner */}
-        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
+        <div className="bg-[#1e40af] rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full" />
           <div className="absolute right-20 top-10 w-32 h-32 bg-white/5 rounded-full" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
@@ -748,7 +748,7 @@ function LearnMuzikSection() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/join">
-                  <Button className="bg-white text-blue-600 hover:bg-white/90">
+                  <Button className="bg-white text-[#1e40af] hover:bg-gray-100">
                     <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
                   </Button>
                 </Link>
@@ -785,8 +785,8 @@ function LearnMuzikSection() {
           {programs.map((program, index) => (
             <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
               <CardHeader>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mb-4 group-hover:from-blue-500 group-hover:to-cyan-500 transition-all duration-300">
-                  <program.icon className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" />
+                <div className="w-14 h-14 rounded-2xl bg-[#0891b2]/10 flex items-center justify-center mb-4 group-hover:bg-[#0891b2] transition-all duration-300">
+                  <program.icon className="w-7 h-7 text-[#0891b2] group-hover:text-white transition-colors" />
                 </div>
                 <CardTitle className="text-xl">{program.title}</CardTitle>
                 <CardDescription>{program.desc}</CardDescription>
@@ -799,7 +799,7 @@ function LearnMuzikSection() {
               </CardContent>
               <CardFooter>
                 <Link href="/register" className="w-full">
-                  <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                  <Button variant="outline" className="w-full group-hover:bg-[#0891b2] group-hover:text-white group-hover:border-[#0891b2] transition-colors">
                     Learn More <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -812,7 +812,7 @@ function LearnMuzikSection() {
         <div className="text-center mt-16">
           <p className="text-gray-600 mb-4">Ready to start your musical journey?</p>
           <Link href="/register">
-            <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
+            <Button size="lg" className="bg-[#1e40af] hover:bg-[#1e3a8a]">
               Join G2 Melody Today <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
@@ -849,11 +849,11 @@ function ContactSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-pink-100 text-pink-700 px-4 py-1.5">
+          <Badge className="mb-4 bg-[#0891b2]/20 text-[#0891b2] px-4 py-1.5 border border-[#0891b2]/30">
             <MessageCircle className="w-3 h-3 mr-1" /> Contact Us
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">Touch</span>
+            Get In <span className="text-[#0891b2]">Touch</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Have questions about our ministry, music, or how to join? We'd love to hear from you!
@@ -873,7 +873,7 @@ function ContactSection() {
               <CardContent className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-pink-400" />
+                    <MapPin className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Location</h4>
@@ -882,7 +882,7 @@ function ContactSection() {
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-pink-400" />
+                    <Mail className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Email</h4>
@@ -891,7 +891,7 @@ function ContactSection() {
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <Church className="w-5 h-5 text-pink-400" />
+                    <Church className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Affiliated Church</h4>
@@ -907,7 +907,7 @@ function ContactSection() {
                       <a
                         key={index}
                         href="#"
-                        className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-pink-500 transition-colors"
+                        className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-[#1e40af] transition-colors"
                       >
                         <Icon className="w-5 h-5" />
                       </a>
@@ -921,7 +921,7 @@ function ContactSection() {
             <Card className="border-0 shadow-lg mt-6">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-amber-500" />
+                  <Calendar className="w-5 h-5 mr-2 text-white" />
                   Book the Choir
                 </CardTitle>
                 <CardDescription>
@@ -933,7 +933,7 @@ function ContactSection() {
                   We're available for weddings, church programs, concerts, and special events. 
                   Contact us to discuss your requirements and get a quote.
                 </p>
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">
+                <Button className="w-full bg-[#1e40af] hover:bg-[#1e3a8a]">
                   Request Booking
                 </Button>
               </CardContent>
@@ -1003,7 +1003,7 @@ function ContactSection() {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
+                  className="w-full bg-[#1e40af] hover:bg-[#1e3a8a]"
                   disabled={sending}
                 >
                   {sending ? (
@@ -1049,7 +1049,7 @@ function Footer() {
             </p>
             <div className="flex space-x-3">
               {socialLinks.map((social, index) => (
-                <a key={index} href={social.href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-amber-500 transition-colors" title={social.label}>
+                <a key={index} href={social.href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-[#1e40af] transition-colors" title={social.label}>
                   <social.icon className="w-5 h-5" />
                 </a>
               ))}
@@ -1062,7 +1062,7 @@ function Footer() {
               {['About Us', 'Our Projects', 'Music Store', 'Learn Muzik', 'Contact'].map((item) => (
                 <li key={item}>
                   <a href={`#${item.toLowerCase().replace(' ', '')}`} className="hover:text-white transition-colors flex items-center">
-                    <ChevronRight className="w-4 h-4 mr-1 text-amber-500" />
+                    <ChevronRight className="w-4 h-4 mr-1 text-white" />
                     {item}
                   </a>
                 </li>
@@ -1076,7 +1076,7 @@ function Footer() {
               {['Vocal Training', 'Four-Part Harmony', 'Music Theory', 'Choir Leadership', 'Worship Ministry'].map((item) => (
                 <li key={item}>
                   <a href="#learn" className="hover:text-white transition-colors flex items-center">
-                    <ChevronRight className="w-4 h-4 mr-1 text-amber-500" />
+                    <ChevronRight className="w-4 h-4 mr-1 text-white" />
                     {item}
                   </a>
                 </li>
@@ -1088,15 +1088,15 @@ function Footer() {
             <h3 className="text-white font-semibold mb-6">Contact</h3>
             <ul className="space-y-4">
               <li className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                 <span>Bomaka, Buea<br />Cameroon</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-amber-500" />
+                <Mail className="w-5 h-5 text-white" />
                 <span>g2melodycmr@gmail.com</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Church className="w-5 h-5 text-amber-500" />
+                <Church className="w-5 h-5 text-white" />
                 <span>Church of Christ</span>
               </li>
             </ul>
@@ -1186,7 +1186,7 @@ function DonationDialog({ project, open, onOpenChange }) {
                   type="button"
                   variant={formData.amount === amount.toString() ? 'default' : 'outline'}
                   size="sm"
-                  className={formData.amount === amount.toString() ? 'bg-amber-600 hover:bg-amber-700' : ''}
+                  className={formData.amount === amount.toString() ? 'bg-[#1e40af] hover:bg-[#1e3a8a]' : ''}
                   onClick={() => setFormData({ ...formData, amount: amount.toString() })}
                 >
                   {(amount / 1000)}k
@@ -1269,7 +1269,7 @@ function DonationDialog({ project, open, onOpenChange }) {
                   key={method.id}
                   type="button"
                   variant={formData.paymentMethod === method.id ? 'default' : 'outline'}
-                  className={`justify-start ${formData.paymentMethod === method.id ? 'bg-amber-600 hover:bg-amber-700' : ''}`}
+                  className={`justify-start ${formData.paymentMethod === method.id ? 'bg-[#1e40af] hover:bg-[#1e3a8a]' : ''}`}
                   onClick={() => setFormData({ ...formData, paymentMethod: method.id })}
                 >
                   <span className="mr-2">{method.icon}</span> {method.label}
@@ -1282,7 +1282,7 @@ function DonationDialog({ project, open, onOpenChange }) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-amber-600 hover:bg-amber-700">
+            <Button type="submit" disabled={loading} className="bg-[#1e40af] hover:bg-[#1e3a8a]">
               {loading ? 'Processing...' : 'Complete Donation'}
             </Button>
           </DialogFooter>
@@ -1366,7 +1366,7 @@ function PurchaseDialog({ track, open, onOpenChange }) {
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handlePurchase} disabled={loading || !email} className="bg-purple-600 hover:bg-purple-700">
+          <Button onClick={handlePurchase} disabled={loading || !email} className="bg-[#1e40af] hover:bg-[#1e3a8a]">
             {loading ? 'Processing...' : 'Complete Purchase'}
           </Button>
         </DialogFooter>
@@ -1421,13 +1421,15 @@ export default function App() {
         const musicData = await musicRes.json()
         const settingsData = await settingsRes.json()
         
-        setProjects(projectsData)
-        setMusic(musicData)
+        setProjects(Array.isArray(projectsData) ? projectsData : [])
+        setMusic(Array.isArray(musicData) ? musicData : [])
         if (settingsData && !settingsData.error) {
           setSiteSettings(settingsData)
         }
       } catch (error) {
         console.error('Error initializing data:', error)
+        setProjects([])
+        setMusic([])
       } finally {
         setLoading(false)
       }
@@ -1450,7 +1452,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
         <div className="text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-6 animate-pulse">
+          <div className="w-20 h-20 rounded-2xl bg-[#1e40af] flex items-center justify-center mx-auto mb-6 animate-pulse">
             <Music className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">G2 Melody</h2>
@@ -1489,3 +1491,4 @@ export default function App() {
     </div>
   )
 }
+

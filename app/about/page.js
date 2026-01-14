@@ -94,8 +94,8 @@ export default function AboutPage() {
   const getVocalPartColor = (part) => {
     switch(part) {
       case 'SOPRANO': return 'bg-rose-100 text-rose-700'
-      case 'ALTO': return 'bg-amber-100 text-amber-700'
-      case 'TENOR': return 'bg-orange-100 text-orange-700'
+      case 'ALTO': return 'bg-[#1e40af]-100 text-[#1e40af]-700'
+      case 'TENOR': return 'bg-[#0891b2]-100 text-[#0891b2]-700'
       case 'BASS': return 'bg-gray-200 text-gray-700'
       default: return 'bg-gray-100 text-gray-700'
     }
@@ -103,9 +103,9 @@ export default function AboutPage() {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'ACTIVE': return 'bg-amber-500'
+      case 'ACTIVE': return 'bg-[#1e40af]-500'
       case 'ALUMNI': return 'bg-gray-500'
-      case 'THEOSORTIAN': return 'bg-orange-500'
+      case 'THEOSORTIAN': return 'bg-[#0891b2]-500'
       case 'SPONSOR': return 'bg-rose-500'
       default: return 'bg-gray-500'
     }
@@ -132,7 +132,7 @@ export default function AboutPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Gospel Guardians <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Melody</span>
+            Gospel Guardians <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Melody</span>
           </h1>
           <p className="text-lg text-white/90 max-w-3xl mx-auto">
             "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" — Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea.
@@ -144,7 +144,7 @@ export default function AboutPage() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 text-white">
               <CardContent className="p-8">
                 <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
                   <Target className="w-7 h-7" />
@@ -175,9 +175,9 @@ export default function AboutPage() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center space-x-2 bg-amber-100 rounded-full px-4 py-2 mb-4">
-              <Calendar className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-medium text-amber-700">Our History</span>
+            <div className="inline-flex items-center space-x-2 bg-[#1e40af]-100 rounded-full px-4 py-2 mb-4">
+              <Calendar className="w-4 h-4 text-[#1e40af]-600" />
+              <span className="text-sm font-medium text-[#1e40af]-700">Our History</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The G2 Journey</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -189,7 +189,7 @@ export default function AboutPage() {
             {/* Late 2016 - The Visionaries & Beginning */}
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border-l-4 border-amber-500">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">Late 2016</span>
+                <span className="px-4 py-2 bg-[#1e40af]-500 text-white rounded-full text-sm font-bold">Late 2016</span>
                 <h3 className="text-xl font-bold text-gray-900">The Visionaries & Beginning</h3>
               </div>
               <p className="text-gray-600 mb-6">
@@ -198,8 +198,8 @@ export default function AboutPage() {
               
               {/* Founders Cards */}
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#1e40af]-50 to-[#0891b2]-50 rounded-xl border border-amber-200">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 flex items-center justify-center flex-shrink-0 shadow-lg">
                     {andyLeroy.image ? (
                       <img src={andyLeroy.image} alt={andyLeroy.name} className="w-20 h-20 rounded-full object-cover" />
                     ) : (
@@ -208,13 +208,13 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg">{andyLeroy.name}</h4>
-                    <p className="text-sm text-amber-600 font-medium">Co-Founder & Visionary</p>
+                    <p className="text-sm text-[#1e40af]-600 font-medium">Co-Founder & Visionary</p>
                     <p className="text-xs text-gray-500 mt-1">Conceived the idea of G2 Melody for the "Gospel Guardians" TV program</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#1e40af]-50 to-[#0891b2]-50 rounded-xl border border-amber-200">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 flex items-center justify-center flex-shrink-0 shadow-lg">
                     {ekwogeBlaise.image ? (
                       <img src={ekwogeBlaise.image} alt={ekwogeBlaise.name} className="w-20 h-20 rounded-full object-cover" />
                     ) : (
@@ -223,7 +223,7 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg">{ekwogeBlaise.name}</h4>
-                    <p className="text-sm text-amber-600 font-medium">Co-Founder & Director</p>
+                    <p className="text-sm text-[#1e40af]-600 font-medium">Co-Founder & Director</p>
                     <p className="text-xs text-gray-500 mt-1">Persevered through early challenges, still serving today</p>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export default function AboutPage() {
             {/* October 2016 - First Members */}
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border-l-4 border-orange-500">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-2 bg-orange-500 text-white rounded-full text-sm font-bold">October 2016</span>
+                <span className="px-4 py-2 bg-[#0891b2]-500 text-white rounded-full text-sm font-bold">October 2016</span>
                 <h3 className="text-xl font-bold text-gray-900">The First Gathering</h3>
               </div>
               <p className="text-gray-600">
@@ -267,7 +267,7 @@ export default function AboutPage() {
             {/* 2018 - Breakthrough */}
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border-l-4 border-amber-500">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2018</span>
+                <span className="px-4 py-2 bg-[#1e40af]-500 text-white rounded-full text-sm font-bold">2018</span>
                 <h3 className="text-xl font-bold text-gray-900">The Breakthrough</h3>
               </div>
               <p className="text-gray-600">
@@ -278,7 +278,7 @@ export default function AboutPage() {
             {/* 2019 - Growth & Album */}
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border-l-4 border-orange-500">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-2 bg-orange-500 text-white rounded-full text-sm font-bold">2019</span>
+                <span className="px-4 py-2 bg-[#0891b2]-500 text-white rounded-full text-sm font-bold">2019</span>
                 <h3 className="text-xl font-bold text-gray-900">Debut Album & New Initiatives</h3>
               </div>
               <p className="text-gray-600 mb-4">
@@ -306,26 +306,26 @@ export default function AboutPage() {
             {/* 2024 - Constitution & Vision */}
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border-l-4 border-amber-500">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">2024</span>
+                <span className="px-4 py-2 bg-[#1e40af]-500 text-white rounded-full text-sm font-bold">2024</span>
                 <h3 className="text-xl font-bold text-gray-900">Constitution & G2 Meloverse Vision</h3>
               </div>
               <p className="text-gray-600 mb-4">
                 G2 Melody officially adopted its <strong>Choristers' Handbook</strong> containing the tenets and operational guidelines. The ambitious <strong>G2 Meloverse</strong> project was launched — a vision for a permanent multi-purpose facility in Buea, Cameroon, including:
               </p>
               <div className="flex flex-wrap gap-2">
-                <Badge className="bg-amber-100 text-amber-700 px-3 py-1">Music Academy</Badge>
-                <Badge className="bg-amber-100 text-amber-700 px-3 py-1">Recording Studios</Badge>
-                <Badge className="bg-amber-100 text-amber-700 px-3 py-1">Radio Station</Badge>
-                <Badge className="bg-amber-100 text-amber-700 px-3 py-1">Event Spaces</Badge>
+                <Badge className="bg-[#1e40af]-100 text-[#1e40af]-700 px-3 py-1">Music Academy</Badge>
+                <Badge className="bg-[#1e40af]-100 text-[#1e40af]-700 px-3 py-1">Recording Studios</Badge>
+                <Badge className="bg-[#1e40af]-100 text-[#1e40af]-700 px-3 py-1">Radio Station</Badge>
+                <Badge className="bg-[#1e40af]-100 text-[#1e40af]-700 px-3 py-1">Event Spaces</Badge>
               </div>
             </div>
 
             {/* Quote */}
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-8 text-white text-center">
+            <div className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 rounded-2xl p-8 text-white text-center">
               <p className="text-xl italic font-medium mb-4">
                 "If your musical abilities today remain unchanged from what they were 3 or 5 years ago, you may not be fully realizing the potential of your gift. Gifts should be cultivated and refined, never hoarded."
               </p>
-              <p className="text-amber-100">— G2 Melody Handbook</p>
+              <p className="text-[#1e40af]-100">— G2 Melody Handbook</p>
             </div>
           </div>
         </div>
@@ -338,8 +338,8 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {objectives.map((obj, index) => (
               <div key={index} className="p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all border border-gray-100">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
-                  <obj.icon className="w-6 h-6 text-amber-600" />
+                <div className="w-12 h-12 rounded-xl bg-[#1e40af]-100 flex items-center justify-center mb-4">
+                  <obj.icon className="w-6 h-6 text-[#1e40af]-600" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">{obj.title}</h4>
                 <p className="text-gray-600 text-sm">{obj.desc}</p>
@@ -356,8 +356,8 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {coreValues.map((value, index) => (
               <div key={index} className="text-center">
-                <div className="w-16 h-16 rounded-2xl bg-amber-500/20 flex items-center justify-center mx-auto mb-3">
-                  <value.icon className="w-7 h-7 text-amber-400" />
+                <div className="w-16 h-16 rounded-2xl bg-[#1e40af]-500/20 flex items-center justify-center mx-auto mb-3">
+                  <value.icon className="w-7 h-7 text-[#1e40af]-400" />
                 </div>
                 <h4 className="font-semibold mb-1">{value.title}</h4>
                 <p className="text-xs text-gray-400">{value.desc}</p>
@@ -371,9 +371,9 @@ export default function AboutPage() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-2 bg-amber-100 rounded-full px-4 py-2 mb-4">
-              <Users className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-medium text-amber-700">Our Family</span>
+            <div className="inline-flex items-center space-x-2 bg-[#1e40af]-100 rounded-full px-4 py-2 mb-4">
+              <Users className="w-4 h-4 text-[#1e40af]-600" />
+              <span className="text-sm font-medium text-[#1e40af]-700">Our Family</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Members Since 2016</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -391,7 +391,7 @@ export default function AboutPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     activeTab === tab.id
-                      ? 'bg-amber-500 text-white shadow-lg'
+                      ? 'bg-[#1e40af]-500 text-white shadow-lg'
                       : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                   }`}
                 >
@@ -435,7 +435,7 @@ export default function AboutPage() {
                       </div>
                       <div className={`absolute top-2 right-2 w-3 h-3 rounded-full ${getStatusBadge(member.status)} ring-2 ring-white`} title={member.status}></div>
                       {member.isFounding && (
-                        <div className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        <div className="absolute top-2 left-2 bg-[#1e40af]-500 text-white text-xs px-2 py-0.5 rounded-full">
                           Founder
                         </div>
                       )}
@@ -443,7 +443,7 @@ export default function AboutPage() {
                     <CardContent className="p-3 text-center">
                       <h4 className="font-semibold text-gray-900 text-sm truncate">{member.name}</h4>
                       {member.role && (
-                        <p className="text-xs text-amber-600 truncate">{member.role}</p>
+                        <p className="text-xs text-[#1e40af]-600 truncate">{member.role}</p>
                       )}
                       <div className="flex items-center justify-center gap-1 mt-2 flex-wrap">
                         {member.vocalPart !== 'NONE' && (
@@ -494,9 +494,9 @@ export default function AboutPage() {
 
           {/* Legend */}
           <div className="flex flex-wrap justify-center gap-4 mt-8 text-xs text-gray-500">
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-amber-500"></div> Active</div>
+            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-[#1e40af]-500"></div> Active</div>
             <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-gray-500"></div> Alumni</div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-orange-500"></div> Theosortian</div>
+            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-[#0891b2]-500"></div> Theosortian</div>
             <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-rose-500"></div> Sponsor</div>
           </div>
         </div>
@@ -508,7 +508,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold mb-4">Ready to Join Us?</h2>
           <p className="text-gray-600 mb-8">Become part of our community and help spread the Gospel through music.</p>
           <Link href="/join">
-            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+            <Button size="lg" className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
               Join G2 Melody <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -519,3 +519,4 @@ export default function AboutPage() {
     </div>
   )
 }
+

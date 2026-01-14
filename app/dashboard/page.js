@@ -141,7 +141,7 @@ export default function DashboardPage() {
               <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
                 <Bell className="w-5 h-5 text-gray-600" />
                 {notifications.filter(n => n.unread).length > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#1e40af]-500 rounded-full"></span>
                 )}
               </button>
 
@@ -149,7 +149,7 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-3">
                 <Avatar className="h-9 w-9">
                   <AvatarImage src={session.user?.image} />
-                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white text-sm font-semibold">
+                  <AvatarFallback className="bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 text-white text-sm font-semibold">
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>
@@ -181,9 +181,9 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold text-gray-900">Welcome back, {userName.split(' ')[0]}! 👋</h1>
               <p className="text-gray-600 mt-1">Continue your musical journey with G2 Melody</p>
             </div>
-            <div className="hidden md:flex items-center space-x-2 bg-amber-50 rounded-full px-4 py-2">
-              <Flame className="w-5 h-5 text-amber-500" />
-              <span className="text-sm font-semibold text-amber-700">{learningProgress.currentStreak} Day Streak!</span>
+            <div className="hidden md:flex items-center space-x-2 bg-[#1e40af]-50 rounded-full px-4 py-2">
+              <Flame className="w-5 h-5 text-[#1e40af]-500" />
+              <span className="text-sm font-semibold text-[#1e40af]-700">{learningProgress.currentStreak} Day Streak!</span>
             </div>
           </div>
         </div>
@@ -191,16 +191,16 @@ export default function DashboardPage() {
         {/* Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white border border-gray-200 rounded-xl p-1 h-auto">
-            <TabsTrigger value="overview" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+            <TabsTrigger value="overview" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#1e40af]-500 data-[state=active]:text-white">
               <BarChart3 className="w-4 h-4 mr-2" /> Overview
             </TabsTrigger>
-            <TabsTrigger value="learning" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+            <TabsTrigger value="learning" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#1e40af]-500 data-[state=active]:text-white">
               <GraduationCap className="w-4 h-4 mr-2" /> Learning
             </TabsTrigger>
-            <TabsTrigger value="practice" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+            <TabsTrigger value="practice" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#1e40af]-500 data-[state=active]:text-white">
               <Headphones className="w-4 h-4 mr-2" /> Practice
             </TabsTrigger>
-            <TabsTrigger value="support" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+            <TabsTrigger value="support" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#1e40af]-500 data-[state=active]:text-white">
               <Heart className="w-4 h-4 mr-2" /> Support
             </TabsTrigger>
           </TabsList>
@@ -209,7 +209,7 @@ export default function DashboardPage() {
           <TabsContent value="overview" className="space-y-6">
             {/* Progress Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="border-0 shadow-md bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+              <Card className="border-0 shadow-md bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 text-white">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
@@ -249,8 +249,8 @@ export default function DashboardPage() {
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-                      <Trophy className="w-6 h-6 text-amber-600" />
+                    <div className="w-12 h-12 rounded-xl bg-[#1e40af]-100 flex items-center justify-center">
+                      <Trophy className="w-6 h-6 text-[#1e40af]-600" />
                     </div>
                     <span className="text-3xl font-bold text-gray-900">3</span>
                   </div>
@@ -276,16 +276,16 @@ export default function DashboardPage() {
                   <CardContent className="space-y-4">
                     {activeCourses.map((course) => (
                       <div key={course.id} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-2xl">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#1e40af]-100 to-[#0891b2]-100 flex items-center justify-center text-2xl">
                           {course.image}
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">{course.title}</h4>
+                          <h4 className="font-semibold text-gray-900 group-hover:text-[#1e40af]-600 transition-colors">{course.title}</h4>
                           <p className="text-sm text-gray-500">{course.completedLessons} of {course.totalLessons} lessons</p>
                           <Progress value={course.progress} className="mt-2 h-2" />
                         </div>
                         <div className="text-right">
-                          <span className="text-lg font-bold text-amber-600">{course.progress}%</span>
+                          <span className="text-lg font-bold text-[#1e40af]-600">{course.progress}%</span>
                           <ChevronRight className="w-5 h-5 text-gray-400 mt-1 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
@@ -299,7 +299,7 @@ export default function DashboardPage() {
                 <Card className="border-0 shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <Calendar className="w-5 h-5 mr-2 text-amber-500" />
+                      <Calendar className="w-5 h-5 mr-2 text-[#1e40af]-500" />
                       Upcoming Schedule
                     </CardTitle>
                   </CardHeader>
@@ -308,7 +308,7 @@ export default function DashboardPage() {
                       <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
                         <div className={`w-2 h-2 rounded-full mt-2 ${
                           item.type === 'rehearsal' ? 'bg-blue-500' :
-                          item.type === 'lesson' ? 'bg-amber-500' : 'bg-rose-500'
+                          item.type === 'lesson' ? 'bg-[#1e40af]-500' : 'bg-rose-500'
                         }`}></div>
                         <div className="flex-1">
                           <p className="font-medium text-gray-900 text-sm">{item.title}</p>
@@ -326,7 +326,7 @@ export default function DashboardPage() {
                 <Card className="border-0 shadow-md mt-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-[#1e40af]-500 flex items-center justify-center">
                         <Zap className="w-5 h-5 text-white" />
                       </div>
                       <div>
@@ -345,7 +345,7 @@ export default function DashboardPage() {
             <Card className="border-0 shadow-md">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center">
-                  <Bell className="w-5 h-5 mr-2 text-amber-500" />
+                  <Bell className="w-5 h-5 mr-2 text-[#1e40af]-500" />
                   Notifications
                 </CardTitle>
                 <Button variant="ghost" size="sm">Mark all as read</Button>
@@ -353,8 +353,8 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-3">
                   {notifications.map((notif) => (
-                    <div key={notif.id} className={`flex items-start gap-4 p-4 rounded-xl ${notif.unread ? 'bg-amber-50' : 'bg-gray-50'}`}>
-                      <div className={`w-2 h-2 rounded-full mt-2 ${notif.unread ? 'bg-amber-500' : 'bg-gray-300'}`}></div>
+                    <div key={notif.id} className={`flex items-start gap-4 p-4 rounded-xl ${notif.unread ? 'bg-[#1e40af]-50' : 'bg-gray-50'}`}>
+                      <div className={`w-2 h-2 rounded-full mt-2 ${notif.unread ? 'bg-[#1e40af]-500' : 'bg-gray-300'}`}></div>
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{notif.title}</p>
                         <p className="text-sm text-gray-500">{notif.desc}</p>
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                     {activeCourses.map((course) => (
                       <div key={course.id} className="p-4 rounded-xl border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer">
                         <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#1e40af]-100 to-[#0891b2]-100 flex items-center justify-center text-3xl">
                             {course.image}
                           </div>
                           <div className="flex-1">
@@ -389,7 +389,7 @@ export default function DashboardPage() {
                             <p className="text-sm text-gray-500 mb-2">{course.completedLessons} of {course.totalLessons} lessons completed</p>
                             <Progress value={course.progress} className="h-2" />
                           </div>
-                          <Button className="bg-amber-500 hover:bg-amber-600">
+                          <Button className="bg-[#1e40af]-500 hover:bg-[#1e40af]-600">
                             <Play className="w-4 h-4 mr-2" /> Continue
                           </Button>
                         </div>
@@ -402,7 +402,7 @@ export default function DashboardPage() {
                 <Card className="border-0 shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <Star className="w-5 h-5 mr-2 text-amber-500" />
+                      <Star className="w-5 h-5 mr-2 text-[#1e40af]-500" />
                       Recommended For You
                     </CardTitle>
                   </CardHeader>
@@ -413,7 +413,7 @@ export default function DashboardPage() {
                           <div className="w-full h-24 rounded-lg bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mb-3">
                             <GraduationCap className="w-10 h-10 text-blue-500" />
                           </div>
-                          <h4 className="font-medium text-gray-900 text-sm mb-1 group-hover:text-amber-600">{lesson.title}</h4>
+                          <h4 className="font-medium text-gray-900 text-sm mb-1 group-hover:text-[#1e40af]-600">{lesson.title}</h4>
                           <div className="flex items-center justify-between text-xs text-gray-500">
                             <span>{lesson.duration}</span>
                             <Badge variant="outline" className="text-xs">{lesson.level}</Badge>
@@ -446,7 +446,7 @@ export default function DashboardPage() {
                       { icon: '🎵', title: 'First Song', desc: 'Complete your first song lesson' },
                       { icon: '⭐', title: 'Quick Learner', desc: 'Complete 5 lessons in a week' },
                     ].map((achievement, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-amber-50">
+                      <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-[#1e40af]-50">
                         <span className="text-2xl">{achievement.icon}</span>
                         <div>
                           <p className="font-medium text-gray-900 text-sm">{achievement.title}</p>
@@ -528,7 +528,7 @@ export default function DashboardPage() {
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3">
                         {item.done ? (
-                          <CheckCircle2 className="w-5 h-5 text-amber-500" />
+                          <CheckCircle2 className="w-5 h-5 text-[#1e40af]-500" />
                         ) : (
                           <Circle className="w-5 h-5 text-gray-300" />
                         )}
@@ -545,7 +545,7 @@ export default function DashboardPage() {
           <TabsContent value="support" className="space-y-6">
             {/* Impact Summary */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="border-0 shadow-md bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+              <Card className="border-0 shadow-md bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 text-white">
                 <CardContent className="p-6">
                   <DollarSign className="w-8 h-8 mb-2 opacity-80" />
                   <p className="text-3xl font-bold">{formatCurrency(supporterStats.totalDonations)}</p>
@@ -568,7 +568,7 @@ export default function DashboardPage() {
               </Card>
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
-                  <Award className="w-8 h-8 mb-2 text-amber-500" />
+                  <Award className="w-8 h-8 mb-2 text-[#1e40af]-500" />
                   <p className="text-3xl font-bold text-gray-900">{supporterStats.badgesEarned}</p>
                   <p className="text-gray-500 text-sm">Badges Earned</p>
                 </CardContent>
@@ -581,7 +581,7 @@ export default function DashboardPage() {
                 <Card className="border-0 shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <TrendingUp className="w-5 h-5 mr-2 text-amber-500" />
+                      <TrendingUp className="w-5 h-5 mr-2 text-[#1e40af]-500" />
                       Your Impact
                     </CardTitle>
                     <CardDescription>See how your support is making a difference</CardDescription>
@@ -589,8 +589,8 @@ export default function DashboardPage() {
                   <CardContent>
                     <div className="grid md:grid-cols-3 gap-4 mb-6">
                       {impactHighlights.map((item, i) => (
-                        <div key={i} className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-center">
-                          <p className="text-2xl font-bold text-amber-600">{item.metric}</p>
+                        <div key={i} className="p-4 rounded-xl bg-gradient-to-br from-[#1e40af]-50 to-[#0891b2]-50 text-center">
+                          <p className="text-2xl font-bold text-[#1e40af]-600">{item.metric}</p>
                           <p className="text-sm text-gray-600">{item.desc}</p>
                         </div>
                       ))}
@@ -602,7 +602,7 @@ export default function DashboardPage() {
                         "Thanks to our supporters, I was able to complete my vocal training and now lead the soprano section. Your generosity changes lives!"
                       </p>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center font-bold">NC</div>
+                        <div className="w-10 h-10 rounded-full bg-[#1e40af]-500 flex items-center justify-center font-bold">NC</div>
                         <div>
                           <p className="font-semibold">Ngeh Canisia</p>
                           <p className="text-sm text-gray-400">Soprano Section Lead</p>
@@ -618,7 +618,7 @@ export default function DashboardPage() {
                 <Card className="border-0 shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <Trophy className="w-5 h-5 mr-2 text-amber-500" />
+                      <Trophy className="w-5 h-5 mr-2 text-[#1e40af]-500" />
                       Top Supporters
                     </CardTitle>
                   </CardHeader>
@@ -626,15 +626,15 @@ export default function DashboardPage() {
                     {supporterLeaderboard.map((supporter) => (
                       <div key={supporter.rank} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                          supporter.rank === 1 ? 'bg-amber-500 text-white' :
+                          supporter.rank === 1 ? 'bg-[#1e40af]-500 text-white' :
                           supporter.rank === 2 ? 'bg-gray-400 text-white' :
-                          'bg-amber-700 text-white'
+                          'bg-[#1e40af]-700 text-white'
                         }`}>
                           {supporter.rank}
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-gray-900 text-sm">{supporter.name}</p>
-                          <Badge className="text-xs bg-amber-100 text-amber-700">{supporter.badge}</Badge>
+                          <Badge className="text-xs bg-[#1e40af]-100 text-[#1e40af]-700">{supporter.badge}</Badge>
                         </div>
                       </div>
                     ))}
@@ -643,11 +643,11 @@ export default function DashboardPage() {
 
                 <Card className="border-0 shadow-md mt-6">
                   <CardContent className="p-6 text-center">
-                    <Gift className="w-12 h-12 mx-auto mb-4 text-amber-500" />
+                    <Gift className="w-12 h-12 mx-auto mb-4 text-[#1e40af]-500" />
                     <h3 className="font-bold text-gray-900 mb-2">Make a Donation</h3>
                     <p className="text-sm text-gray-500 mb-4">Support our learners and ministry</p>
                     <Link href="/projects">
-                      <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                      <Button className="w-full bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
                         <Heart className="w-4 h-4 mr-2" /> Donate Now
                       </Button>
                     </Link>
@@ -675,3 +675,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+

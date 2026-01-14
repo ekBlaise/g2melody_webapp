@@ -21,16 +21,16 @@ import {
 // Upcoming Event Card
 function EventCard({ event, isPast = false }) {
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border ${isPast ? 'border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/50' : 'border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 dark:border-amber-800/50'} p-5 transition-all duration-300 hover:shadow-lg`}>
+    <div className={`group relative overflow-hidden rounded-2xl border ${isPast ? 'border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/50' : 'border-amber-200 bg-gradient-to-br from-[#1e40af]-50 to-[#0891b2]-50 dark:from-[#1e40af]-900/20 dark:to-[#0891b2]-900/20 dark:border-amber-800/50'} p-5 transition-all duration-300 hover:shadow-lg`}>
       <div className="flex items-start gap-4">
-        <div className={`flex flex-col items-center justify-center rounded-xl ${isPast ? 'bg-gray-200 dark:bg-gray-800' : 'bg-gradient-to-br from-amber-500 to-orange-500'} p-3 text-center min-w-[60px]`}>
+        <div className={`flex flex-col items-center justify-center rounded-xl ${isPast ? 'bg-gray-200 dark:bg-gray-800' : 'bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500'} p-3 text-center min-w-[60px]`}>
           <span className={`text-xs font-medium ${isPast ? 'text-gray-500' : 'text-white/80'}`}>{event.month}</span>
           <span className={`text-2xl font-bold ${isPast ? 'text-gray-700 dark:text-gray-300' : 'text-white'}`}>{event.day}</span>
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <h4 className="font-semibold text-gray-900 dark:text-white">{event.title}</h4>
-            {!isPast && <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 text-xs">Upcoming</Badge>}
+            {!isPast && <Badge className="bg-[#1e40af]-100 text-[#1e40af]-700 dark:bg-[#1e40af]-900/50 dark:text-[#1e40af]-300 text-xs">Upcoming</Badge>}
           </div>
           <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {event.time}</span>
@@ -91,7 +91,7 @@ function AnnouncementCard({ announcement }) {
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
           announcement.priority === 'high' ? 'bg-red-100 text-red-600' : 
-          announcement.priority === 'medium' ? 'bg-amber-100 text-amber-600' : 
+          announcement.priority === 'medium' ? 'bg-[#1e40af]-100 text-[#1e40af]-600' : 
           'bg-blue-100 text-blue-600'
         }`}>
           <Bell className="h-5 w-5" />
@@ -271,7 +271,7 @@ export default function MemberDashboard() {
           
           <Card className="border-0 shadow-lg dark:bg-gray-900">
             <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 text-white shadow-lg shadow-amber-500/30">
                 <Star className="h-7 w-7" />
               </div>
               <div>
@@ -331,7 +331,7 @@ export default function MemberDashboard() {
               <Card className="border-0 shadow-xl dark:bg-gray-900">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Bell className="h-5 w-5 text-amber-500" />
+                    <Bell className="h-5 w-5 text-[#1e40af]-500" />
                     Announcements
                   </CardTitle>
                   <CardDescription>Latest updates from leadership</CardDescription>
@@ -466,3 +466,4 @@ export default function MemberDashboard() {
     </div>
   )
 }
+

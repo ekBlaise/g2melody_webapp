@@ -97,7 +97,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <Link href="/" className="flex items-center justify-center space-x-3 mb-8 lg:hidden">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 flex items-center justify-center shadow-lg">
               <Music className="w-7 h-7 text-white" />
             </div>
             <div>
@@ -187,7 +187,7 @@ export default function RegisterPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
                   disabled={loading}
                 >
                   {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
@@ -224,7 +224,7 @@ export default function RegisterPage() {
             <CardFooter className="flex flex-col space-y-4 pt-2">
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{' '}
-                <Link href="/login" className="text-amber-600 hover:text-amber-700 font-semibold">
+                <Link href="/login" className="text-[#1e40af]-600 hover:text-[#1e40af]-700 font-semibold">
                   Sign In
                 </Link>
               </p>
@@ -245,9 +245,9 @@ export default function RegisterPage() {
           alt="Worship Community"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-gray-900/90 via-gray-900/70 to-gray-900/50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-[#1e40af]/70 flex items-center justify-center">
           <div className="text-center text-white p-12 max-w-lg">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-8 shadow-2xl">
+            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 flex items-center justify-center mx-auto mb-8 shadow-2xl">
               <Music className="w-12 h-12 text-white" />
             </div>
             <h1 className="text-4xl font-bold mb-4">Join Our Community</h1>
@@ -258,8 +258,8 @@ export default function RegisterPage() {
             <div className="space-y-4">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center space-x-4 bg-white/10 backdrop-blur rounded-xl p-4">
-                  <div className="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                    <benefit.icon className="w-6 h-6 text-amber-400" />
+                  <div className="w-12 h-12 rounded-lg bg-[#1e40af]-500/20 flex items-center justify-center flex-shrink-0">
+                    <benefit.icon className="w-6 h-6 text-[#1e40af]-400" />
                   </div>
                   <div className="text-left">
                     <h3 className="font-semibold">{benefit.title}</h3>
@@ -274,3 +274,4 @@ export default function RegisterPage() {
     </div>
   )
 }
+

@@ -446,7 +446,7 @@ export default function AdminDashboard() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
         <div className="text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-xl shadow-orange-500/30">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0891b2]-500 to-red-500 shadow-xl shadow-orange-500/30">
             <Shield className="h-10 w-10 text-white animate-pulse" />
           </div>
           <h2 className="text-xl font-bold text-white">Loading Admin Console...</h2>
@@ -466,12 +466,12 @@ export default function AdminDashboard() {
       <header className="sticky top-0 z-50 border-b border-gray-200/50 bg-white/80 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-950/80">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0891b2]-500 to-red-500 shadow-lg shadow-orange-500/30">
               <Shield className="h-5 w-5 text-white" />
             </div>
             <div>
               <span className="font-bold text-gray-900 dark:text-white">G2 Melody</span>
-              <Badge className="ml-2 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+              <Badge className="ml-2 bg-[#0891b2]-100 text-[#0891b2]-700 dark:bg-[#0891b2]-900/30 dark:text-[#0891b2]-300">
                 <Crown className="h-3 w-3 mr-1" />Admin
               </Badge>
             </div>
@@ -595,7 +595,7 @@ export default function AdminDashboard() {
               <Card className="border-0 shadow-xl dark:bg-gray-900">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-amber-500" />
+                    <Zap className="h-5 w-5 text-[#1e40af]-500" />
                     Quick Actions
                   </CardTitle>
                   <CardDescription>Frequently used operations</CardDescription>
@@ -722,12 +722,12 @@ export default function AdminDashboard() {
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-amber-500" />
+                    <Star className="h-5 w-5 text-[#1e40af]-500" />
                     Founders Management
                   </CardTitle>
                   <CardDescription>Manage the visionaries displayed on the About page</CardDescription>
                 </div>
-                <Button className="bg-gradient-to-r from-amber-500 to-orange-500 gap-2" onClick={() => setCreateFounderDialogOpen(true)}>
+                <Button className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 gap-2" onClick={() => setCreateFounderDialogOpen(true)}>
                   <Plus className="h-4 w-4" /> Add Founder
                 </Button>
               </CardHeader>
@@ -735,7 +735,7 @@ export default function AdminDashboard() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {founders.map((founder) => (
                     <div key={founder.id} className="flex items-start gap-4 rounded-xl border border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-800">
-                      <div className="h-16 w-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                      <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#1e40af]-500 to-[#0891b2]-500 flex items-center justify-center flex-shrink-0">
                         {founder.image ? (
                           <img src={founder.image} alt={founder.name} className="h-16 w-16 rounded-full object-cover" />
                         ) : (
@@ -744,7 +744,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-gray-900 dark:text-white">{founder.name}</h4>
-                        <p className="text-sm text-amber-600">{founder.role}</p>
+                        <p className="text-sm text-[#1e40af]-600">{founder.role}</p>
                         <p className="text-xs text-gray-500 mt-1 line-clamp-2">{founder.bio}</p>
                       </div>
                       <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700" onClick={() => handleDeleteFounder(founder.id)}>
@@ -796,7 +796,7 @@ export default function AdminDashboard() {
                               </div>
                               <div>
                                 <p className="font-medium text-gray-900 dark:text-white text-sm">{member.name}</p>
-                                {member.role && <p className="text-xs text-amber-600">{member.role}</p>}
+                                {member.role && <p className="text-xs text-[#1e40af]-600">{member.role}</p>}
                               </div>
                             </div>
                           </td>
@@ -815,7 +815,7 @@ export default function AdminDashboard() {
                             <Badge className={`text-xs ${
                               member.status === 'ACTIVE' ? 'bg-green-100 text-green-700' :
                               member.status === 'ALUMNI' ? 'bg-blue-100 text-blue-700' :
-                              member.status === 'THEOSORTIAN' ? 'bg-amber-100 text-amber-700' :
+                              member.status === 'THEOSORTIAN' ? 'bg-[#1e40af]-100 text-[#1e40af]-700' :
                               member.status === 'SPONSOR' ? 'bg-purple-100 text-purple-700' :
                               'bg-gray-100 text-gray-700'
                             }`}>
@@ -824,7 +824,7 @@ export default function AdminDashboard() {
                           </td>
                           <td className="py-3 px-2 text-sm text-gray-600">{member.yearJoined || '-'}</td>
                           <td className="py-3 px-2">
-                            {member.isFounding && <Badge className="bg-amber-500 text-white text-xs">Founding</Badge>}
+                            {member.isFounding && <Badge className="bg-[#1e40af]-500 text-white text-xs">Founding</Badge>}
                           </td>
                           <td className="py-3 px-2 text-right">
                             <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 h-8 w-8 p-0" onClick={() => handleDeleteChoirMember(member.id)}>
@@ -1063,7 +1063,7 @@ function CreateFounderDialog({ open, onOpenChange, onSubmit }) {
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-amber-500 to-orange-500">
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500">
               {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
               Add Founder
             </Button>
@@ -1161,3 +1161,4 @@ function CreateChoirMemberDialog({ open, onOpenChange, onSubmit }) {
     </Dialog>
   )
 }
+
