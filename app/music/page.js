@@ -82,10 +82,8 @@ export default function MusicPage() {
   const handlePlay = (track) => {
     if (playingTrack?.id === track.id) {
       setPlayingTrack(null)
-      // Would pause audio here
     } else {
       setPlayingTrack(track)
-      // Would play audio here - in production, connect to actual audio player
     }
   }
 
@@ -102,7 +100,7 @@ export default function MusicPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
       </div>
     )
   }
@@ -111,7 +109,7 @@ export default function MusicPage() {
     <div className="min-h-screen bg-white">
       <SharedNavigation currentPage="music" />
 
-      {/* Hero with Background Image */}
+      {/* Hero */}
       <section className="relative py-20 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -119,15 +117,15 @@ export default function MusicPage() {
             alt="Concert Performance"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 via-purple-900/80 to-purple-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
-            <Headphones className="w-4 h-4 text-purple-400" />
+            <Headphones className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-medium text-white/90">Music Store</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Music Collection</span>
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Music Collection</span>
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
             Experience the power of acapella worship. Stream our music for free, or purchase to download high-quality tracks.
@@ -148,7 +146,6 @@ export default function MusicPage() {
 
       {/* Album View or Grid View */}
       {selectedAlbum ? (
-        // Album Detail View
         <AlbumDetail 
           album={selectedAlbum} 
           onBack={() => setSelectedAlbum(null)}
@@ -159,7 +156,6 @@ export default function MusicPage() {
           formatCurrency={formatCurrency}
         />
       ) : (
-        // Albums Grid
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
@@ -183,7 +179,7 @@ export default function MusicPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center shadow-xl">
+                      <div className="w-14 h-14 rounded-full bg-amber-500 flex items-center justify-center shadow-xl">
                         <Play className="w-6 h-6 text-white ml-1" />
                       </div>
                     </div>
@@ -191,11 +187,11 @@ export default function MusicPage() {
                       {album.tracks.length} tracks
                     </Badge>
                   </div>
-                  <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-purple-600 transition-colors">
+                  <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-amber-600 transition-colors">
                     {album.name}
                   </h3>
                   <p className="text-sm text-gray-500 line-clamp-1">{album.artist}</p>
-                  <p className="text-sm font-medium text-purple-600 mt-1">
+                  <p className="text-sm font-medium text-amber-600 mt-1">
                     {formatCurrency(album.totalPrice)}
                   </p>
                 </div>
@@ -255,7 +251,7 @@ function AlbumDetail({ album, onBack, onPlay, onPurchase, playingTrack, formatDu
             />
           </div>
           <div className="flex flex-col justify-end">
-            <Badge className="w-fit mb-3 bg-purple-100 text-purple-700">Album</Badge>
+            <Badge className="w-fit mb-3 bg-amber-100 text-amber-700">Album</Badge>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">{album.name}</h1>
             <p className="text-xl text-gray-600 mb-4">{album.artist}</p>
             <div className="flex items-center gap-4 text-gray-500 mb-6">
@@ -268,7 +264,7 @@ function AlbumDetail({ album, onBack, onPlay, onPurchase, playingTrack, formatDu
             </div>
             <div className="flex gap-3">
               <Button 
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
                 onClick={() => onPurchase(album, 'album')}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
@@ -295,33 +291,33 @@ function AlbumDetail({ album, onBack, onPlay, onPurchase, playingTrack, formatDu
               <div 
                 key={track.id}
                 className={`grid grid-cols-[auto_1fr_auto_auto] gap-4 px-6 py-4 items-center hover:bg-gray-100 transition-colors group ${
-                  playingTrack?.id === track.id ? 'bg-purple-50' : ''
+                  playingTrack?.id === track.id ? 'bg-amber-50' : ''
                 }`}
               >
                 <span className="w-8 text-center">
                   <button 
                     onClick={() => onPlay(track)}
-                    className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-purple-100 transition-colors"
+                    className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-100 transition-colors"
                   >
                     {playingTrack?.id === track.id ? (
-                      <Pause className="w-4 h-4 text-purple-600" />
+                      <Pause className="w-4 h-4 text-amber-600" />
                     ) : (
                       <span className="group-hover:hidden text-gray-400">{index + 1}</span>
                     )}
                     {playingTrack?.id !== track.id && (
-                      <Play className="w-4 h-4 text-purple-600 hidden group-hover:block" />
+                      <Play className="w-4 h-4 text-amber-600 hidden group-hover:block" />
                     )}
                   </button>
                 </span>
                 <div>
-                  <p className={`font-medium ${playingTrack?.id === track.id ? 'text-purple-600' : 'text-gray-900'}`}>
+                  <p className={`font-medium ${playingTrack?.id === track.id ? 'text-amber-600' : 'text-gray-900'}`}>
                     {track.title}
                   </p>
                   <p className="text-sm text-gray-500">{track.artist}</p>
                 </div>
                 <span className="text-gray-500 text-right">{formatDuration(track.duration)}</span>
                 <div className="flex items-center gap-2 justify-end">
-                  <span className="text-purple-600 font-medium">{formatCurrency(track.price)}</span>
+                  <span className="text-amber-600 font-medium">{formatCurrency(track.price)}</span>
                   <Button 
                     size="sm" 
                     variant="ghost"
@@ -367,7 +363,6 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
     setLoading(true)
     try {
       if (isAlbum) {
-        // Purchase all tracks in album
         for (const track of item.tracks) {
           await fetch('/api/purchases', {
             method: 'POST',
@@ -413,7 +408,7 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
             <p className="text-sm text-gray-500">
               {isAlbum ? `${item.tracks.length} tracks` : item.artist}
             </p>
-            <p className="font-bold text-purple-600 mt-1">{formatCurrency(price)}</p>
+            <p className="font-bold text-amber-600 mt-1">{formatCurrency(price)}</p>
           </div>
         </div>
 
@@ -439,7 +434,7 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
           <Button 
             onClick={handlePurchase} 
             disabled={loading || !email}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
           >
             {loading ? 'Processing...' : `Pay ${formatCurrency(price)}`}
           </Button>
