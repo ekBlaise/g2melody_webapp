@@ -1269,7 +1269,7 @@ function DonationDialog({ project, open, onOpenChange }) {
                   key={method.id}
                   type="button"
                   variant={formData.paymentMethod === method.id ? 'default' : 'outline'}
-                  className={`justify-start ${formData.paymentMethod === method.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                  className={`justify-start ${formData.paymentMethod === method.id ? 'bg-amber-600 hover:bg-amber-700' : ''}`}
                   onClick={() => setFormData({ ...formData, paymentMethod: method.id })}
                 >
                   <span className="mr-2">{method.icon}</span> {method.label}
