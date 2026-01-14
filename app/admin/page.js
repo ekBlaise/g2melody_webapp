@@ -714,6 +714,134 @@ export default function AdminDashboard() {
           <TabsContent value="settings" className="space-y-6">
             <SettingsSection settings={siteSettings} onUpdate={setSiteSettings} />
           </TabsContent>
+
+          {/* About Page Management Tab */}
+          <TabsContent value="about" className="space-y-6">
+            {/* Founders Management */}
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5 text-amber-500" />
+                    Founders Management
+                  </CardTitle>
+                  <CardDescription>Manage the visionaries displayed on the About page</CardDescription>
+                </div>
+                <Button className="bg-gradient-to-r from-amber-500 to-orange-500 gap-2" onClick={() => setCreateFounderDialogOpen(true)}>
+                  <Plus className="h-4 w-4" /> Add Founder
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {founders.map((founder) => (
+                    <div key={founder.id} className="flex items-start gap-4 rounded-xl border border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-800">
+                      <div className="h-16 w-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                        {founder.image ? (
+                          <img src={founder.image} alt={founder.name} className="h-16 w-16 rounded-full object-cover" />
+                        ) : (
+                          <User className="h-8 w-8 text-white" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">{founder.name}</h4>
+                        <p className="text-sm text-amber-600">{founder.role}</p>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{founder.bio}</p>
+                      </div>
+                      <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700" onClick={() => handleDeleteFounder(founder.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  {founders.length === 0 && (
+                    <div className="col-span-2 text-center py-8 text-gray-500">No founders added yet</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Choir Members Management */}
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-green-500" />
+                    Choir Members
+                  </CardTitle>
+                  <CardDescription>Manage members displayed on the About page ({choirMembers.length} total)</CardDescription>
+                </div>
+                <Button className="bg-gradient-to-r from-green-500 to-emerald-500 gap-2" onClick={() => setCreateMemberDialogOpen(true)}>
+                  <Plus className="h-4 w-4" /> Add Member
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200 dark:border-gray-700">
+                        <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Name</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Vocal Part</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Status</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Year Joined</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Founding</th>
+                        <th className="text-right py-3 px-2 text-sm font-medium text-gray-500">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {choirMembers.map((member) => (
+                        <tr key={member.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                <User className="h-4 w-4 text-gray-500" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-gray-900 dark:text-white text-sm">{member.name}</p>
+                                {member.role && <p className="text-xs text-amber-600">{member.role}</p>}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 px-2">
+                            <Badge variant="outline" className={`text-xs ${
+                              member.vocalPart === 'SOPRANO' ? 'bg-pink-50 text-pink-700 border-pink-200' :
+                              member.vocalPart === 'ALTO' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                              member.vocalPart === 'TENOR' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                              member.vocalPart === 'BASS' ? 'bg-green-50 text-green-700 border-green-200' :
+                              'bg-gray-50 text-gray-700 border-gray-200'
+                            }`}>
+                              {member.vocalPart === 'NONE' ? 'N/A' : member.vocalPart}
+                            </Badge>
+                          </td>
+                          <td className="py-3 px-2">
+                            <Badge className={`text-xs ${
+                              member.status === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                              member.status === 'ALUMNI' ? 'bg-blue-100 text-blue-700' :
+                              member.status === 'THEOSORTIAN' ? 'bg-amber-100 text-amber-700' :
+                              member.status === 'SPONSOR' ? 'bg-purple-100 text-purple-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {member.status}
+                            </Badge>
+                          </td>
+                          <td className="py-3 px-2 text-sm text-gray-600">{member.yearJoined || '-'}</td>
+                          <td className="py-3 px-2">
+                            {member.isFounding && <Badge className="bg-amber-500 text-white text-xs">Founding</Badge>}
+                          </td>
+                          <td className="py-3 px-2 text-right">
+                            <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 h-8 w-8 p-0" onClick={() => handleDeleteChoirMember(member.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {choirMembers.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">No choir members added yet</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
