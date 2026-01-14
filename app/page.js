@@ -388,11 +388,11 @@ function ProjectsSection({ projects, onDonate }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-green-100 text-green-700 px-4 py-1.5">
+          <Badge className="mb-4 bg-amber-100 text-amber-700 px-4 py-1.5">
             <Target className="w-3 h-3 mr-1" /> Our Projects
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-500">Mission</span>
+            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Mission</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
