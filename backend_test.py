@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Base URL from environment
-BASE_URL = "https://musicportal-6.preview.emergentagent.com/api"
+BASE_URL = "https://g2melody.preview.emergentagent.com/api"
 
 # Test credentials
 ADMIN_EMAIL = "admin@g2melody.com"
