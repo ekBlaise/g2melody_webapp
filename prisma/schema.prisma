@@ -335,3 +335,168 @@ model HistoryEvent {
   updatedAt     DateTime @updatedAt
 }
 
+// ==================== LEARNING PLATFORM MODELS ====================
+
+// Course model for Learn Muzik
+model Course {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?  @db.Text
+  image         String?
+  emoji         String?  @default("🎵")
+  duration      String?  // e.g., "12 weeks"
+  level         String   @default("Beginner") // Beginner, Intermediate, Advanced
+  totalLessons  Int      @default(0)
+  isPublished   Boolean  @default(true)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lessons       Lesson[]
+  enrollments   Enrollment[]
+}
+
+// Lesson model
+model Lesson {
+  id            String   @id @default(uuid())
+  courseId      String
+  title         String
+  description   String?  @db.Text
+  content       String?  @db.Text
+  videoUrl      String?
+  audioUrl      String?
+  duration      Int?     // in minutes
+  order         Int      @default(0)
+  isPublished   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress      LessonProgress[]
+}
+
+// User enrollment in courses
+model Enrollment {
+  id            String   @id @default(uuid())
+  userId        String
+  courseId      String
+  progress      Int      @default(0) // percentage 0-100
+  completedLessons Int   @default(0)
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  lastAccessedAt DateTime @default(now())
+
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+// Individual lesson progress
+model LessonProgress {
+  id            String   @id @default(uuid())
+  userId        String
+  lessonId      String
+  completed     Boolean  @default(false)
+  watchTime     Int      @default(0) // in seconds
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+// Practice tracks for users
+model PracticeTrack {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  audioUrl      String?
+  duration      String?  // e.g., "5:30"
+  type          String   @default("Exercise") // Exercise, Song, Warm-up
+  vocalPart     VocalPart @default(NONE) // For part-specific tracks
+  difficulty    String   @default("Beginner")
+  isPublished   Boolean  @default(true)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// User practice sessions
+model PracticeSession {
+  id            String   @id @default(uuid())
+  userId        String
+  trackId       String?
+  duration      Int      // in minutes
+  date          DateTime @default(now())
+  notes         String?
+
+  @@index([userId])
+}
+
+// User achievements/badges
+model Achievement {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  icon          String?  // emoji or icon name
+  type          String   @default("milestone") // milestone, streak, course, special
+  requirement   String?  // JSON string for conditions
+  createdAt     DateTime @default(now())
+}
+
+// User earned achievements
+model UserAchievement {
+  id            String   @id @default(uuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+// User notifications
+model Notification {
+  id            String   @id @default(uuid())
+  userId        String
+  title         String
+  message       String
+  type          String   @default("info") // info, reminder, achievement, announcement
+  isRead        Boolean  @default(false)
+  link          String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Scheduled events for users (rehearsals, deadlines, etc.)
+model ScheduleItem {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  date          DateTime
+  time          String?
+  type          String   @default("event") // rehearsal, lesson, deadline, event
+  isPublic      Boolean  @default(true)
+  userId        String?  // null for public events
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// User learning stats/streaks
+model UserStats {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  totalPracticeMinutes Int @default(0)
+  totalLessonsCompleted Int @default(0)
+  lastPracticeDate DateTime?
+  vocalPart       VocalPart @default(NONE)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
