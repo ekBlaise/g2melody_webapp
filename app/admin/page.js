@@ -858,6 +858,20 @@ export default function AdminDashboard() {
         onOpenChange={setCreateMusicDialogOpen}
         onSubmit={handleCreateMusic}
       />
+
+      {/* Create Founder Dialog */}
+      <CreateFounderDialog
+        open={createFounderDialogOpen}
+        onOpenChange={setCreateFounderDialogOpen}
+        onSubmit={handleCreateFounder}
+      />
+
+      {/* Create Choir Member Dialog */}
+      <CreateChoirMemberDialog
+        open={createMemberDialogOpen}
+        onOpenChange={setCreateMemberDialogOpen}
+        onSubmit={handleCreateChoirMember}
+      />
     </div>
   )
 }
