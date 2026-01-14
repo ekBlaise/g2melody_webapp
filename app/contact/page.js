@@ -47,7 +47,7 @@ export default function ContactPage() {
       <SharedNavigation currentPage="contact" />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-20 text-white overflow-hidden">
+      <section className="relative py-16 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1519937754318-2462db1c429d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
