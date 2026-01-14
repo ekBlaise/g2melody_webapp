@@ -482,6 +482,9 @@ export default function AdminDashboard() {
             <TabsTrigger value="settings" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
               <Settings className="mr-2 h-4 w-4" /> Settings
             </TabsTrigger>
+            <TabsTrigger value="about" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+              <FileText className="mr-2 h-4 w-4" /> About Page
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
