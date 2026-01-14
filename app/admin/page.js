@@ -897,6 +897,83 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* History Timeline Management */}
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-blue-500" />
+                    History Timeline
+                  </CardTitle>
+                  <CardDescription>Manage the "Our History" timeline on the About page ({historyEvents.length} events)</CardDescription>
+                </div>
+                <Button className="bg-gradient-to-r from-blue-500 to-indigo-500 gap-2" onClick={() => setCreateHistoryDialogOpen(true)}>
+                  <Plus className="h-4 w-4" /> Add Event
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {historyEvents.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No history events added yet</p>
+                      <p className="text-sm mt-1">Add timeline events to tell the G2 Melody story</p>
+                    </div>
+                  ) : (
+                    historyEvents.map((event, index) => (
+                      <div 
+                        key={event.id} 
+                        className={`flex gap-4 p-4 rounded-xl border transition-all hover:shadow-md ${
+                          event.colorVariant === 'amber' ? 'border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800' :
+                          event.colorVariant === 'orange' ? 'border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800' :
+                          event.colorVariant === 'rose' ? 'border-rose-200 bg-rose-50 dark:bg-rose-900/20 dark:border-rose-800' :
+                          'border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700'
+                        }`}
+                      >
+                        <div className="flex flex-col items-center">
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                            event.colorVariant === 'amber' ? 'bg-gradient-to-br from-amber-500 to-orange-500' :
+                            event.colorVariant === 'orange' ? 'bg-gradient-to-br from-orange-500 to-red-500' :
+                            event.colorVariant === 'rose' ? 'bg-gradient-to-br from-rose-500 to-pink-500' :
+                            'bg-gradient-to-br from-gray-500 to-gray-600'
+                          }`}>
+                            #{index + 1}
+                          </div>
+                          <span className="mt-2 text-sm font-semibold text-gray-600">{event.year}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-semibold text-gray-900 dark:text-white">{event.title}</h4>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{event.description}</p>
+                            </div>
+                            <div className="flex items-center gap-2 ml-4">
+                              <Badge variant="outline" className={`text-xs ${
+                                event.colorVariant === 'amber' ? 'bg-amber-100 text-amber-700 border-amber-300' :
+                                event.colorVariant === 'orange' ? 'bg-orange-100 text-orange-700 border-orange-300' :
+                                event.colorVariant === 'rose' ? 'bg-rose-100 text-rose-700 border-rose-300' :
+                                'bg-gray-100 text-gray-700 border-gray-300'
+                              }`}>
+                                {event.colorVariant}
+                              </Badge>
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="text-red-600 hover:text-red-700 h-8 w-8 p-0" 
+                                onClick={() => handleDeleteHistory(event.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
