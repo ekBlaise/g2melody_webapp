@@ -255,11 +255,14 @@ backend:
     file: "/app/app/api/[[...path]]/route.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET /api/enrollments?userId=X returns user enrollments with course data. POST enrolls user in course. Tested - enrollment creates successfully."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/enrollments successfully created enrollment for admin-1 in course-3. GET /api/enrollments returned 3 enrollments for admin-1. API working correctly."
 
   - task: "Practice Tracks API"
     implemented: true
