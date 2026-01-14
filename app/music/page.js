@@ -121,7 +121,7 @@ export default function MusicPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Music Collection</span>
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-400">Music Collection</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-6">
             Experience the power of acapella worship. Stream our music for free, or purchase to download high-quality tracks.
