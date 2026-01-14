@@ -60,7 +60,7 @@ export default function ProjectsPage() {
     <div className="min-h-screen bg-gray-50">
       <SharedNavigation currentPage="projects" />
 
-      {/* Hero with Background Image */}
+      {/* Hero */}
       <section className="relative py-24 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -68,15 +68,15 @@ export default function ProjectsPage() {
             alt="Community Choir"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 via-green-900/80 to-green-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
-            <Target className="w-4 h-4 text-green-400" />
+            <Target className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-medium text-white/90">Our Projects</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">Mission</span>
+            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Mission</span>
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
             Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
@@ -107,7 +107,7 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                   <Link href={`/projects/${meloverse.id}`}>
-                    <Button className="bg-gradient-to-r from-amber-500 to-orange-500">
+                    <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
                       Learn More <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -146,7 +146,7 @@ export default function ProjectsPage() {
                     <CardContent>
                       <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 mb-2" />
                       <div className="flex justify-between text-sm">
-                        <span className="font-semibold text-green-600">{formatCurrency(project.currentAmount)}</span>
+                        <span className="font-semibold text-amber-600">{formatCurrency(project.currentAmount)}</span>
                         <span className="text-gray-500">of {formatCurrency(project.goalAmount)}</span>
                       </div>
                     </CardContent>
@@ -155,7 +155,7 @@ export default function ProjectsPage() {
                         <Button variant="outline" className="w-full">View Details</Button>
                       </Link>
                       <Link href={`/projects/${project.id}`} className="flex-1">
-                        <Button className="w-full bg-green-600 hover:bg-green-700">
+                        <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
                           <Heart className="w-4 h-4 mr-1" /> Donate
                         </Button>
                       </Link>
@@ -171,13 +171,13 @@ export default function ProjectsPage() {
                   <Card key={project.id} className="overflow-hidden">
                     <div className="relative h-48">
                       <img src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'} alt={project.title} className="w-full h-full object-cover grayscale-[30%]" />
-                      <Badge className="absolute top-3 right-3 bg-green-500">
+                      <Badge className="absolute top-3 right-3 bg-amber-500">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                       </Badge>
                     </div>
                     <CardHeader>
                       <CardTitle className="text-lg">{project.title}</CardTitle>
-                      <p className="text-green-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
+                      <p className="text-amber-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
                     </CardHeader>
                   </Card>
                 ))}
