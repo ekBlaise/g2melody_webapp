@@ -378,6 +378,70 @@ export default function AdminDashboard() {
     return false
   }
 
+  const handleCreateFounder = async (formData) => {
+    try {
+      const res = await fetch('/api/admin/founders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const founder = await res.json()
+        setFounders([...founders, founder])
+        toast.success('Founder added!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to add founder')
+    }
+    return false
+  }
+
+  const handleDeleteFounder = async (founderId) => {
+    if (!confirm('Are you sure you want to delete this founder?')) return
+    try {
+      const res = await fetch(`/api/admin/founders/${founderId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setFounders(founders.filter(f => f.id !== founderId))
+        toast.success('Founder deleted!')
+      }
+    } catch (error) {
+      toast.error('Failed to delete founder')
+    }
+  }
+
+  const handleCreateChoirMember = async (formData) => {
+    try {
+      const res = await fetch('/api/admin/choir-members', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const member = await res.json()
+        setChoirMembers([...choirMembers, member])
+        toast.success('Member added!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to add member')
+    }
+    return false
+  }
+
+  const handleDeleteChoirMember = async (memberId) => {
+    if (!confirm('Are you sure you want to delete this member?')) return
+    try {
+      const res = await fetch(`/api/admin/choir-members/${memberId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setChoirMembers(choirMembers.filter(m => m.id !== memberId))
+        toast.success('Member deleted!')
+      }
+    } catch (error) {
+      toast.error('Failed to delete member')
+    }
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
