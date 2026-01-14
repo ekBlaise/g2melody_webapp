@@ -578,6 +578,109 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json(settings))
     }
 
+    // ==================== FOUNDERS ====================
+    if (route === '/founders' && method === 'GET') {
+      const founders = await prisma.founder.findMany({
+        orderBy: { order: 'asc' }
+      })
+      return handleCORS(NextResponse.json(founders))
+    }
+
+    if (route === '/admin/founders' && method === 'POST') {
+      const body = await request.json()
+      const founder = await prisma.founder.create({
+        data: {
+          id: uuidv4(),
+          name: body.name,
+          role: body.role,
+          bio: body.bio,
+          image: body.image,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(founder))
+    }
+
+    const founderMatch = route.match(/^\/admin\/founders\/([^/]+)$/)
+    if (founderMatch && method === 'PUT') {
+      const body = await request.json()
+      const founder = await prisma.founder.update({
+        where: { id: founderMatch[1] },
+        data: {
+          name: body.name,
+          role: body.role,
+          bio: body.bio,
+          image: body.image,
+          order: body.order
+        }
+      })
+      return handleCORS(NextResponse.json(founder))
+    }
+
+    if (founderMatch && method === 'DELETE') {
+      await prisma.founder.delete({ where: { id: founderMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // ==================== CHOIR MEMBERS ====================
+    if (route === '/choir-members' && method === 'GET') {
+      const url = new URL(request.url)
+      const status = url.searchParams.get('status')
+      
+      const where = {}
+      if (status && status !== 'all') {
+        where.status = status.toUpperCase()
+      }
+      
+      const members = await prisma.choirMember.findMany({
+        where,
+        orderBy: [{ order: 'asc' }, { name: 'asc' }]
+      })
+      return handleCORS(NextResponse.json(members))
+    }
+
+    if (route === '/admin/choir-members' && method === 'POST') {
+      const body = await request.json()
+      const member = await prisma.choirMember.create({
+        data: {
+          id: uuidv4(),
+          name: body.name,
+          image: body.image,
+          vocalPart: body.vocalPart || 'NONE',
+          yearJoined: body.yearJoined ? parseInt(body.yearJoined) : null,
+          status: body.status || 'ACTIVE',
+          role: body.role,
+          isFounding: body.isFounding || false,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(member))
+    }
+
+    const choirMemberMatch = route.match(/^\/admin\/choir-members\/([^/]+)$/)
+    if (choirMemberMatch && method === 'PUT') {
+      const body = await request.json()
+      const member = await prisma.choirMember.update({
+        where: { id: choirMemberMatch[1] },
+        data: {
+          name: body.name,
+          image: body.image,
+          vocalPart: body.vocalPart,
+          yearJoined: body.yearJoined ? parseInt(body.yearJoined) : null,
+          status: body.status,
+          role: body.role,
+          isFounding: body.isFounding,
+          order: body.order
+        }
+      })
+      return handleCORS(NextResponse.json(member))
+    }
+
+    if (choirMemberMatch && method === 'DELETE') {
+      await prisma.choirMember.delete({ where: { id: choirMemberMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
