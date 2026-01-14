@@ -437,7 +437,7 @@ function ProjectsSection({ projects, onDonate }) {
                   <CardContent>
                     <div className="flex justify-between items-end mb-4">
                       <div>
-                        <p className="text-2xl font-bold text-green-600">{formatCurrency(project.currentAmount)}</p>
+                        <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
                         <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
                       </div>
                       <div className="text-right">
