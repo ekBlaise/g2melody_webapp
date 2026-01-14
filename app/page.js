@@ -474,13 +474,13 @@ function ProjectsSection({ projects, onDonate }) {
                       alt={project.title}
                       className="w-full h-full object-cover grayscale-[30%]"
                     />
-                    <Badge className="absolute top-4 right-4 bg-green-500">
+                    <Badge className="absolute top-4 right-4 bg-amber-500">
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                     </Badge>
                   </div>
                   <CardHeader>
                     <CardTitle className="text-lg">{project.title}</CardTitle>
-                    <p className="text-green-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
+                    <p className="text-amber-600 font-semibold">{formatCurrency(project.goalAmount)} raised</p>
                   </CardHeader>
                 </Card>
               ))}
