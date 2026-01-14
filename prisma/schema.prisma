@@ -281,3 +281,45 @@ model Album {
   updatedAt     DateTime @updatedAt
 }
 
+// Founder model for About Us page
+model Founder {
+  id            String   @id @default(uuid())
+  name          String
+  role          String?  // e.g., "Co-Founder", "Visionary"
+  bio           String?  @db.Text
+  image         String?
+  order         Int      @default(0)  // For sorting
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Choir Member model for Members Since 2016 section
+enum MemberStatus {
+  ACTIVE
+  ALUMNI
+  THEOSORTIAN
+  SPONSOR
+}
+
+enum VocalPart {
+  SOPRANO
+  ALTO
+  TENOR
+  BASS
+  NONE
+}
+
+model ChoirMember {
+  id            String       @id @default(uuid())
+  name          String
+  image         String?
+  vocalPart     VocalPart    @default(NONE)
+  yearJoined    Int?
+  status        MemberStatus @default(ACTIVE)
+  role          String?      // e.g., "Conductor", "Secretary"
+  isFounding    Boolean      @default(false)
+  order         Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
