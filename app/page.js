@@ -491,7 +491,7 @@ function ProjectsSection({ projects, onDonate }) {
         {/* View All Projects Button */}
         <div className="text-center mt-10">
           <Link href="/projects">
-            <Button size="lg" variant="outline" className="border-green-500 text-green-600 hover:bg-green-50">
+            <Button size="lg" variant="outline" className="border-amber-500 text-amber-600 hover:bg-amber-50">
               View All Projects <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
