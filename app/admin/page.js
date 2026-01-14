@@ -1018,3 +1018,146 @@ function CreateMusicDialog({ open, onOpenChange, onSubmit }) {
     </Dialog>
   )
 }
+
+// Create Founder Dialog Component
+function CreateFounderDialog({ open, onOpenChange, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '', role: '', bio: '', image: '', order: 0
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(formData)
+    if (success) {
+      onOpenChange(false)
+      setFormData({ name: '', role: '', bio: '', image: '', order: 0 })
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add Founder</DialogTitle>
+          <DialogDescription>Add a new founder to the About page</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="founderName">Full Name</Label>
+            <Input id="founderName" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+          </div>
+          <div>
+            <Label htmlFor="founderRole">Role/Title</Label>
+            <Input id="founderRole" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} placeholder="e.g., Co-Founder & Visionary" />
+          </div>
+          <div>
+            <Label htmlFor="founderBio">Biography</Label>
+            <Textarea id="founderBio" value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} rows={3} placeholder="Brief description about this founder..." />
+          </div>
+          <div>
+            <Label htmlFor="founderImage">Photo URL (optional)</Label>
+            <Input id="founderImage" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://example.com/photo.jpg" />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-amber-500 to-orange-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Add Founder
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// Create Choir Member Dialog Component
+function CreateChoirMemberDialog({ open, onOpenChange, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '', vocalPart: 'NONE', yearJoined: '', status: 'ACTIVE', role: '', isFounding: false, image: ''
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(formData)
+    if (success) {
+      onOpenChange(false)
+      setFormData({ name: '', vocalPart: 'NONE', yearJoined: '', status: 'ACTIVE', role: '', isFounding: false, image: '' })
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add Choir Member</DialogTitle>
+          <DialogDescription>Add a new member to the choir roster</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="memberName">Full Name</Label>
+            <Input id="memberName" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="vocalPart">Vocal Part</Label>
+              <Select value={formData.vocalPart} onValueChange={(value) => setFormData({ ...formData, vocalPart: value })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="SOPRANO">Soprano</SelectItem>
+                  <SelectItem value="ALTO">Alto</SelectItem>
+                  <SelectItem value="TENOR">Tenor</SelectItem>
+                  <SelectItem value="BASS">Bass</SelectItem>
+                  <SelectItem value="NONE">None/Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="memberStatus">Status</Label>
+              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="ALUMNI">Alumni</SelectItem>
+                  <SelectItem value="THEOSORTIAN">Theosortian</SelectItem>
+                  <SelectItem value="SPONSOR">Sponsor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="yearJoined">Year Joined</Label>
+              <Input id="yearJoined" type="number" value={formData.yearJoined} onChange={(e) => setFormData({ ...formData, yearJoined: e.target.value })} placeholder="2016" />
+            </div>
+            <div>
+              <Label htmlFor="memberRole">Role (optional)</Label>
+              <Input id="memberRole" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} placeholder="e.g., Director, Secretary" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch id="isFounding" checked={formData.isFounding} onCheckedChange={(checked) => setFormData({ ...formData, isFounding: checked })} />
+            <Label htmlFor="isFounding">Founding Member</Label>
+          </div>
+          <div>
+            <Label htmlFor="memberImage">Photo URL (optional)</Label>
+            <Input id="memberImage" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://example.com/photo.jpg" />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-green-500 to-emerald-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Add Member
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
