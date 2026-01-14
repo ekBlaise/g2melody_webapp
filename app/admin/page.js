@@ -1301,3 +1301,113 @@ function CreateChoirMemberDialog({ open, onOpenChange, onSubmit }) {
     </Dialog>
   )
 }
+// Create History Dialog Component
+function CreateHistoryDialog({ open, onOpenChange, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    year: '', title: '', description: '', colorVariant: 'amber', order: 0
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(formData)
+    if (success) {
+      onOpenChange(false)
+      setFormData({ year: '', title: '', description: '', colorVariant: 'amber', order: 0 })
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add History Event</DialogTitle>
+          <DialogDescription>Add a new event to the G2 Melody timeline on the About page</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="historyYear">Year/Period</Label>
+              <Input 
+                id="historyYear" 
+                value={formData.year} 
+                onChange={(e) => setFormData({ ...formData, year: e.target.value })} 
+                placeholder="e.g., Late 2016, October 2017"
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="historyOrder">Display Order</Label>
+              <Input 
+                id="historyOrder" 
+                type="number"
+                value={formData.order} 
+                onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })} 
+                placeholder="0"
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="historyTitle">Event Title</Label>
+            <Input 
+              id="historyTitle" 
+              value={formData.title} 
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+              placeholder="e.g., The Birth of G2 Melody"
+              required 
+            />
+          </div>
+          <div>
+            <Label htmlFor="historyDesc">Description</Label>
+            <Textarea 
+              id="historyDesc" 
+              value={formData.description} 
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+              rows={4} 
+              placeholder="Describe what happened during this period..."
+              required 
+            />
+          </div>
+          <div>
+            <Label htmlFor="colorVariant">Color Theme</Label>
+            <Select value={formData.colorVariant} onValueChange={(value) => setFormData({ ...formData, colorVariant: value })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="amber">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-amber-500 to-orange-500"></div>
+                    Amber/Orange (Primary)
+                  </div>
+                </SelectItem>
+                <SelectItem value="orange">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-500 to-red-500"></div>
+                    Orange/Red (Growth)
+                  </div>
+                </SelectItem>
+                <SelectItem value="rose">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-rose-500 to-pink-500"></div>
+                    Rose/Pink (Milestone)
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-gray-500 mt-1">Choose a color theme for this timeline event</p>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-blue-500 to-indigo-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Add Event
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
