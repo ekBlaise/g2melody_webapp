@@ -453,7 +453,7 @@ function ProjectsSection({ projects, onDonate }) {
                       </Button>
                     </Link>
                     <Button 
-                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg" 
+                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg" 
                       onClick={() => onDonate(project)}
                     >
                       <Heart className="mr-2 h-4 w-4" /> Donate
