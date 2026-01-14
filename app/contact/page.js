@@ -46,7 +46,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-gray-50">
       <SharedNavigation currentPage="contact" />
 
-      {/* Hero with Background Image */}
+      {/* Hero */}
       <section className="relative py-24 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -54,15 +54,15 @@ export default function ContactPage() {
             alt="Worship Connection"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-pink-900/90 via-pink-900/80 to-pink-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 border border-white/20">
-            <MessageCircle className="w-4 h-4 text-pink-400" />
+            <MessageCircle className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-medium text-white/90">Contact Us</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400">Touch</span>
+            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Touch</span>
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
             Have questions about our ministry, music, or how to join? We'd love to hear from you!
@@ -84,7 +84,7 @@ export default function ContactPage() {
                 <CardContent className="space-y-6">
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-pink-400" />
+                      <MapPin className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">Location</h4>
@@ -93,7 +93,7 @@ export default function ContactPage() {
                   </div>
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-pink-400" />
+                      <Mail className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">Email</h4>
@@ -102,7 +102,7 @@ export default function ContactPage() {
                   </div>
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                      <Church className="w-5 h-5 text-pink-400" />
+                      <Church className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">Affiliated Church</h4>
@@ -113,7 +113,7 @@ export default function ContactPage() {
                     <h4 className="font-semibold mb-4">Follow Us</h4>
                     <div className="flex space-x-3">
                       {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
-                        <a key={i} href="#" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-pink-500 transition-colors">
+                        <a key={i} href="#" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-amber-500 transition-colors">
                           <Icon className="w-5 h-5" />
                         </a>
                       ))}
@@ -134,7 +134,7 @@ export default function ContactPage() {
                   <p className="text-gray-600 text-sm mb-4">
                     We're available for weddings, church programs, concerts, and special events.
                   </p>
-                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">
+                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
                     Request Booking
                   </Button>
                 </CardContent>
@@ -179,7 +179,7 @@ export default function ContactPage() {
                     <Label htmlFor="message">Message</Label>
                     <Textarea id="message" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} placeholder="How can we help?" rows={5} className="mt-1" required />
                   </div>
-                  <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-rose-500" disabled={sending}>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" disabled={sending}>
                     {sending ? 'Sending...' : <><Send className="mr-2 h-4 w-4" /> Send Message</>}
                   </Button>
                 </form>
