@@ -14,7 +14,7 @@ import {
   Music, Heart, Users, Home, BookOpen, MessageCircle, Bell, Settings,
   Play, Pause, Trophy, Target, Calendar, Clock, Star, TrendingUp,
   Headphones, Mic2, Award, ChevronRight, Gift, DollarSign, BarChart3,
-  Volume2, CheckCircle2, Circle, Flame, Zap, GraduationCap, LogOut
+  Volume2, CheckCircle2, Circle, Flame, Zap, GraduationCap, LogOut, Loader2
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -22,23 +22,136 @@ export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
-  const [playingLesson, setPlayingLesson] = useState(null)
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: 'New lesson available', desc: 'Four-Part Harmony Basics is now live!', time: '2 hours ago', unread: true },
-    { id: 2, title: 'Practice reminder', desc: 'You haven\'t practiced in 3 days', time: '1 day ago', unread: true },
-    { id: 3, title: 'Achievement unlocked!', desc: 'You completed your first week of practice', time: '3 days ago', unread: false },
-  ])
+  const [playingTrack, setPlayingTrack] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  
+  // Dashboard data state
+  const [dashboardData, setDashboardData] = useState({
+    progress: {
+      overallProgress: 0,
+      totalLessons: 0,
+      completedLessons: 0,
+      practiceHours: 0,
+      currentStreak: 0,
+      nextMilestone: 'Complete 10 lessons'
+    },
+    courses: [],
+    practiceTracks: [],
+    achievements: [],
+    notifications: [],
+    schedule: [],
+    stats: { currentStreak: 0, totalPracticeMinutes: 0, vocalPart: 'NONE' }
+  })
+  
+  const [supporterData, setSupporterData] = useState({
+    stats: { totalDonations: 0, donationCount: 0, studentsSupported: 0, badgesEarned: 0 },
+    donations: [],
+    leaderboard: [],
+    impact: { learnersSupported: 0, lessonsEnabled: 0, songsRecorded: 0 }
+  })
+
+  // Fetch learner dashboard data
+  const fetchLearnerData = async (userId) => {
+    try {
+      const response = await fetch(`/api/dashboard/learner?userId=${userId}`)
+      if (!response.ok) throw new Error('Failed to fetch dashboard data')
+      const data = await response.json()
+      setDashboardData(data)
+    } catch (err) {
+      console.error('Error fetching learner data:', err)
+      // Keep default state on error
+    }
+  }
+
+  // Fetch supporter dashboard data
+  const fetchSupporterData = async (userId) => {
+    try {
+      const response = await fetch(`/api/dashboard/supporter?userId=${userId}`)
+      if (!response.ok) throw new Error('Failed to fetch supporter data')
+      const data = await response.json()
+      setSupporterData(data)
+    } catch (err) {
+      console.error('Error fetching supporter data:', err)
+    }
+  }
+
+  // Enroll in a course
+  const enrollInCourse = async (courseId) => {
+    if (!session?.user?.id) return
+    try {
+      const response = await fetch('/api/enrollments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: session.user.id, courseId })
+      })
+      if (response.ok) {
+        fetchLearnerData(session.user.id)
+      }
+    } catch (err) {
+      console.error('Error enrolling:', err)
+    }
+  }
+
+  // Log practice session
+  const logPractice = async (trackId, duration) => {
+    if (!session?.user?.id) return
+    try {
+      await fetch('/api/practice-sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: session.user.id, trackId, duration })
+      })
+      fetchLearnerData(session.user.id)
+    } catch (err) {
+      console.error('Error logging practice:', err)
+    }
+  }
+
+  // Mark notification as read
+  const markNotificationRead = async (notificationId) => {
+    try {
+      await fetch(`/api/notifications/${notificationId}/read`, { method: 'PUT' })
+      fetchLearnerData(session.user.id)
+    } catch (err) {
+      console.error('Error marking notification:', err)
+    }
+  }
+
+  // Mark all notifications as read
+  const markAllNotificationsRead = async () => {
+    if (!session?.user?.id) return
+    try {
+      await fetch('/api/notifications/mark-all-read', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: session.user.id })
+      })
+      fetchLearnerData(session.user.id)
+    } catch (err) {
+      console.error('Error marking all notifications:', err)
+    }
+  }
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
+    } else if (status === 'authenticated' && session?.user?.id) {
+      setLoading(true)
+      Promise.all([
+        fetchLearnerData(session.user.id),
+        fetchSupporterData(session.user.id)
+      ]).finally(() => setLoading(false))
     }
-  }, [status, router])
+  }, [status, session, router])
 
-  if (status === 'loading') {
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-amber-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
       </div>
     )
   }
@@ -49,62 +162,31 @@ export default function DashboardPage() {
   const userEmail = session.user?.email || ''
   const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase()
 
-  // Mock data for demonstration
-  const learningProgress = {
-    overallProgress: 35,
-    currentStreak: 7,
-    totalLessons: 24,
-    completedLessons: 8,
-    practiceHours: 12.5,
-    nextMilestone: 'Complete 10 lessons'
-  }
-
-  const activeCourses = [
-    { id: 1, title: 'Vocal Fundamentals', progress: 60, totalLessons: 12, completedLessons: 7, image: '🎤' },
-    { id: 2, title: 'Four-Part Harmony', progress: 25, totalLessons: 8, completedLessons: 2, image: '🎵' },
-    { id: 3, title: 'Sight Reading Basics', progress: 10, totalLessons: 10, completedLessons: 1, image: '📖' },
-  ]
-
-  const practiceTracks = [
-    { id: 1, title: 'Soprano Scale Practice', duration: '5:30', type: 'Exercise' },
-    { id: 2, title: 'Unfathomable Love - Tenor Part', duration: '4:15', type: 'Song' },
-    { id: 3, title: 'Breathing Exercises', duration: '3:00', type: 'Exercise' },
-    { id: 4, title: 'Harmony Drill #3', duration: '6:45', type: 'Exercise' },
-  ]
-
-  const upcomingSchedule = [
-    { id: 1, title: 'Online Rehearsal', date: 'Today', time: '6:00 PM', type: 'rehearsal' },
-    { id: 2, title: 'Vocal Training Session', date: 'Tomorrow', time: '4:00 PM', type: 'lesson' },
-    { id: 3, title: 'Assignment Due: Harmony Exercise', date: 'Jan 18', time: '11:59 PM', type: 'deadline' },
-  ]
-
-  const recommendedLessons = [
-    { id: 1, title: 'Advanced Breathing Techniques', duration: '15 min', level: 'Intermediate' },
-    { id: 2, title: 'Introduction to Alto Part', duration: '20 min', level: 'Beginner' },
-    { id: 3, title: 'Blending Voices in Harmony', duration: '25 min', level: 'Intermediate' },
-  ]
-
-  const supporterStats = {
-    totalDonations: 150000,
-    studentsSupported: 5,
-    mentorshipHours: 8,
-    badgesEarned: 3
-  }
-
-  const impactHighlights = [
-    { metric: '5 Learners', desc: 'directly supported by your contributions' },
-    { metric: '12 Hours', desc: 'of lessons enabled' },
-    { metric: '3 Songs', desc: 'recorded with your support' },
-  ]
-
-  const supporterLeaderboard = [
-    { rank: 1, name: 'Sister Mafani Patricia', amount: 500000, badge: 'Gold Patron' },
-    { rank: 2, name: 'Brother John Neba', amount: 250000, badge: 'Silver Patron' },
-    { rank: 3, name: 'Anonymous', amount: 100000, badge: 'Bronze Patron' },
-  ]
+  // Destructure dashboard data
+  const { progress, courses, practiceTracks, achievements, notifications, schedule, stats } = dashboardData
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount)
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diff = date - now
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    
+    if (days === 0) return 'Today'
+    if (days === 1) return 'Tomorrow'
+    if (days < 7) return date.toLocaleDateString('en-US', { weekday: 'long' })
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+
+  const vocalPartLabels = {
+    SOPRANO: 'Soprano',
+    ALTO: 'Alto',
+    TENOR: 'Tenor',
+    BASS: 'Bass',
+    NONE: 'Not Set'
   }
 
   return (
@@ -140,7 +222,7 @@ export default function DashboardPage() {
               {/* Notifications */}
               <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
                 <Bell className="w-5 h-5 text-gray-600" />
-                {notifications.filter(n => n.unread).length > 0 && (
+                {notifications.filter(n => !n.isRead).length > 0 && (
                   <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
                 )}
               </button>
@@ -183,7 +265,7 @@ export default function DashboardPage() {
             </div>
             <div className="hidden md:flex items-center space-x-2 bg-amber-50 rounded-full px-4 py-2">
               <Flame className="w-5 h-5 text-amber-500" />
-              <span className="text-sm font-semibold text-amber-700">{learningProgress.currentStreak} Day Streak!</span>
+              <span className="text-sm font-semibold text-amber-700">{progress.currentStreak} Day Streak!</span>
             </div>
           </div>
         </div>
@@ -215,10 +297,10 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                       <Target className="w-6 h-6" />
                     </div>
-                    <span className="text-3xl font-bold">{learningProgress.overallProgress}%</span>
+                    <span className="text-3xl font-bold">{progress.overallProgress}%</span>
                   </div>
                   <p className="text-white/90 font-medium">Overall Progress</p>
-                  <Progress value={learningProgress.overallProgress} className="mt-2 h-2 bg-white/30" />
+                  <Progress value={progress.overallProgress} className="mt-2 h-2 bg-white/30" />
                 </CardContent>
               </Card>
 
@@ -228,7 +310,7 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
                       <BookOpen className="w-6 h-6 text-blue-600" />
                     </div>
-                    <span className="text-3xl font-bold text-gray-900">{learningProgress.completedLessons}/{learningProgress.totalLessons}</span>
+                    <span className="text-3xl font-bold text-gray-900">{progress.completedLessons}/{progress.totalLessons}</span>
                   </div>
                   <p className="text-gray-600 font-medium">Lessons Completed</p>
                 </CardContent>
@@ -240,7 +322,7 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center">
                       <Clock className="w-6 h-6 text-rose-600" />
                     </div>
-                    <span className="text-3xl font-bold text-gray-900">{learningProgress.practiceHours}h</span>
+                    <span className="text-3xl font-bold text-gray-900">{progress.practiceHours}h</span>
                   </div>
                   <p className="text-gray-600 font-medium">Practice Hours</p>
                 </CardContent>
@@ -252,7 +334,7 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
                       <Trophy className="w-6 h-6 text-amber-600" />
                     </div>
-                    <span className="text-3xl font-bold text-gray-900">3</span>
+                    <span className="text-3xl font-bold text-gray-900">{achievements.length}</span>
                   </div>
                   <p className="text-gray-600 font-medium">Achievements</p>
                 </CardContent>
@@ -274,22 +356,32 @@ export default function DashboardPage() {
                     </Link>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {activeCourses.map((course) => (
-                      <div key={course.id} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-2xl">
-                          {course.image}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">{course.title}</h4>
-                          <p className="text-sm text-gray-500">{course.completedLessons} of {course.totalLessons} lessons</p>
-                          <Progress value={course.progress} className="mt-2 h-2" />
-                        </div>
-                        <div className="text-right">
-                          <span className="text-lg font-bold text-amber-600">{course.progress}%</span>
-                          <ChevronRight className="w-5 h-5 text-gray-400 mt-1 group-hover:translate-x-1 transition-transform" />
-                        </div>
+                    {courses.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <GraduationCap className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No courses enrolled yet</p>
+                        <Button className="mt-4 bg-amber-500 hover:bg-amber-600" onClick={() => setActiveTab('learning')}>
+                          Browse Courses
+                        </Button>
                       </div>
-                    ))}
+                    ) : (
+                      courses.map((course) => (
+                        <div key={course.id} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-2xl">
+                            {course.emoji || '🎵'}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">{course.title}</h4>
+                            <p className="text-sm text-gray-500">{course.completedLessons || 0} of {course.totalLessons} lessons</p>
+                            <Progress value={course.progress || 0} className="mt-2 h-2" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-lg font-bold text-amber-600">{course.progress || 0}%</span>
+                            <ChevronRight className="w-5 h-5 text-gray-400 mt-1 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -304,18 +396,22 @@ export default function DashboardPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {upcomingSchedule.map((item) => (
-                      <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${
-                          item.type === 'rehearsal' ? 'bg-blue-500' :
-                          item.type === 'lesson' ? 'bg-amber-500' : 'bg-rose-500'
-                        }`}></div>
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 text-sm">{item.title}</p>
-                          <p className="text-xs text-gray-500">{item.date} • {item.time}</p>
+                    {schedule.length === 0 ? (
+                      <p className="text-gray-500 text-center py-4">No upcoming events</p>
+                    ) : (
+                      schedule.map((item) => (
+                        <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+                          <div className={`w-2 h-2 rounded-full mt-2 ${
+                            item.type === 'rehearsal' ? 'bg-blue-500' :
+                            item.type === 'lesson' ? 'bg-amber-500' : 'bg-rose-500'
+                          }`}></div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 text-sm">{item.title}</p>
+                            <p className="text-xs text-gray-500">{formatDate(item.date)} • {item.time}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                     <Button variant="outline" className="w-full mt-2">
                       <Calendar className="w-4 h-4 mr-2" /> View Full Schedule
                     </Button>
@@ -331,11 +427,15 @@ export default function DashboardPage() {
                       </div>
                       <div>
                         <p className="text-sm text-gray-400">Next Milestone</p>
-                        <p className="font-semibold">{learningProgress.nextMilestone}</p>
+                        <p className="font-semibold">{progress.nextMilestone}</p>
                       </div>
                     </div>
-                    <Progress value={80} className="h-2 bg-gray-700" />
-                    <p className="text-xs text-gray-400 mt-2">2 more lessons to go!</p>
+                    <Progress value={Math.min((progress.completedLessons / 10) * 100, 100)} className="h-2 bg-gray-700" />
+                    <p className="text-xs text-gray-400 mt-2">
+                      {10 - progress.completedLessons > 0 
+                        ? `${10 - progress.completedLessons} more lessons to go!` 
+                        : 'Milestone complete!'}
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -348,20 +448,30 @@ export default function DashboardPage() {
                   <Bell className="w-5 h-5 mr-2 text-amber-500" />
                   Notifications
                 </CardTitle>
-                <Button variant="ghost" size="sm">Mark all as read</Button>
+                <Button variant="ghost" size="sm" onClick={markAllNotificationsRead}>Mark all as read</Button>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {notifications.map((notif) => (
-                    <div key={notif.id} className={`flex items-start gap-4 p-4 rounded-xl ${notif.unread ? 'bg-amber-50' : 'bg-gray-50'}`}>
-                      <div className={`w-2 h-2 rounded-full mt-2 ${notif.unread ? 'bg-amber-500' : 'bg-gray-300'}`}></div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900">{notif.title}</p>
-                        <p className="text-sm text-gray-500">{notif.desc}</p>
+                  {notifications.length === 0 ? (
+                    <p className="text-gray-500 text-center py-4">No notifications</p>
+                  ) : (
+                    notifications.map((notif) => (
+                      <div 
+                        key={notif.id} 
+                        className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer ${!notif.isRead ? 'bg-amber-50' : 'bg-gray-50'}`}
+                        onClick={() => !notif.isRead && markNotificationRead(notif.id)}
+                      >
+                        <div className={`w-2 h-2 rounded-full mt-2 ${!notif.isRead ? 'bg-amber-500' : 'bg-gray-300'}`}></div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{notif.title}</p>
+                          <p className="text-sm text-gray-500">{notif.message}</p>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {new Date(notif.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-400">{notif.time}</span>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -378,49 +488,47 @@ export default function DashboardPage() {
                     <CardDescription>Pick up where you left off</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {activeCourses.map((course) => (
-                      <div key={course.id} className="p-4 rounded-xl border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer">
-                        <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
-                            {course.image}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900">{course.title}</h4>
-                            <p className="text-sm text-gray-500 mb-2">{course.completedLessons} of {course.totalLessons} lessons completed</p>
-                            <Progress value={course.progress} className="h-2" />
-                          </div>
-                          <Button className="bg-amber-500 hover:bg-amber-600">
-                            <Play className="w-4 h-4 mr-2" /> Continue
-                          </Button>
-                        </div>
+                    {courses.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>Start your first course to begin learning!</p>
                       </div>
-                    ))}
+                    ) : (
+                      courses.map((course) => (
+                        <div key={course.id} className="p-4 rounded-xl border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer">
+                          <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                              {course.emoji || '🎵'}
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900">{course.title}</h4>
+                              <p className="text-sm text-gray-500 mb-2">{course.completedLessons || 0} of {course.totalLessons} lessons completed</p>
+                              <Progress value={course.progress || 0} className="h-2" />
+                            </div>
+                            <Button className="bg-amber-500 hover:bg-amber-600">
+                              <Play className="w-4 h-4 mr-2" /> Continue
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
-                {/* Recommended Lessons */}
+                {/* Available Courses to Enroll */}
                 <Card className="border-0 shadow-md">
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Star className="w-5 h-5 mr-2 text-amber-500" />
-                      Recommended For You
+                      Available Courses
                     </CardTitle>
+                    <CardDescription>Enroll in new courses to expand your skills</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      {recommendedLessons.map((lesson) => (
-                        <div key={lesson.id} className="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                          <div className="w-full h-24 rounded-lg bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mb-3">
-                            <GraduationCap className="w-10 h-10 text-blue-500" />
-                          </div>
-                          <h4 className="font-medium text-gray-900 text-sm mb-1 group-hover:text-amber-600">{lesson.title}</h4>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span>{lesson.duration}</span>
-                            <Badge variant="outline" className="text-xs">{lesson.level}</Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <AvailableCourses 
+                      enrolledCourseIds={courses.map(c => c.id)} 
+                      onEnroll={enrollInCourse} 
+                    />
                   </CardContent>
                 </Card>
               </div>
@@ -431,8 +539,12 @@ export default function DashboardPage() {
                   <CardContent className="p-6">
                     <Mic2 className="w-8 h-8 mb-4 opacity-80" />
                     <h3 className="text-lg font-bold mb-2">Your Vocal Part</h3>
-                    <p className="text-3xl font-bold mb-1">Tenor</p>
-                    <p className="text-sm text-white/80">Focus on mid-range exercises</p>
+                    <p className="text-3xl font-bold mb-1">{vocalPartLabels[stats.vocalPart] || 'Not Set'}</p>
+                    <p className="text-sm text-white/80">
+                      {stats.vocalPart !== 'NONE' 
+                        ? `Focus on ${stats.vocalPart.toLowerCase()} exercises` 
+                        : 'Set your vocal part in settings'}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -441,19 +553,19 @@ export default function DashboardPage() {
                     <CardTitle className="text-base">Achievements</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {[
-                      { icon: '🔥', title: '7 Day Streak', desc: 'Practice for 7 days in a row' },
-                      { icon: '🎵', title: 'First Song', desc: 'Complete your first song lesson' },
-                      { icon: '⭐', title: 'Quick Learner', desc: 'Complete 5 lessons in a week' },
-                    ].map((achievement, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-amber-50">
-                        <span className="text-2xl">{achievement.icon}</span>
-                        <div>
-                          <p className="font-medium text-gray-900 text-sm">{achievement.title}</p>
-                          <p className="text-xs text-gray-500">{achievement.desc}</p>
+                    {achievements.length === 0 ? (
+                      <p className="text-gray-500 text-center py-4">Complete lessons to earn achievements!</p>
+                    ) : (
+                      achievements.slice(0, 3).map((achievement) => (
+                        <div key={achievement.id} className="flex items-center gap-3 p-3 rounded-lg bg-amber-50">
+                          <span className="text-2xl">{achievement.icon}</span>
+                          <div>
+                            <p className="font-medium text-gray-900 text-sm">{achievement.name}</p>
+                            <p className="text-xs text-gray-500">{achievement.description}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -474,31 +586,51 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {practiceTracks.map((track) => (
-                        <div key={track.id} className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
-                          playingLesson === track.id ? 'bg-rose-50 border border-rose-200' : 'bg-gray-50 hover:bg-gray-100'
-                        }`}>
-                          <button
-                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                              playingLesson === track.id 
-                                ? 'bg-rose-500 text-white' 
-                                : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500'
-                            }`}
-                            onClick={() => setPlayingLesson(playingLesson === track.id ? null : track.id)}
-                          >
-                            {playingLesson === track.id ? (
-                              <Pause className="w-5 h-5" />
-                            ) : (
-                              <Play className="w-5 h-5 ml-0.5" />
-                            )}
-                          </button>
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{track.title}</h4>
-                            <p className="text-sm text-gray-500">{track.duration} • {track.type}</p>
+                      {practiceTracks.length === 0 ? (
+                        <p className="text-gray-500 text-center py-8">No practice tracks available</p>
+                      ) : (
+                        practiceTracks.map((track) => (
+                          <div key={track.id} className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
+                            playingTrack === track.id ? 'bg-rose-50 border border-rose-200' : 'bg-gray-50 hover:bg-gray-100'
+                          }`}>
+                            <button
+                              className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                                playingTrack === track.id 
+                                  ? 'bg-rose-500 text-white' 
+                                  : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500'
+                              }`}
+                              onClick={() => {
+                                if (playingTrack === track.id) {
+                                  setPlayingTrack(null)
+                                } else {
+                                  setPlayingTrack(track.id)
+                                  // Log 5 minutes of practice when playing a track
+                                  setTimeout(() => logPractice(track.id, 5), 5000)
+                                }
+                              }}
+                            >
+                              {playingTrack === track.id ? (
+                                <Pause className="w-5 h-5" />
+                              ) : (
+                                <Play className="w-5 h-5 ml-0.5" />
+                              )}
+                            </button>
+                            <div className="flex-1">
+                              <h4 className="font-medium text-gray-900">{track.title}</h4>
+                              <p className="text-sm text-gray-500">
+                                {track.duration} • {track.type}
+                                {track.vocalPart !== 'NONE' && ` • ${vocalPartLabels[track.vocalPart]}`}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              {track.vocalPart !== 'NONE' && (
+                                <Badge variant="outline" className="text-xs">{vocalPartLabels[track.vocalPart]}</Badge>
+                              )}
+                              <Badge variant="outline">{track.difficulty}</Badge>
+                            </div>
                           </div>
-                          <Badge variant="outline">{track.type}</Badge>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -510,8 +642,13 @@ export default function DashboardPage() {
                     <Volume2 className="w-8 h-8 mb-4 opacity-80" />
                     <h3 className="text-lg font-bold mb-2">Daily Practice Goal</h3>
                     <p className="text-4xl font-bold mb-1">30 min</p>
-                    <p className="text-sm text-white/80">15 min completed today</p>
-                    <Progress value={50} className="mt-4 h-2 bg-white/30" />
+                    <p className="text-sm text-white/80">
+                      {Math.round(stats.totalPracticeMinutes % 30)} min completed today
+                    </p>
+                    <Progress 
+                      value={Math.min((stats.totalPracticeMinutes % 30) / 30 * 100, 100)} 
+                      className="mt-4 h-2 bg-white/30" 
+                    />
                   </CardContent>
                 </Card>
 
@@ -521,10 +658,10 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {[
-                      { title: 'Warm-up exercises', done: true },
-                      { title: 'Scale practice', done: true },
-                      { title: 'Song rehearsal', done: false },
-                      { title: 'Cool-down', done: false },
+                      { title: 'Warm-up exercises', done: stats.totalPracticeMinutes > 0 },
+                      { title: 'Scale practice', done: stats.totalPracticeMinutes >= 10 },
+                      { title: 'Song rehearsal', done: stats.totalPracticeMinutes >= 20 },
+                      { title: 'Cool-down', done: stats.totalPracticeMinutes >= 30 },
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3">
                         {item.done ? (
@@ -548,28 +685,28 @@ export default function DashboardPage() {
               <Card className="border-0 shadow-md bg-gradient-to-br from-amber-500 to-orange-500 text-white">
                 <CardContent className="p-6">
                   <DollarSign className="w-8 h-8 mb-2 opacity-80" />
-                  <p className="text-3xl font-bold">{formatCurrency(supporterStats.totalDonations)}</p>
+                  <p className="text-3xl font-bold">{formatCurrency(supporterData.stats.totalDonations)}</p>
                   <p className="text-white/80 text-sm">Total Contributions</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <Users className="w-8 h-8 mb-2 text-blue-500" />
-                  <p className="text-3xl font-bold text-gray-900">{supporterStats.studentsSupported}</p>
+                  <p className="text-3xl font-bold text-gray-900">{supporterData.stats.studentsSupported}</p>
                   <p className="text-gray-500 text-sm">Learners Supported</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
-                  <Clock className="w-8 h-8 mb-2 text-rose-500" />
-                  <p className="text-3xl font-bold text-gray-900">{supporterStats.mentorshipHours}h</p>
-                  <p className="text-gray-500 text-sm">Mentorship Hours</p>
+                  <BookOpen className="w-8 h-8 mb-2 text-rose-500" />
+                  <p className="text-3xl font-bold text-gray-900">{supporterData.impact.lessonsEnabled}</p>
+                  <p className="text-gray-500 text-sm">Lessons Enabled</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <Award className="w-8 h-8 mb-2 text-amber-500" />
-                  <p className="text-3xl font-bold text-gray-900">{supporterStats.badgesEarned}</p>
+                  <p className="text-3xl font-bold text-gray-900">{supporterData.stats.badgesEarned}</p>
                   <p className="text-gray-500 text-sm">Badges Earned</p>
                 </CardContent>
               </Card>
@@ -588,12 +725,18 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid md:grid-cols-3 gap-4 mb-6">
-                      {impactHighlights.map((item, i) => (
-                        <div key={i} className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-center">
-                          <p className="text-2xl font-bold text-amber-600">{item.metric}</p>
-                          <p className="text-sm text-gray-600">{item.desc}</p>
-                        </div>
-                      ))}
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-center">
+                        <p className="text-2xl font-bold text-amber-600">{supporterData.impact.learnersSupported} Learners</p>
+                        <p className="text-sm text-gray-600">directly supported</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 text-center">
+                        <p className="text-2xl font-bold text-blue-600">{supporterData.impact.lessonsEnabled} Lessons</p>
+                        <p className="text-sm text-gray-600">enabled</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-rose-50 to-pink-50 text-center">
+                        <p className="text-2xl font-bold text-rose-600">{supporterData.impact.songsRecorded} Songs</p>
+                        <p className="text-sm text-gray-600">recorded</p>
+                      </div>
                     </div>
 
                     {/* Testimonial */}
@@ -623,21 +766,25 @@ export default function DashboardPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {supporterLeaderboard.map((supporter) => (
-                      <div key={supporter.rank} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                          supporter.rank === 1 ? 'bg-amber-500 text-white' :
-                          supporter.rank === 2 ? 'bg-gray-400 text-white' :
-                          'bg-amber-700 text-white'
-                        }`}>
-                          {supporter.rank}
+                    {supporterData.leaderboard.length === 0 ? (
+                      <p className="text-gray-500 text-center py-4">Be the first to donate!</p>
+                    ) : (
+                      supporterData.leaderboard.slice(0, 5).map((supporter) => (
+                        <div key={supporter.rank} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                            supporter.rank === 1 ? 'bg-amber-500 text-white' :
+                            supporter.rank === 2 ? 'bg-gray-400 text-white' :
+                            'bg-amber-700 text-white'
+                          }`}>
+                            {supporter.rank}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 text-sm">{supporter.name}</p>
+                            <Badge className="text-xs bg-amber-100 text-amber-700">{supporter.badge}</Badge>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 text-sm">{supporter.name}</p>
-                          <Badge className="text-xs bg-amber-100 text-amber-700">{supporter.badge}</Badge>
-                        </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
@@ -672,6 +819,59 @@ export default function DashboardPage() {
           </div>
         </div>
       </footer>
+    </div>
+  )
+}
+
+// Component to show available courses for enrollment
+function AvailableCourses({ enrolledCourseIds, onEnroll }) {
+  const [courses, setCourses] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/courses?published=true')
+      .then(res => res.json())
+      .then(data => {
+        setCourses(data.filter(c => !enrolledCourseIds.includes(c.id)))
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [enrolledCourseIds])
+
+  if (loading) {
+    return <div className="text-center py-4"><Loader2 className="w-6 h-6 animate-spin mx-auto" /></div>
+  }
+
+  if (courses.length === 0) {
+    return <p className="text-gray-500 text-center py-4">You're enrolled in all available courses!</p>
+  }
+
+  return (
+    <div className="grid md:grid-cols-2 gap-4">
+      {courses.map((course) => (
+        <div key={course.id} className="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center text-2xl">
+              {course.emoji || '🎵'}
+            </div>
+            <div className="flex-1">
+              <h4 className="font-medium text-gray-900">{course.title}</h4>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="outline" className="text-xs">{course.level}</Badge>
+                <span className="text-xs text-gray-500">{course.totalLessons} lessons</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description}</p>
+          <Button 
+            size="sm" 
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            onClick={() => onEnroll(course.id)}
+          >
+            <GraduationCap className="w-4 h-4 mr-2" /> Enroll Now
+          </Button>
+        </div>
+      ))}
     </div>
   )
 }
