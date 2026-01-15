@@ -1467,6 +1467,131 @@ async function handleRoute(request, { params }) {
       }))
     }
 
+    // ==================== IMAGE UPLOAD ====================
+    if (route === '/upload' && method === 'POST') {
+      try {
+        const formData = await request.formData()
+        const file = formData.get('file')
+        
+        if (!file) {
+          return handleCORS(NextResponse.json({ error: 'No file provided' }, { status: 400 }))
+        }
+
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+
+        // Generate unique filename
+        const ext = file.name.split('.').pop()
+        const filename = `${uuidv4()}.${ext}`
+        
+        // Ensure uploads directory exists
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads')
+        if (!existsSync(uploadDir)) {
+          await mkdir(uploadDir, { recursive: true })
+        }
+
+        // Write file
+        const filepath = path.join(uploadDir, filename)
+        await writeFile(filepath, buffer)
+
+        // Return the public URL
+        const url = `/uploads/${filename}`
+        return handleCORS(NextResponse.json({ url, filename }))
+      } catch (error) {
+        console.error('Upload error:', error)
+        return handleCORS(NextResponse.json({ error: 'Failed to upload file' }, { status: 500 }))
+      }
+    }
+
+    // ==================== NEWS & EVENTS ====================
+    
+    // Get all news/events
+    if (route === '/news' && method === 'GET') {
+      const url = new URL(request.url)
+      const type = url.searchParams.get('type') // news, event, announcement
+      const featured = url.searchParams.get('featured')
+      const limit = parseInt(url.searchParams.get('limit') || '20')
+      
+      const where = { isPublished: true }
+      if (type) where.type = type
+      if (featured === 'true') where.isFeatured = true
+      
+      const news = await prisma.newsEvent.findMany({
+        where,
+        orderBy: { publishedAt: 'desc' },
+        take: limit
+      })
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Get single news/event
+    const newsDetailMatch = route.match(/^\/news\/([^/]+)$/)
+    if (newsDetailMatch && method === 'GET') {
+      const news = await prisma.newsEvent.findUnique({
+        where: { id: newsDetailMatch[1] }
+      })
+      if (!news) {
+        return handleCORS(NextResponse.json({ error: 'Not found' }, { status: 404 }))
+      }
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Admin: Create news/event
+    if (route === '/admin/news' && method === 'POST') {
+      const body = await request.json()
+      const news = await prisma.newsEvent.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          slug: body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          summary: body.summary,
+          content: body.content,
+          image: body.image,
+          type: body.type || 'news',
+          eventDate: body.eventDate ? new Date(body.eventDate) : null,
+          eventTime: body.eventTime,
+          eventLocation: body.eventLocation,
+          isFeatured: body.isFeatured ?? false,
+          isPublished: body.isPublished ?? true,
+          publishedAt: body.isPublished ? new Date() : null,
+          author: body.author
+        }
+      })
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Admin: Update news/event
+    const adminNewsMatch = route.match(/^\/admin\/news\/([^/]+)$/)
+    if (adminNewsMatch && method === 'PUT') {
+      const body = await request.json()
+      const news = await prisma.newsEvent.update({
+        where: { id: adminNewsMatch[1] },
+        data: {
+          title: body.title,
+          slug: body.slug,
+          summary: body.summary,
+          content: body.content,
+          image: body.image,
+          type: body.type,
+          eventDate: body.eventDate ? new Date(body.eventDate) : null,
+          eventTime: body.eventTime,
+          eventLocation: body.eventLocation,
+          isFeatured: body.isFeatured,
+          isPublished: body.isPublished,
+          publishedAt: body.isPublished && !body.publishedAt ? new Date() : body.publishedAt,
+          author: body.author,
+          updatedAt: new Date()
+        }
+      })
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Admin: Delete news/event
+    if (adminNewsMatch && method === 'DELETE') {
+      await prisma.newsEvent.delete({ where: { id: adminNewsMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
