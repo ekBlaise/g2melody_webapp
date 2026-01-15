@@ -367,10 +367,6 @@ export default function JoinPage() {
                           <Label>City/Town *</Label>
                           <Input value={memberForm.city} onChange={(e) => setMemberForm({...memberForm, city: e.target.value})} placeholder="e.g., Buea, Douala, Yaoundé" className="mt-1" required />
                         </div>
-                        <div className="sm:col-span-2">
-                          <Label>Address / Neighborhood</Label>
-                          <Input value={memberForm.address} onChange={(e) => setMemberForm({...memberForm, address: e.target.value})} placeholder="Street address or neighborhood" className="mt-1" />
-                        </div>
                       </div>
                     </div>
 
