@@ -224,18 +224,18 @@ export default function JoinPage() {
                 <div className="lg:col-span-2 relative rounded-3xl overflow-hidden min-h-[500px] shadow-xl hidden lg:block">
                   <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg" alt="Support" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-900 via-amber-900/80 to-amber-900/60" />
-                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                    <span className="inline-block px-3 py-1 bg-amber-500 text-white text-sm font-medium rounded-full mb-4 w-fit">Become a Supporter</span>
-                    <h2 className="text-3xl font-bold text-white mb-3">Support Our Ministry</h2>
-                    <p className="text-white/80 text-lg leading-relaxed">Create an account to donate, access exclusive content, and follow our journey.</p>
+                  <div className="absolute inset-0 p-8 flex flex-col ">
+                    <span className="inline-block px-3 py-1 bg-amber-500 text-white text-sm font-medium rounded-full mb-4 w-fit">Become a Learner/Supporter</span>
+                    <h2 className="text-3xl font-bold text-white mb-3">Join Our Community</h2>
+                    <p className="text-white/80 text-lg leading-relaxed">Create an account to learn, donate, access exclusive content, and follow our journey from a personalized dashboard.</p>
                   </div>
                 </div>
 
                 {/* Form */}
                 <Card className="lg:col-span-3 border-0 shadow-xl rounded-3xl">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-2xl">Create Supporter Account</CardTitle>
-                    <CardDescription>Join our community of supporters and stay connected</CardDescription>
+                    <CardTitle className="text-2xl">Create Learner/Supporter Account</CardTitle>
+                    <CardDescription>Join our community of learners and supporters and stay connected</CardDescription>
                   </CardHeader>
                   <CardContent className="pt-4">
                     <form onSubmit={handleSupporterSubmit} className="space-y-5">
@@ -292,7 +292,7 @@ export default function JoinPage() {
                 <div className="lg:col-span-2 relative rounded-3xl overflow-hidden min-h-[500px] shadow-xl hidden lg:block">
                   <img src="https://images.unsplash.com/photo-1541697367348-dfc31a1611dc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85" alt="Join Choir" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/80 to-blue-900/60" />
-                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                  <div className="absolute inset-0 p-8 flex flex-col">
                     <span className="inline-block px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full mb-4 w-fit">Join Our Choir</span>
                     <h2 className="text-3xl font-bold text-white mb-3">Become a Member</h2>
                     <p className="text-white/80 text-lg leading-relaxed">Join G2 Melody and use your voice to spread the Gospel through music.</p>
@@ -310,6 +310,9 @@ export default function JoinPage() {
                         <span>Music training & growth</span>
                       </div>
                     </div>
+                    <p className="text-xs text-blue-700 mt-4 bg-blue-100 p-3 rounded-lg">
+                        <strong>Note:</strong> Membership requires commitment to rehearsals and alignment with our values. All applications are reviewed by the G2 Melody leadership team.
+                      </p>
                   </div>
                 </div>
 
@@ -501,9 +504,6 @@ export default function JoinPage() {
                           </Label>
                         </div>
                       </div>
-                      <p className="text-xs text-blue-700 mt-4 bg-blue-100 p-3 rounded-lg">
-                        <strong>Note:</strong> Membership requires commitment to rehearsals and alignment with our values. All applications are reviewed by the G2 Melody leadership team.
-                      </p>
                     </div>
 
                     <Button type="submit" className="w-full h-14 rounded-xl text-lg font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600" disabled={loading}>

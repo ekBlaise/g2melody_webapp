@@ -306,7 +306,7 @@ export function SharedFooter() {
             <ul className="space-y-4">
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                <span>Bomaka, Buea<br />Cameroon</span>
+                <span>Buea, Cameroon</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-amber-500" />

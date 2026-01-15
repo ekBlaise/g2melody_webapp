@@ -84,7 +84,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">Location</h4>
-                      <p className="text-gray-400">Bomaka, Buea<br />South West Region, Cameroon</p>
+                      <p className="text-gray-400">Buea<br />South West Region, Cameroon</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
