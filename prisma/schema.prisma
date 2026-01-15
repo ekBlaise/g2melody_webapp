@@ -504,3 +504,26 @@ model UserStats {
   updatedAt       DateTime @updatedAt
 }
 
+// News and Events
+model NewsEvent {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  summary       String?
+  content       String?  // Rich text/HTML content
+  image         String?
+  type          String   @default("news") // news, event, announcement
+  eventDate     DateTime? // For events
+  eventTime     String?   // e.g., "6:00 PM"
+  eventLocation String?   // For events
+  isFeatured    Boolean  @default(false)
+  isPublished   Boolean  @default(false)
+  publishedAt   DateTime?
+  author        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([type, isPublished])
+  @@index([publishedAt])
+}
+
