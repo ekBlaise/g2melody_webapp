@@ -121,7 +121,7 @@ export default function MusicPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-400">Music Collection</span>
+            Our <span className="text-purple-300">Music Collection</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-6">
             Experience the power of acapella worship. Stream our music for free, or purchase to download high-quality tracks.
@@ -260,7 +260,7 @@ function AlbumDetail({ album, onBack, onPlay, onPurchase, playingTrack, formatDu
             </div>
             <div className="flex gap-3">
               <Button 
-                className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600"
+                className="bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700"
                 onClick={() => onPurchase(album, 'album')}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
@@ -430,7 +430,7 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
           <Button 
             onClick={handlePurchase} 
             disabled={loading || !email}
-            className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600"
+            className="bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700"
           >
             {loading ? 'Processing...' : `Pay ${formatCurrency(price)}`}
           </Button>

@@ -131,7 +131,8 @@ function HeroSection({ siteSettings }) {
   const slides = [
     {
       image: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
-      title: 'Evangelizing Through',
+      title: 'Evangelizing ',
+      titleColored: 'Through',
       highlight: 'Music',
       subtitle: 'Uniting voices in worship, spreading the Gospel across Cameroon and beyond'
     },
@@ -139,6 +140,7 @@ function HeroSection({ siteSettings }) {
       image: 'https://images.unsplash.com/photo-1541697367348-dfc31a1611dc',
       title: 'Revitalizing',
       highlight: 'Church Music',
+      highlightParts: [{text: 'Church', colored: false}, ' ', {text: 'Music', colored: true}],
       subtitle: 'Preserving acapella heritage while nurturing the next generation of worship leaders'
     },
     {
@@ -191,10 +193,25 @@ function HeroSection({ siteSettings }) {
         <div className="max-w-4xl">
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.9]">
-            {slides[currentSlide].title}{' '}
-            <span className="text-white font-bold">
-              {slides[currentSlide].highlight}
-            </span>
+            {slides[currentSlide].title}
+            {slides[currentSlide].titleColored && (
+              <span className="font-bold bg-gradient-to-r from-[#1e40af] to-[#0891b2] text-transparent bg-clip-text">
+                {slides[currentSlide].titleColored}
+              </span>
+            )}{' '}
+            {slides[currentSlide].highlightParts ? (
+              slides[currentSlide].highlightParts.map((part, i) => 
+                typeof part === 'string' ? part : (
+                  <span key={i} className={part.colored === false ? 'text-white' : 'font-bold bg-gradient-to-r from-[#1e40af] to-[#0891b2] text-transparent bg-clip-text'}>
+                    {part.text}
+                  </span>
+                )
+              )
+            ) : (
+              <span className="font-bold bg-gradient-to-r from-[#1e40af] to-[#0891b2] text-transparent bg-clip-text">
+                {slides[currentSlide].highlight}
+              </span>
+            )}
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
@@ -258,10 +275,10 @@ function AboutSection() {
   ]
 
   const objectives = [
-    { icon: Mic2, title: 'Evangelism Through Music', desc: 'Using non-instrumental singing to spread the Gospel of Christ' },
+    { icon: Mic2, title: 'Evangelism Through Music', titleParts: ['Evangelism ', {text: 'Through Music', colored: true}], desc: 'Using non-instrumental singing to spread the Gospel of Christ' },
     { icon: Sparkles, title: 'Spiritual Devotion', desc: 'Serving as a beacon of faith and commitment to God\'s work' },
     { icon: Users, title: 'Unity in Diversity', desc: 'Bringing together individuals from diverse backgrounds' },
-    { icon: Music, title: 'Revitalize Church Music', desc: 'Promoting mastery of four-part harmony and acapella traditions' },
+    { icon: Music, title: 'Revitalize Church Music', titleParts: ['Revitalize ', {text: 'Church', colored: false}, ' Music'], desc: 'Promoting mastery of four-part harmony and acapella traditions' },
     { icon: GraduationCap, title: 'Music Education', desc: 'Developing talents through structured professional training' },
     { icon: Globe, title: 'Global Outreach', desc: 'Spreading worship across Cameroon and beyond' },
   ]
@@ -300,7 +317,7 @@ function AboutSection() {
             </CardHeader>
             <CardContent>
               <p className="text-white/90 leading-relaxed">
-                Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music, 
+                Evangelizing <span className="bg-gradient-to-r from-[#1e40af] to-[#0891b2] text-transparent bg-clip-text font-semibold">through music</span>, uniting individuals under a shared purpose, revitalizing church music, 
                 and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church, 
                 while extending Christ's love to individuals from diverse backgrounds.
               </p>
@@ -334,7 +351,17 @@ function AboutSection() {
                 <div className="w-12 h-12 rounded-xl bg-[#1e40af]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <obj.icon className="w-6 h-6 text-[#1e40af]" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">{obj.title}</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  {obj.titleParts ? (
+                    obj.titleParts.map((part, i) => 
+                      typeof part === 'string' ? part : (
+                        <span key={i} className={part.colored ? 'bg-gradient-to-r from-[#1e40af] to-[#0891b2] text-transparent bg-clip-text font-bold' : ''}>
+                          {part.text}
+                        </span>
+                      )
+                    )
+                  ) : obj.title}
+                </h4>
                 <p className="text-gray-600 text-sm">{obj.desc}</p>
               </div>
             ))}
@@ -342,16 +369,16 @@ function AboutSection() {
         </div>
 
         {/* Core Values */}
-        <div className="bg-gray-900 rounded-3xl p-8 md:p-12 text-white">
+        <div className="bg-gray-200 rounded-3xl p-8 md:p-12 text-gray-900">
           <h3 className="text-2xl font-bold text-center mb-10">Our Core Values</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {coreValues.map((value, index) => (
               <div key={index} className="text-center group">
-                <div className="w-16 h-16 rounded-2xl bg-[#1e40af]/20 flex items-center justify-center mx-auto mb-3 group-hover:bg-[#1e40af] transition-all duration-300">
+                <div className="w-16 h-16 rounded-2xl bg-[#1e40af]/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-[#1e40af] transition-all duration-300">
                   <value.icon className="w-7 h-7 text-[#1e40af] group-hover:text-white transition-colors" />
                 </div>
                 <h4 className="font-semibold mb-1">{value.title}</h4>
-                <p className="text-xs text-gray-400">{value.desc}</p>
+                <p className="text-xs text-gray-600">{value.desc}</p>
               </div>
             ))}
           </div>
@@ -505,11 +532,11 @@ function ProjectsSection({ projects, onDonate }) {
               alt="G2 Meloverse" 
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-[#1e40af]/70" />
+            <div className="absolute inset-0 bg-gray-900/70" />
           </div>
           <div className="relative p-8 md:p-16">
             <div className="max-w-3xl">
-              <Badge className="mb-4 bg-[#1e40af]/20 text-white border-[#1e40af]/30">
+              <Badge className="mb-4 bg-[#1e40af] text-white border-[#1e40af]">
                 <Building className="w-3 h-3 mr-1" /> Vision Project
               </Badge>
               <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">G2 Meloverse</h3>
@@ -524,7 +551,7 @@ function ProjectsSection({ projects, onDonate }) {
                   { icon: Building, title: 'Multi-purpose Hall', desc: 'Events & community space' }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start space-x-3 bg-white/10 backdrop-blur rounded-xl p-4">
-                    <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-[#1e40af]/30 flex items-center justify-center flex-shrink-0">
                       <item.icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -536,7 +563,7 @@ function ProjectsSection({ projects, onDonate }) {
               </div>
               <div className="flex flex-wrap gap-4">
                 <Link href="/projects/proj-meloverse">
-                  <Button size="lg" className="bg-white text-[#1e40af] hover:bg-gray-100">
+                  <Button size="lg" className="bg-[#1e40af] text-white hover:bg-[#1e3a8a]">
                     Learn More <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -580,7 +607,7 @@ function MusicStoreSection({ music, onPurchase }) {
             <Headphones className="w-3 h-3 mr-1" /> Music Store
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our <span className="text-[#0891b2]">Music Collection</span>
+            Our <span className="text-purple-950">Music Collection</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Experience the power of acapella worship. Purchase and download our original compositions, hymns, and gospel tracks.
@@ -588,7 +615,7 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {/* Album Highlight */}
-        <div className="bg-[#1e40af] rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
+        <div className="bg-purple-950 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -598,7 +625,7 @@ function MusicStoreSection({ music, onPurchase }) {
                 Our debut album released in 2019, featuring original compositions that showcase the beauty of four-part harmony and acapella worship.
               </p>
               <Link href="/music">
-                <Button className="bg-white text-rose-600 hover:bg-white/90">
+                <Button className="bg-white text-purple-950 hover:bg-white/90">
                   <Play className="mr-2 h-4 w-4" /> Browse All Music
                 </Button>
               </Link>
@@ -1045,7 +1072,7 @@ function Footer() {
               </div>
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              Evangelizing through music, uniting voices in worship, and spreading the Gospel across Cameroon and beyond since 2016.
+              Evangelizing <span className="bg-gradient-to-r from-[#1e40af] to-[#0891b2] text-transparent bg-clip-text font-semibold">through music</span>, uniting voices in worship, and spreading the Gospel across Cameroon and beyond since 2016.
             </p>
             <div className="flex space-x-3">
               {socialLinks.map((social, index) => (

@@ -80,7 +80,7 @@ export default function NewsPage() {
         </div>
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Activities & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Events</span>
+            Activities & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af] to-[#0891b2]">Events</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Stay updated with our concerts, workshops, community outreach, and special events.
@@ -164,7 +164,7 @@ function ActivityCard({ activity, formatDate, formatTime, isPast }) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#1e40af]-400 to-[#0891b2]-500 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-[#1e40af] to-[#0891b2] flex items-center justify-center">
               <CalendarDays className="w-16 h-16 text-white/50" />
             </div>
           )}

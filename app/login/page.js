@@ -218,7 +218,7 @@ function LoginContent() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
                   disabled={loading}
                 >
                   {loading ? (

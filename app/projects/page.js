@@ -44,9 +44,10 @@ export default function ProjectsPage() {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
   }
 
-  const currentProjects = projects.filter(p => p.status === 'CURRENT')
-  const pastProjects = projects.filter(p => p.status === 'PAST')
-  const meloverse = projects.find(p => p.id === 'proj-meloverse')
+  const projectsArray = Array.isArray(projects) ? projects : []
+  const currentProjects = projectsArray.filter(p => p.status === 'CURRENT')
+  const pastProjects = projectsArray.filter(p => p.status === 'PAST')
+  const meloverse = projectsArray.find(p => p.id === 'proj-meloverse')
 
   if (loading) {
     return (
@@ -72,7 +73,7 @@ export default function ProjectsPage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Mission</span>
+            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af] to-[#0891b2]">Mission</span>
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
@@ -103,7 +104,7 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                   <Link href={`/projects/${meloverse.id}`}>
-                    <Button className="bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
+                    <Button className="bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700">
                       Learn More <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -151,7 +152,7 @@ export default function ProjectsPage() {
                         <Button variant="outline" className="w-full">View Details</Button>
                       </Link>
                       <Link href={`/projects/${project.id}`} className="flex-1">
-                        <Button className="w-full bg-gradient-to-r from-[#1e40af]-500 to-[#0891b2]-500 hover:from-[#1e40af]-600 hover:to-[#0891b2]-600">
+                        <Button className="w-full bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700">
                           <Heart className="w-4 h-4 mr-1" /> Donate
                         </Button>
                       </Link>

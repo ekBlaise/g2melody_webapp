@@ -76,12 +76,12 @@ export function SharedNavigation({ currentPage = 'home' }) {
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             <Link href="/login">
-              <Button variant="ghost" size="sm" className={isScrolled ? 'text-gray-700' : 'text-white hover:bg-white/10'}>
+              <Button size="sm" className="bg-[#1e40af] hover:bg-[#1e3a8a] text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 Sign In
               </Button>
             </Link>
             <Link href="/join">
-              <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button size="sm" className="bg-[#0891b2] hover:bg-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 Join G2 Melody
               </Button>
             </Link>
@@ -121,10 +121,10 @@ export function SharedNavigation({ currentPage = 'home' }) {
             </div>
             <div className="flex space-x-3 pt-6 mt-6 border-t">
               <Link href="/login" className="flex-1">
-                <Button variant="outline" className="w-full">Sign In</Button>
+                <Button className="w-full bg-[#1e40af] hover:bg-[#1e3a8a] text-white">Sign In</Button>
               </Link>
               <Link href="/join" className="flex-1">
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">Join Us</Button>
+                <Button className="w-full bg-[#0891b2] hover:bg-cyan-700 text-white">Join Us</Button>
               </Link>
             </div>
           </div>
