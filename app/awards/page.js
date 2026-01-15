@@ -44,7 +44,7 @@ export default function AwardsPage() {
       <SharedNavigation currentPage="awards" />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 mt-16 text-white overflow-hidden">
+      <section className="relative pt-24 pb-12 mt-16 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHx0cm9waHklMjBhd2FyZHxlbnwwfHx8fDE3MDk0NDIwMDB8MA&ixlib=rb-4.1.0&q=85"
@@ -54,13 +54,10 @@ export default function AwardsPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-amber-900/90 via-amber-800/80 to-orange-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-6 shadow-xl">
-            <Trophy className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Awards & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-300">Recognition</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-200 max-w-3xl mx-auto">
+          <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Celebrating our achievements and the recognition we've received for our dedication to spreading the Gospel through music.
           </p>
         </div>
