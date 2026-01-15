@@ -287,7 +287,34 @@ export default function JoinPage() {
 
             {/* MEMBER TAB - Extended Form */}
             <TabsContent value="member">
-              <Card className="border-0 shadow-xl rounded-3xl">
+              <div className="grid lg:grid-cols-5 gap-8 items-start">
+                {/* Left Info Panel */}
+                <div className="lg:col-span-2 relative rounded-3xl overflow-hidden min-h-[500px] shadow-xl hidden lg:block">
+                  <img src="https://images.unsplash.com/photo-1541697367348-dfc31a1611dc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85" alt="Join Choir" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/80 to-blue-900/60" />
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <span className="inline-block px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full mb-4 w-fit">Join Our Choir</span>
+                    <h2 className="text-3xl font-bold text-white mb-3">Become a Member</h2>
+                    <p className="text-white/80 text-lg leading-relaxed">Join G2 Melody and use your voice to spread the Gospel through music.</p>
+                    <div className="mt-6 space-y-3">
+                      <div className="flex items-center gap-3 text-white/90">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400" />
+                        <span>Weekly rehearsals</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-white/90">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400" />
+                        <span>Performance opportunities</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-white/90">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400" />
+                        <span>Music training & growth</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form */}
+                <Card className="lg:col-span-3 border-0 shadow-xl rounded-3xl">
                 <CardHeader className="border-b border-gray-100 pb-6">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
@@ -347,32 +374,17 @@ export default function JoinPage() {
                       </div>
                     </div>
 
-                    {/* Section 2: Church / Worship Information */}
+                    {/* Section 2: Church / Place of Worship */}
                     <div className="space-y-4">
                       <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
                         <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center">2</span>
-                        <h3 className="font-semibold text-gray-900 text-lg">Church / Worship Information</h3>
+                        <h3 className="font-semibold text-gray-900 text-lg">Church / Place of Worship</h3>
                       </div>
                       
                       <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label>Are you a member of the Church of Christ? *</Label>
-                          <Select value={memberForm.memberOfChurchOfChrist} onValueChange={(v) => setMemberForm({...memberForm, memberOfChurchOfChrist: v})}>
-                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="yes">Yes</SelectItem>
-                              <SelectItem value="no">No</SelectItem>
-                              <SelectItem value="interested">No, but interested</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label>Church/Congregation Name *</Label>
-                          <Input value={memberForm.congregation} onChange={(e) => setMemberForm({...memberForm, congregation: e.target.value})} placeholder="Where do you worship?" className="mt-1" required />
-                        </div>
                         <div className="sm:col-span-2">
-                          <Label>Church Branch/Location</Label>
-                          <Input value={memberForm.churchBranch} onChange={(e) => setMemberForm({...memberForm, churchBranch: e.target.value})} placeholder="e.g., Church of Christ Buea, Molyko" className="mt-1" />
+                          <Label>Which church do you attend? *</Label>
+                          <Input value={memberForm.congregation} onChange={(e) => setMemberForm({...memberForm, congregation: e.target.value})} placeholder="e.g., Church of Christ Molyko, Baptist Church Buea" className="mt-1" required />
                         </div>
                       </div>
                     </div>
