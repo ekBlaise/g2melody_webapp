@@ -800,6 +800,12 @@ export default function AdminDashboard() {
               <TabsTrigger value="about" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
                 <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> About
               </TabsTrigger>
+              <TabsTrigger value="awards" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Award className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Awards
+              </TabsTrigger>
+              <TabsTrigger value="gallery" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Camera className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Gallery
+              </TabsTrigger>
             </TabsList>
           </div>
 
