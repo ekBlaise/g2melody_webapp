@@ -650,7 +650,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 sm:mb-8 grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
           <AnimatedStatCard
             icon={DollarSign}
             title="Total Revenue"
@@ -683,30 +683,32 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="inline-flex h-12 items-center justify-center rounded-xl bg-gray-100 p-1.5 dark:bg-gray-800">
-            <TabsTrigger value="overview" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <BarChart3 className="mr-2 h-4 w-4" /> Overview
-            </TabsTrigger>
-            <TabsTrigger value="projects" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <Target className="mr-2 h-4 w-4" /> Projects
-            </TabsTrigger>
-            <TabsTrigger value="music" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <Music className="mr-2 h-4 w-4" /> Music
-            </TabsTrigger>
-            <TabsTrigger value="news" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <Megaphone className="mr-2 h-4 w-4" /> News
-            </TabsTrigger>
-            <TabsTrigger value="users" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <Users className="mr-2 h-4 w-4" /> Users
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <Settings className="mr-2 h-4 w-4" /> Settings
-            </TabsTrigger>
-            <TabsTrigger value="about" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
-              <FileText className="mr-2 h-4 w-4" /> About Page
-            </TabsTrigger>
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
+            <TabsList className="inline-flex h-10 sm:h-12 items-center justify-start sm:justify-center rounded-xl bg-gray-100 p-1 sm:p-1.5 dark:bg-gray-800 min-w-max">
+              <TabsTrigger value="overview" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <BarChart3 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> <span className="hidden sm:inline">Overview</span><span className="sm:hidden">Stats</span>
+              </TabsTrigger>
+              <TabsTrigger value="projects" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Target className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Projects
+              </TabsTrigger>
+              <TabsTrigger value="music" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Music className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Music
+              </TabsTrigger>
+              <TabsTrigger value="news" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Megaphone className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> News
+              </TabsTrigger>
+              <TabsTrigger value="users" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Users className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Users
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <Settings className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> <span className="hidden sm:inline">Settings</span><span className="sm:hidden">Set</span>
+              </TabsTrigger>
+              <TabsTrigger value="about" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+                <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> About
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
