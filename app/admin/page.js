@@ -1156,6 +1156,13 @@ export default function AdminDashboard() {
         onOpenChange={setCreateHistoryDialogOpen}
         onSubmit={handleCreateHistory}
       />
+
+      {/* Create News Dialog */}
+      <CreateNewsDialog
+        open={createNewsDialogOpen}
+        onOpenChange={setCreateNewsDialogOpen}
+        onSubmit={handleCreateNews}
+      />
     </div>
   )
 }
