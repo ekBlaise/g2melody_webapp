@@ -363,8 +363,8 @@ function AboutSection() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Melody</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea, 
-            evolving into a powerful force for musical evangelism and worship excellence.
+            Founded in late 2016, G2 Melody started as a small group from The Church of Christ Muea, known as  "Melodious Voices". 
+            This young dynamic group has been evolving into a powerful force for musical evangelism and worship excellence.
           </p>
         </div>
 
@@ -663,7 +663,7 @@ function MusicStoreSection({ music, onPurchase }) {
             Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">Music Collection</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Experience the power of acapella worship. Purchase and download our original compositions, hymns, and gospel tracks.
+            Experience the power of a cappella worship. Stream our music for free, or purchase and download our original compositions, hymns, and gospel songs.
           </p>
         </div>
 
@@ -957,7 +957,7 @@ function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Location</h4>
-                    <p className="text-gray-400">Buea<br />South West Region, Cameroon</p>
+                    <p className="text-gray-400">Buea, South West Region, Cameroon</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
