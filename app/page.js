@@ -41,7 +41,6 @@ function Navigation({ isScrolled, activeSection }) {
 
   const aboutSubLinks = [
     { href: '/about', label: 'About Us' },
-    { href: '/awards', label: 'Awards & Recognition' },
     { href: '/gallery', label: 'Gallery' },
   ]
 
