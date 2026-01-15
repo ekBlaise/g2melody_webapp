@@ -214,11 +214,6 @@ function LoginContent() {
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  <div className="flex justify-end">
-                    <Link href="/forgot-password" className="text-sm text-amber-600 hover:text-amber-700 font-medium">
-                      Forgot password?
-                    </Link>
-                  </div>
                 </div>
 
                 <Button 
