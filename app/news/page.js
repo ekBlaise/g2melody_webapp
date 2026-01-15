@@ -2,306 +2,255 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { SharedNavigation, SharedFooter } from '@/components/shared'
-import {
-  Calendar, Clock, MapPin, Play, Image as ImageIcon, Video, ArrowRight,
-  Loader2, CalendarDays, History, Sparkles
-} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Navbar, Footer } from '@/components/shared'
+import { Calendar, Clock, MapPin, ArrowRight, Megaphone, FileText, Loader2, Newspaper, CalendarDays } from 'lucide-react'
 
 export default function NewsPage() {
-  const [activities, setActivities] = useState([])
+  const [news, setNews] = useState([])
+  const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('upcoming')
+  const [activeFilter, setActiveFilter] = useState('all')
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchNews = async () => {
       try {
-        const res = await fetch('/api/activities')
-        if (res.ok) {
-          const data = await res.json()
-          setActivities(data)
-        } else {
-          setActivities(sampleActivities)
+        const response = await fetch('/api/news')
+        if (response.ok) {
+          const data = await response.json()
+          setNews(data.filter(n => n.type !== 'event'))
+          setEvents(data.filter(n => n.type === 'event'))
         }
-      } catch (error) {
-        setActivities(sampleActivities)
+      } catch (err) {
+        console.error('Error fetching news:', err)
       } finally {
         setLoading(false)
       }
     }
-    fetchActivities()
+    fetchNews()
   }, [])
 
-  const now = new Date()
-  const upcomingActivities = activities.filter(a => new Date(a.date) >= now)
-  const pastActivities = activities.filter(a => new Date(a.date) < now)
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'long',
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     })
   }
 
-  const formatTime = (date) => {
-    return new Date(date).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
-      </div>
-    )
-  }
+  const allItems = activeFilter === 'all' 
+    ? [...news, ...events].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
+    : activeFilter === 'events' 
+      ? events 
+      : news
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <SharedNavigation currentPage="news" />
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
 
-      {/* Hero */}
-      <section className="relative pt-24 pb-12 mt-16 text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHw0fHxjb25jZXJ0JTIwY3Jvd2R8ZW58MHx8fHwxNzY4MjQ4MTI0fDA&ixlib=rb-4.1.0&q=85"
-            alt="Events"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-32 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              News & Events
+            </h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Stay updated with the latest happenings, announcements, and upcoming events from G2 Melody
+            </p>
+          </div>
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Activities & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Events</span>
-          </h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            Stay updated with our concerts, workshops, community outreach, and special events.
-          </p>
+      </section>
+
+      {/* Filter Tabs */}
+      <section className="bg-white border-b border-gray-200 sticky top-16 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-2 py-4">
+            {[
+              { id: 'all', label: 'All Updates', icon: Newspaper },
+              { id: 'news', label: 'News & Announcements', icon: Megaphone },
+              { id: 'events', label: 'Upcoming Events', icon: CalendarDays }
+            ].map((filter) => (
+              <Button
+                key={filter.id}
+                variant={activeFilter === filter.id ? 'default' : 'outline'}
+                className={activeFilter === filter.id ? 'bg-amber-500 hover:bg-amber-600' : ''}
+                onClick={() => setActiveFilter(filter.id)}
+              >
+                <filter.icon className="w-4 h-4 mr-2" />
+                {filter.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-10 p-1.5 bg-white shadow-lg rounded-2xl h-14">
-            <TabsTrigger value="upcoming" className="rounded-xl text-base font-medium data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <Sparkles className="w-4 h-4 mr-2" /> Upcoming
-            </TabsTrigger>
-            <TabsTrigger value="past" className="rounded-xl text-base font-medium data-[state=active]:bg-gray-700 data-[state=active]:text-white">
-              <History className="w-4 h-4 mr-2" /> Past Activities
-            </TabsTrigger>
-          </TabsList>
+      <main className="flex-1 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+            </div>
+          ) : allItems.length === 0 ? (
+            <div className="text-center py-20">
+              <Megaphone className="w-16 h-16 mx-auto mb-6 text-gray-300" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No updates yet</h3>
+              <p className="text-gray-500">Check back soon for news and events</p>
+            </div>
+          ) : (
+            <>
+              {/* Featured Items */}
+              {activeFilter === 'all' && allItems.filter(item => item.isFeatured).length > 0 && (
+                <div className="mb-12">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured</h2>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {allItems.filter(item => item.isFeatured).slice(0, 2).map((item) => (
+                      <Card key={item.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow group">
+                        <div className="relative h-56">
+                          {item.image ? (
+                            <img 
+                              src={item.image} 
+                              alt={item.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                              {item.type === 'event' ? (
+                                <Calendar className="w-16 h-16 text-white/80" />
+                              ) : (
+                                <Megaphone className="w-16 h-16 text-white/80" />
+                              )}
+                            </div>
+                          )}
+                          <div className="absolute top-4 left-4 flex gap-2">
+                            <Badge className={`${
+                              item.type === 'event' ? 'bg-blue-500' : 
+                              item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
+                            } text-white`}>
+                              {item.type}
+                            </Badge>
+                            <Badge className="bg-purple-500 text-white">Featured</Badge>
+                          </div>
+                        </div>
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
+                            {item.title}
+                          </h3>
+                          <p className="text-gray-600 mb-4 line-clamp-2">{item.summary}</p>
+                          {item.type === 'event' && item.eventDate && (
+                            <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {formatDate(item.eventDate)}
+                              </span>
+                              {item.eventTime && (
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-4 h-4" />
+                                  {item.eventTime}
+                                </span>
+                              )}
+                              {item.eventLocation && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  {item.eventLocation}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-400">
+                              {formatDate(item.publishedAt)}
+                            </span>
+                            <Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700">
+                              Read More <ArrowRight className="w-4 h-4 ml-1" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* Upcoming Events */}
-          <TabsContent value="upcoming">
-            {upcomingActivities.length === 0 ? (
-              <div className="text-center py-16">
-                <CalendarDays className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No Upcoming Events</h3>
-                <p className="text-gray-500">Check back soon for new events and activities!</p>
+              {/* All Items Grid */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  {activeFilter === 'events' ? 'Upcoming Events' : 
+                   activeFilter === 'news' ? 'News & Announcements' : 'All Updates'}
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {allItems.filter(item => activeFilter !== 'all' || !item.isFeatured).map((item) => (
+                    <Card key={item.id} className="overflow-hidden border border-gray-200 hover:border-amber-300 hover:shadow-lg transition-all group">
+                      <div className="relative h-40">
+                        {item.image ? (
+                          <img 
+                            src={item.image} 
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className={`w-full h-full flex items-center justify-center ${
+                            item.type === 'event' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' :
+                            item.type === 'announcement' ? 'bg-gradient-to-br from-amber-500 to-orange-500' :
+                            'bg-gradient-to-br from-gray-700 to-gray-900'
+                          }`}>
+                            {item.type === 'event' ? (
+                              <Calendar className="w-12 h-12 text-white/80" />
+                            ) : item.type === 'announcement' ? (
+                              <Megaphone className="w-12 h-12 text-white/80" />
+                            ) : (
+                              <FileText className="w-12 h-12 text-white/80" />
+                            )}
+                          </div>
+                        )}
+                        <Badge className={`absolute top-3 left-3 ${
+                          item.type === 'event' ? 'bg-blue-500' : 
+                          item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
+                        } text-white text-xs`}>
+                          {item.type}
+                        </Badge>
+                      </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.summary}</p>
+                        {item.type === 'event' && item.eventDate && (
+                          <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-3">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {formatDate(item.eventDate)}
+                            </span>
+                            {item.eventLocation && (
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3 h-3" />
+                                {item.eventLocation}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                          <span className="text-xs text-gray-400">
+                            {formatDate(item.publishedAt)}
+                          </span>
+                          <Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700 text-xs h-7">
+                            Read More
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {upcomingActivities.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} formatDate={formatDate} formatTime={formatTime} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
+            </>
+          )}
+        </div>
+      </main>
 
-          {/* Past Activities */}
-          <TabsContent value="past">
-            {pastActivities.length === 0 ? (
-              <div className="text-center py-16">
-                <History className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">No past activities to display yet.</p>
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pastActivities.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} formatDate={formatDate} formatTime={formatTime} isPast />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      <SharedFooter />
+      <Footer />
     </div>
   )
 }
-
-function ActivityCard({ activity, formatDate, formatTime, isPast }) {
-  const hasMedia = activity.images?.length > 0 || activity.videos?.length > 0
-
-  // Use amber for all badges to keep color consistency
-  const getBadgeStyle = (type) => {
-    switch(type) {
-      case 'concert': return 'bg-amber-500'
-      case 'workshop': return 'bg-orange-500'
-      case 'outreach': return 'bg-amber-600'
-      default: return 'bg-gray-700'
-    }
-  }
-
-  return (
-    <Link href={`/news/${activity.id}`}>
-      <Card className={`overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer h-full ${isPast ? 'opacity-90' : ''}`}>
-        <div className="relative h-48">
-          {activity.coverImage ? (
-            <img
-              src={activity.coverImage}
-              alt={activity.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-              <CalendarDays className="w-16 h-16 text-white/50" />
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          
-          {/* Type Badge */}
-          <Badge className={`absolute top-3 left-3 ${getBadgeStyle(activity.type)}`}>
-            {activity.type}
-          </Badge>
-
-          {/* Media Indicator */}
-          {hasMedia && (
-            <div className="absolute top-3 right-3 flex gap-1">
-              {activity.images?.length > 0 && (
-                <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center">
-                  <ImageIcon className="w-4 h-4 text-white" />
-                </div>
-              )}
-              {activity.videos?.length > 0 && (
-                <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center">
-                  <Video className="w-4 h-4 text-white" />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Date Badge */}
-          <div className="absolute bottom-3 left-3">
-            <div className="bg-white rounded-lg px-3 py-1.5 shadow-lg">
-              <p className="text-xs font-medium text-gray-500">
-                {new Date(activity.date).toLocaleDateString('en-US', { month: 'short' })}
-              </p>
-              <p className="text-xl font-bold text-gray-900">
-                {new Date(activity.date).getDate()}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <CardContent className="p-5">
-          <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-2">
-            {activity.title}
-          </h3>
-          <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-            {activity.description}
-          </p>
-          
-          <div className="space-y-2 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-500" />
-              <span>{formatTime(activity.date)}</span>
-            </div>
-            {activity.venue && (
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-amber-500" />
-                <span className="line-clamp-1">{activity.venue}</span>
-              </div>
-            )}
-          </div>
-        </CardContent>
-
-        <CardFooter className="px-5 pb-5 pt-0">
-          <Button variant="ghost" className="w-full group-hover:bg-amber-50 group-hover:text-amber-600">
-            View Details <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </CardFooter>
-      </Card>
-    </Link>
-  )
-}
-
-// Sample data for demonstration
-const sampleActivities = [
-  {
-    id: 'act-1',
-    title: 'Christmas Cantata 2024',
-    description: 'Join us for our annual Christmas cantata featuring traditional carols and original compositions celebrating the birth of Christ.',
-    type: 'concert',
-    date: '2024-12-22T18:00:00',
-    venue: 'Church of Christ Bomaka, Buea',
-    coverImage: 'https://images.unsplash.com/photo-1512389142860-9c449e58a814?w=800',
-    images: ['img1.jpg', 'img2.jpg'],
-    videos: ['video1.mp4']
-  },
-  {
-    id: 'act-2',
-    title: 'Vocal Training Workshop',
-    description: 'A comprehensive workshop on vocal techniques, breathing exercises, and four-part harmony basics for aspiring singers.',
-    type: 'workshop',
-    date: '2025-01-15T14:00:00',
-    venue: 'G2 Melody Training Center',
-    coverImage: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800',
-    images: ['img1.jpg'],
-    videos: []
-  },
-  {
-    id: 'act-3',
-    title: 'Community Gospel Outreach',
-    description: 'Spreading the Gospel through music in Molyko community. Join us for songs, testimonies, and fellowship.',
-    type: 'outreach',
-    date: '2025-02-08T10:00:00',
-    venue: 'Molyko, Buea',
-    coverImage: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=800',
-    images: [],
-    videos: []
-  },
-  {
-    id: 'act-4',
-    title: 'Easter Celebration Concert',
-    description: 'A special resurrection celebration featuring powerful hymns and worship songs.',
-    type: 'concert',
-    date: '2025-04-20T17:00:00',
-    venue: 'Church of Christ Bomaka',
-    coverImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800',
-    images: [],
-    videos: []
-  },
-  {
-    id: 'act-5',
-    title: 'Annual General Meeting 2024',
-    description: 'Our annual meeting to review the year, celebrate achievements, and plan for the future.',
-    type: 'meeting',
-    date: '2024-11-30T14:00:00',
-    venue: 'G2 Melody Office',
-    coverImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800',
-    images: ['img1.jpg', 'img2.jpg', 'img3.jpg'],
-    videos: ['recap.mp4']
-  },
-  {
-    id: 'act-6',
-    title: 'Unfathomable Love Album Launch',
-    description: 'The official launch of our debut album "Unfathomable Love" with live performances.',
-    type: 'concert',
-    date: '2019-08-15T17:00:00',
-    venue: 'Multipurpose Hall, Buea',
-    coverImage: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
-    images: ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg'],
-    videos: ['highlight.mp4', 'performance.mp4']
-  }
-]
