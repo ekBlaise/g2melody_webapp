@@ -605,7 +605,7 @@ export default function AdminDashboard() {
                 <Home className="h-4 w-4" /> View Site
               </Button>
             </Link>
-            <Button variant="ghost" size="sm" className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => signOut({ callbackUrl: '/' })}>
+            <Button variant="ghost" size="sm" className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => signOut({ callbackUrl: '/admin/login' })}>
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>
