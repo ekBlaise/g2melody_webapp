@@ -1592,6 +1592,145 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ success: true }))
     }
 
+    // ==================== AWARDS ====================
+    
+    // Get all awards (public)
+    if (route === '/awards' && method === 'GET') {
+      const awards = await prisma.award.findMany({
+        orderBy: [{ year: 'desc' }, { order: 'asc' }]
+      })
+      return handleCORS(NextResponse.json(awards))
+    }
+
+    // Admin: Create award
+    if (route === '/admin/awards' && method === 'POST') {
+      const body = await request.json()
+      const award = await prisma.award.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          year: parseInt(body.year),
+          image: body.image,
+          awardingOrganization: body.awardingOrganization,
+          category: body.category,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(award))
+    }
+
+    // Admin: Update award
+    const awardMatch = route.match(/^\/admin\/awards\/([^/]+)$/)
+    if (awardMatch && method === 'PUT') {
+      const body = await request.json()
+      const award = await prisma.award.update({
+        where: { id: awardMatch[1] },
+        data: {
+          title: body.title,
+          description: body.description,
+          year: body.year ? parseInt(body.year) : undefined,
+          image: body.image,
+          awardingOrganization: body.awardingOrganization,
+          category: body.category,
+          order: body.order
+        }
+      })
+      return handleCORS(NextResponse.json(award))
+    }
+
+    // Admin: Delete award
+    if (awardMatch && method === 'DELETE') {
+      await prisma.award.delete({ where: { id: awardMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // ==================== GALLERY ====================
+    
+    // Get gallery items (public) - supports filtering by year and category
+    if (route === '/gallery' && method === 'GET') {
+      const url = new URL(request.url)
+      const year = url.searchParams.get('year')
+      const category = url.searchParams.get('category')
+      const featured = url.searchParams.get('featured')
+      
+      const where = {}
+      if (year) where.year = parseInt(year)
+      if (category) where.category = category
+      if (featured === 'true') where.isFeatured = true
+      
+      const items = await prisma.galleryItem.findMany({
+        where,
+        orderBy: [{ year: 'desc' }, { order: 'asc' }]
+      })
+      return handleCORS(NextResponse.json(items))
+    }
+
+    // Get unique years and categories for filters
+    if (route === '/gallery/filters' && method === 'GET') {
+      const [years, categories] = await Promise.all([
+        prisma.galleryItem.findMany({
+          select: { year: true },
+          distinct: ['year'],
+          orderBy: { year: 'desc' }
+        }),
+        prisma.galleryItem.findMany({
+          select: { category: true },
+          distinct: ['category'],
+          orderBy: { category: 'asc' }
+        })
+      ])
+      return handleCORS(NextResponse.json({
+        years: years.map(y => y.year),
+        categories: categories.map(c => c.category)
+      }))
+    }
+
+    // Admin: Create gallery item
+    if (route === '/admin/gallery' && method === 'POST') {
+      const body = await request.json()
+      const item = await prisma.galleryItem.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          imageUrl: body.imageUrl,
+          year: parseInt(body.year),
+          category: body.category,
+          eventName: body.eventName,
+          order: body.order || 0,
+          isFeatured: body.isFeatured || false
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    // Admin: Update gallery item
+    const galleryMatch = route.match(/^\/admin\/gallery\/([^/]+)$/)
+    if (galleryMatch && method === 'PUT') {
+      const body = await request.json()
+      const item = await prisma.galleryItem.update({
+        where: { id: galleryMatch[1] },
+        data: {
+          title: body.title,
+          description: body.description,
+          imageUrl: body.imageUrl,
+          year: body.year ? parseInt(body.year) : undefined,
+          category: body.category,
+          eventName: body.eventName,
+          order: body.order,
+          isFeatured: body.isFeatured
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    // Admin: Delete gallery item
+    if (galleryMatch && method === 'DELETE') {
+      await prisma.galleryItem.delete({ where: { id: galleryMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
