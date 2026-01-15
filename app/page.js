@@ -27,16 +27,34 @@ import {
 // Navigation Component
 function Navigation({ isScrolled, activeSection }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
     { href: '/projects', label: 'Projects' },
     { href: '/music', label: 'Music' },
     { href: '/news', label: 'News' },
     { href: '/learn', label: 'Learn Muzik' },
     { href: '/contact', label: 'Contact' },
   ]
+
+  const aboutSubLinks = [
+    { href: '/about', label: 'About Us' },
+    { href: '/awards', label: 'Awards & Recognition' },
+    { href: '/gallery', label: 'Gallery' },
+  ]
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setAboutDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-100' : 'bg-transparent'}`}>
@@ -54,7 +72,45 @@ function Navigation({ isScrolled, activeSection }) {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
+            <Link
+              href="/"
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+                isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Home
+            </Link>
+
+            {/* About Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${
+                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                About
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {/* Dropdown Menu */}
+              {aboutDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {aboutSubLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setAboutDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {navLinks.filter(link => link.label !== 'Home').map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -98,16 +154,41 @@ function Navigation({ isScrolled, activeSection }) {
         {mobileMenuOpen && (
           <div className="lg:hidden bg-white rounded-2xl shadow-2xl p-6 mt-2 mb-4 animate-in slide-in-from-top-5">
             <div className="space-y-2">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-medium transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-medium transition-colors"
+              >
+                Home
+              </Link>
+              
+              {/* About Section in Mobile */}
+              <div className="border-t border-gray-100 pt-2 mt-2">
+                <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">About</p>
+                {aboutSubLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-medium transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="border-t border-gray-100 pt-2 mt-2">
+                {navLinks.filter(link => link.label !== 'Home').map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-3 px-4 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-medium transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
             <div className="flex space-x-3 pt-6 mt-6 border-t">
               <Link href="/login" className="flex-1">
