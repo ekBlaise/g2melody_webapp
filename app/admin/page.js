@@ -606,6 +606,9 @@ export default function AdminDashboard() {
             <TabsTrigger value="music" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
               <Music className="mr-2 h-4 w-4" /> Music
             </TabsTrigger>
+            <TabsTrigger value="news" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
+              <Megaphone className="mr-2 h-4 w-4" /> News
+            </TabsTrigger>
             <TabsTrigger value="users" className="rounded-lg px-5 data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
               <Users className="mr-2 h-4 w-4" /> Users
             </TabsTrigger>
