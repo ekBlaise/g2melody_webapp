@@ -31,21 +31,21 @@ function AnimatedStatCard({ icon: Icon, title, value, change, changeType, color,
   return (
     <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 dark:bg-gray-900 group overflow-hidden relative">
       <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-      <CardContent className="p-6 relative">
+      <CardContent className="p-3 sm:p-6 relative">
         <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
-            {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
+          <div className="min-w-0 flex-1">
+            <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{title}</p>
+            <p className="mt-1 sm:mt-2 text-lg sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{value}</p>
+            {subtitle && <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1 truncate">{subtitle}</p>}
             {change && (
-              <div className={`mt-2 flex items-center gap-1 text-sm ${changeType === 'positive' ? 'text-emerald-600' : changeType === 'negative' ? 'text-red-600' : 'text-gray-500'}`}>
-                {changeType === 'positive' ? <TrendingUp className="h-4 w-4" /> : <TrendingUp className="h-4 w-4 rotate-180" />}
-                <span>{change}</span>
+              <div className={`mt-1 sm:mt-2 hidden sm:flex items-center gap-1 text-xs sm:text-sm ${changeType === 'positive' ? 'text-emerald-600' : changeType === 'negative' ? 'text-red-600' : 'text-gray-500'}`}>
+                {changeType === 'positive' ? <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" /> : <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 rotate-180" />}
+                <span className="truncate">{change}</span>
               </div>
             )}
           </div>
-          <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-white shadow-lg`}>
-            <Icon className="h-7 w-7" />
+          <div className={`flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br ${color} text-white shadow-lg flex-shrink-0 ml-2`}>
+            <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
           </div>
         </div>
       </CardContent>
