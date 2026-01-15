@@ -1253,6 +1253,129 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Awards Tab */}
+          <TabsContent value="awards" className="space-y-6">
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="h-5 w-5 text-amber-500" />
+                    Awards & Recognition
+                  </CardTitle>
+                  <CardDescription>Manage awards and achievements ({awards.length} total)</CardDescription>
+                </div>
+                <Button className="bg-gradient-to-r from-amber-500 to-orange-500 gap-2" onClick={() => setCreateAwardDialogOpen(true)}>
+                  <Plus className="h-4 w-4" /> Add Award
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {awards.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <Award className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No awards yet</p>
+                    <p className="text-sm mt-1">Add your choir's achievements and recognitions</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {awards.map((award) => (
+                      <div key={award.id} className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="h-32 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center">
+                          {award.image ? (
+                            <img src={award.image} alt={award.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <Award className="h-12 w-12 text-amber-500" />
+                          )}
+                        </div>
+                        <div className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <Badge className="bg-amber-100 text-amber-700">{award.year}</Badge>
+                            {award.category && <Badge variant="outline" className="text-xs">{award.category}</Badge>}
+                          </div>
+                          <h4 className="font-semibold text-gray-900 dark:text-white line-clamp-2">{award.title}</h4>
+                          {award.awardingOrganization && (
+                            <p className="text-sm text-amber-600 mt-1 flex items-center gap-1">
+                              <Building className="h-3 w-3" /> {award.awardingOrganization}
+                            </p>
+                          )}
+                          {award.description && (
+                            <p className="text-xs text-gray-500 mt-2 line-clamp-2">{award.description}</p>
+                          )}
+                          <div className="mt-3 flex justify-end">
+                            <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 h-8 w-8 p-0" onClick={() => handleDeleteAward(award.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Gallery Tab */}
+          <TabsContent value="gallery" className="space-y-6">
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Camera className="h-5 w-5 text-blue-500" />
+                    Photo Gallery
+                  </CardTitle>
+                  <CardDescription>Manage gallery photos ({galleryItems.length} total)</CardDescription>
+                </div>
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 gap-2" onClick={() => setCreateGalleryDialogOpen(true)}>
+                  <Plus className="h-4 w-4" /> Add Photo
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {galleryItems.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <Camera className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No gallery items yet</p>
+                    <p className="text-sm mt-1">Add photos from concerts, rehearsals, and events</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    {galleryItems.map((item) => (
+                      <div key={item.id} className="group relative aspect-square rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute bottom-0 left-0 right-0 p-2 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                          <p className="text-white text-xs font-medium line-clamp-1">{item.title}</p>
+                          <div className="flex items-center gap-1 text-white/70 text-[10px]">
+                            <span>{item.year}</span>
+                            <span>•</span>
+                            <span>{item.category}</span>
+                          </div>
+                        </div>
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className={`h-7 w-7 p-0 ${item.isFeatured ? 'text-amber-400' : 'text-white/80'} hover:text-amber-400 bg-black/50 hover:bg-black/70`}
+                            onClick={() => handleToggleGalleryFeatured(item)}
+                          >
+                            <Star className={`h-4 w-4 ${item.isFeatured ? 'fill-current' : ''}`} />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-white/80 hover:text-red-400 bg-black/50 hover:bg-black/70" onClick={() => handleDeleteGalleryItem(item.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {item.isFeatured && (
+                          <div className="absolute top-2 left-2">
+                            <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5">Featured</Badge>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
