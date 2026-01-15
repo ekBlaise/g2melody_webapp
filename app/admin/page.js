@@ -504,6 +504,55 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleCreateNews = async (formData) => {
+    try {
+      const res = await fetch('/api/admin/news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const news = await res.json()
+        setNewsEvents([news, ...newsEvents])
+        toast.success('News item created!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to create news')
+    }
+    return false
+  }
+
+  const handleDeleteNews = async (newsId) => {
+    if (!confirm('Are you sure you want to delete this news item?')) return
+    try {
+      const res = await fetch(`/api/admin/news/${newsId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setNewsEvents(newsEvents.filter(n => n.id !== newsId))
+        toast.success('News item deleted!')
+      }
+    } catch (error) {
+      toast.error('Failed to delete news')
+    }
+  }
+
+  const handleToggleNewsPublish = async (newsItem) => {
+    try {
+      const res = await fetch(`/api/admin/news/${newsItem.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newsItem, isPublished: !newsItem.isPublished })
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setNewsEvents(newsEvents.map(n => n.id === newsItem.id ? updated : n))
+        toast.success(updated.isPublished ? 'Published!' : 'Unpublished!')
+      }
+    } catch (error) {
+      toast.error('Failed to update')
+    }
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
