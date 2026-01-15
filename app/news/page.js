@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Navbar, Footer } from '@/components/shared'
+import { SharedNavigation, SharedFooter } from '@/components/shared'
 import { Calendar, Clock, MapPin, ArrowRight, Megaphone, FileText, Loader2, Newspaper, CalendarDays } from 'lucide-react'
 
 export default function NewsPage() {
