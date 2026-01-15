@@ -539,3 +539,35 @@ model PasswordResetToken {
   @@index([token])
 }
 
+// Awards and Recognition
+model Award {
+  id                 String   @id @default(uuid())
+  title              String
+  description        String?  @db.Text
+  year               Int
+  image              String?
+  awardingOrganization String?
+  category           String?  // e.g., "Music Excellence", "Community Service", "Achievement"
+  order              Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// Gallery - Photo Gallery grouped by Year and Category
+model GalleryItem {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  imageUrl    String
+  year        Int
+  category    String   // e.g., "Concerts", "Rehearsals", "Events", "Community"
+  eventName   String?  // Optional: specific event name
+  order       Int      @default(0)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([year])
+  @@index([category])
+}
+
