@@ -23,7 +23,7 @@ import {
   Eye, CheckCircle2, Clock, AlertCircle, Activity, PieChart, Shield, Bell,
   FileText, Mic2, BookOpen, Video, Search, Filter, MoreVertical, Download,
   RefreshCw, Zap, Globe, Building, Radio, ChevronRight, ArrowUpRight, Crown, Star, User,
-  Megaphone, MapPin, Image, ExternalLink
+  Megaphone, MapPin, Image, ExternalLink, Award, Camera
 } from 'lucide-react'
 
 // Animated Stats Card Component
