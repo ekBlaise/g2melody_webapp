@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Navbar, Footer } from '@/components/shared'
+import { SharedNavigation, SharedFooter } from '@/components/shared'
 import { Calendar, Clock, MapPin, ArrowLeft, Share2, Loader2, Megaphone, User, Facebook, Twitter } from 'lucide-react'
 
 export default function NewsDetailPage() {
