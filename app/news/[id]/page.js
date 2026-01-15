@@ -58,11 +58,11 @@ export default function NewsDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
-        <Navbar />
+        <SharedNavigation currentPage="news" />
         <div className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
         </div>
-        <Footer />
+        <SharedFooter />
       </div>
     )
   }
