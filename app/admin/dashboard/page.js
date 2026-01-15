@@ -1983,3 +1983,246 @@ function CreateNewsDialog({ open, onOpenChange, onSubmit }) {
     </Dialog>
   )
 }
+
+
+// Create Award Dialog
+function CreateAwardDialog({ open, onOpenChange, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    title: '', description: '', year: new Date().getFullYear(), image: '',
+    awardingOrganization: '', category: ''
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(formData)
+    if (success) {
+      onOpenChange(false)
+      setFormData({
+        title: '', description: '', year: new Date().getFullYear(), image: '',
+        awardingOrganization: '', category: ''
+      })
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add Award</DialogTitle>
+          <DialogDescription>Add a new award or recognition</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="awardTitle">Award Title *</Label>
+            <Input 
+              id="awardTitle" 
+              value={formData.title} 
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+              placeholder="e.g., Best Gospel Choir 2024"
+              required 
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="awardYear">Year *</Label>
+              <Input 
+                id="awardYear" 
+                type="number" 
+                value={formData.year} 
+                onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })} 
+                min="2000"
+                max="2030"
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="awardCategory">Category</Label>
+              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Music Excellence">Music Excellence</SelectItem>
+                  <SelectItem value="Community Service">Community Service</SelectItem>
+                  <SelectItem value="Achievement">Achievement</SelectItem>
+                  <SelectItem value="Performance">Performance</SelectItem>
+                  <SelectItem value="Ministry">Ministry</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="awardOrg">Awarding Organization</Label>
+            <Input 
+              id="awardOrg" 
+              value={formData.awardingOrganization} 
+              onChange={(e) => setFormData({ ...formData, awardingOrganization: e.target.value })} 
+              placeholder="e.g., Cameroon Gospel Music Association"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="awardDesc">Description</Label>
+            <Textarea 
+              id="awardDesc" 
+              value={formData.description} 
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+              rows={3} 
+              placeholder="Details about the award..."
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="awardImage">Image URL</Label>
+            <Input 
+              id="awardImage" 
+              value={formData.image} 
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })} 
+              placeholder="https://example.com/award.jpg"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-amber-500 to-orange-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Add Award
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// Create Gallery Item Dialog
+function CreateGalleryDialog({ open, onOpenChange, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    title: '', description: '', imageUrl: '', year: new Date().getFullYear(),
+    category: '', eventName: '', isFeatured: false
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(formData)
+    if (success) {
+      onOpenChange(false)
+      setFormData({
+        title: '', description: '', imageUrl: '', year: new Date().getFullYear(),
+        category: '', eventName: '', isFeatured: false
+      })
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add Gallery Photo</DialogTitle>
+          <DialogDescription>Add a new photo to the gallery</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="galleryTitle">Photo Title *</Label>
+            <Input 
+              id="galleryTitle" 
+              value={formData.title} 
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+              placeholder="e.g., Concert at Buea Town Hall"
+              required 
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="galleryImage">Image URL *</Label>
+            <Input 
+              id="galleryImage" 
+              value={formData.imageUrl} 
+              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })} 
+              placeholder="https://example.com/photo.jpg"
+              required 
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="galleryYear">Year *</Label>
+              <Input 
+                id="galleryYear" 
+                type="number" 
+                value={formData.year} 
+                onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })} 
+                min="2016"
+                max="2030"
+                required 
+              />
+            </div>
+            <div>
+              <Label htmlFor="galleryCategory">Category *</Label>
+              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Concerts">Concerts</SelectItem>
+                  <SelectItem value="Rehearsals">Rehearsals</SelectItem>
+                  <SelectItem value="Events">Events</SelectItem>
+                  <SelectItem value="Community">Community</SelectItem>
+                  <SelectItem value="Fellowship">Fellowship</SelectItem>
+                  <SelectItem value="Behind the Scenes">Behind the Scenes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="galleryEvent">Event Name (optional)</Label>
+            <Input 
+              id="galleryEvent" 
+              value={formData.eventName} 
+              onChange={(e) => setFormData({ ...formData, eventName: e.target.value })} 
+              placeholder="e.g., Christmas Concert 2023"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="galleryDesc">Description (optional)</Label>
+            <Textarea 
+              id="galleryDesc" 
+              value={formData.description} 
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+              rows={2} 
+              placeholder="Brief description of the photo..."
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Switch 
+              id="galleryFeatured" 
+              checked={formData.isFeatured}
+              onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
+            />
+            <Label htmlFor="galleryFeatured">Mark as Featured</Label>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-blue-500 to-purple-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Add Photo
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
