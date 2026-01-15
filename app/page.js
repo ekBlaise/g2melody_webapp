@@ -363,8 +363,8 @@ function AboutSection() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Melody</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Founded in late 2016, G2 Melody started as a small group from The Church of Christ Muea, known as  "Melodious Voices". 
-            This young dynamic group has been evolving into a powerful force for musical evangelism and worship excellence.
+            Founded in late 2016, G2 Melody began as a small group from the Church of Christ, Muea, formerly known as Melodious Voices. 
+            The group has since grown into a powerful force for musical evangelism and worship excellence.
           </p>
         </div>
 

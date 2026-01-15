@@ -142,7 +142,7 @@ export default function AboutPage() {
             Gospel Guardians <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Melody</span>
           </h1>
           <p className="text-lg text-white/90 max-w-3xl mx-auto">
-            "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" — Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea.
+           "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" - Since 2016, G2 Melody has grown from Melodious Voices of the Church of Christ, Muea, into a vibrant musical ministry.
           </p>
         </div>
       </section>
