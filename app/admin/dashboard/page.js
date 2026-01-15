@@ -583,32 +583,38 @@ export default function AdminDashboard() {
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-950' : 'bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50'}`}>
       {/* Premium Admin Header */}
       <header className="sticky top-0 z-50 border-b border-gray-200/50 bg-white/80 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-950/80">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/30">
-              <Shield className="h-5 w-5 text-white" />
+        <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+          <Link href="/admin/dashboard" className="flex items-center gap-2 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/30">
+              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <span className="font-bold text-gray-900 dark:text-white">G2 Melody</span>
-              <Badge className="ml-2 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+              <Badge className="ml-2 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 text-xs">
                 <Crown className="h-3 w-3 mr-1" />Admin
               </Badge>
             </div>
+            <Badge className="sm:hidden bg-orange-100 text-orange-700 text-xs">
+              Admin
+            </Badge>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="hidden sm:flex" onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          <div className="flex items-center gap-1 sm:gap-3">
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => setDarkMode(!darkMode)}>
+              {darkMode ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </Button>
             <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="hidden sm:flex gap-2">
                 <ExternalLink className="h-4 w-4" /> Visit Website
+              </Button>
+              <Button variant="ghost" size="icon" className="sm:hidden h-8 w-8">
+                <ExternalLink className="h-4 w-4" />
               </Button>
             </Link>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" 
+              className="hidden sm:flex gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" 
               onClick={async () => {
                 await signOut({ redirect: false })
                 window.location.href = '/admin/login'
@@ -616,18 +622,29 @@ export default function AdminDashboard() {
             >
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="sm:hidden h-8 w-8 text-red-600" 
+              onClick={async () => {
+                await signOut({ redirect: false })
+                window.location.href = '/admin/login'
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
         {/* Admin Welcome */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-4 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-            <p className="text-gray-500 dark:text-gray-400">Welcome back, {session.user.name}. Here's your platform overview.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">Welcome back, {session.user.name?.split(' ')[0]}.</p>
           </div>
-          <Button onClick={() => window.location.reload()} variant="outline" size="sm" className="gap-2">
+          <Button onClick={() => window.location.reload()} variant="outline" size="sm" className="gap-2 self-start sm:self-auto">
             <RefreshCw className="h-4 w-4" /> Refresh
           </Button>
         </div>
