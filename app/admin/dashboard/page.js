@@ -563,6 +563,89 @@ export default function AdminDashboard() {
     }
   }
 
+  // ==================== AWARDS HANDLERS ====================
+  const handleCreateAward = async (formData) => {
+    try {
+      const res = await fetch('/api/admin/awards', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const award = await res.json()
+        setAwards([...awards, award].sort((a, b) => b.year - a.year))
+        toast.success('Award added!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to add award')
+    }
+    return false
+  }
+
+  const handleDeleteAward = async (awardId) => {
+    if (!confirm('Are you sure you want to delete this award?')) return
+    try {
+      const res = await fetch(`/api/admin/awards/${awardId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setAwards(awards.filter(a => a.id !== awardId))
+        toast.success('Award deleted!')
+      }
+    } catch (error) {
+      toast.error('Failed to delete award')
+    }
+  }
+
+  // ==================== GALLERY HANDLERS ====================
+  const handleCreateGalleryItem = async (formData) => {
+    try {
+      const res = await fetch('/api/admin/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const item = await res.json()
+        setGalleryItems([...galleryItems, item].sort((a, b) => b.year - a.year))
+        toast.success('Gallery item added!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to add gallery item')
+    }
+    return false
+  }
+
+  const handleDeleteGalleryItem = async (itemId) => {
+    if (!confirm('Are you sure you want to delete this gallery item?')) return
+    try {
+      const res = await fetch(`/api/admin/gallery/${itemId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setGalleryItems(galleryItems.filter(i => i.id !== itemId))
+        toast.success('Gallery item deleted!')
+      }
+    } catch (error) {
+      toast.error('Failed to delete gallery item')
+    }
+  }
+
+  const handleToggleGalleryFeatured = async (item) => {
+    try {
+      const res = await fetch(`/api/admin/gallery/${item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...item, isFeatured: !item.isFeatured })
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setGalleryItems(galleryItems.map(i => i.id === item.id ? updated : i))
+        toast.success(updated.isFeatured ? 'Marked as featured!' : 'Removed from featured!')
+      }
+    } catch (error) {
+      toast.error('Failed to update')
+    }
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
