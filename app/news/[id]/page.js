@@ -73,7 +73,7 @@ export default function NewsDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
+      <SharedNavigation currentPage="news" />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-24 sm:pt-32 pb-12 sm:pb-20">
