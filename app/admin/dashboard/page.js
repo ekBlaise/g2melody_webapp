@@ -1420,6 +1420,20 @@ export default function AdminDashboard() {
         onOpenChange={setCreateNewsDialogOpen}
         onSubmit={handleCreateNews}
       />
+
+      {/* Create Award Dialog */}
+      <CreateAwardDialog
+        open={createAwardDialogOpen}
+        onOpenChange={setCreateAwardDialogOpen}
+        onSubmit={handleCreateAward}
+      />
+
+      {/* Create Gallery Dialog */}
+      <CreateGalleryDialog
+        open={createGalleryDialogOpen}
+        onOpenChange={setCreateGalleryDialogOpen}
+        onSubmit={handleCreateGalleryItem}
+      />
     </div>
   )
 }
