@@ -250,7 +250,7 @@ export default function NewsPage() {
         </div>
       </main>
 
-      <Footer />
+      <SharedFooter />
     </div>
   )
 }
