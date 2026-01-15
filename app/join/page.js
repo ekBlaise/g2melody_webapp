@@ -539,6 +539,7 @@ export default function JoinPage() {
                   </form>
                 </CardContent>
               </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
