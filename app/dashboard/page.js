@@ -258,7 +258,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar Navigation */}
+      {/* Sidebar Navigation - Desktop */}
       <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
         {/* Logo */}
         <div className="flex items-center h-16 px-6 border-b border-gray-200">
@@ -324,10 +324,10 @@ export default function DashboardPage() {
       <div className="lg:pl-64 flex flex-col flex-1">
         {/* Top Header (Mobile) */}
         <header className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between h-16 px-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between h-14 px-4">
+            <div className="flex items-center gap-2">
               <img src="/logo.png" alt="G2 Melody" className="h-8 w-auto" />
-              <span className="font-bold text-gray-900">G2 Melody</span>
+              <span className="font-bold text-gray-900 text-sm">G2 Melody</span>
             </div>
             <div className="flex items-center gap-2">
               <button className="relative p-2 rounded-full hover:bg-gray-100">
@@ -336,6 +336,10 @@ export default function DashboardPage() {
                   <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
                 )}
               </button>
+              <div className="flex items-center gap-1.5 bg-amber-50 rounded-full px-2 py-1">
+                <Flame className="w-3.5 h-3.5 text-amber-500" />
+                <span className="text-xs font-semibold text-amber-700">{progress.currentStreak}</span>
+              </div>
               <Avatar className="h-8 w-8">
                 <AvatarImage src={session.user?.image} />
                 <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white text-xs font-semibold">
@@ -345,19 +349,19 @@ export default function DashboardPage() {
             </div>
           </div>
           
-          {/* Mobile Navigation */}
-          <div className="flex overflow-x-auto px-4 py-2 gap-2 border-t border-gray-100">
-            {navItems.slice(0, 5).map((item) => (
+          {/* Mobile Navigation - Scrollable Tabs */}
+          <div className="flex overflow-x-auto px-2 py-2 gap-1.5 border-t border-gray-100 scrollbar-hide">
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
-                className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
                   activeSection === item.id
                     ? 'bg-amber-500 text-white'
-                    : 'bg-gray-100 text-gray-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                <item.icon className="w-4 h-4" />
+                <item.icon className="w-3.5 h-3.5" />
                 {item.label}
               </button>
             ))}
