@@ -1562,3 +1562,167 @@ function CreateHistoryDialog({ open, onOpenChange, onSubmit }) {
     </Dialog>
   )
 }
+
+// Create News Dialog Component
+function CreateNewsDialog({ open, onOpenChange, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    title: '', summary: '', content: '', image: '', type: 'news',
+    eventDate: '', eventTime: '', eventLocation: '', isFeatured: false, isPublished: true, author: ''
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(formData)
+    if (success) {
+      onOpenChange(false)
+      setFormData({
+        title: '', summary: '', content: '', image: '', type: 'news',
+        eventDate: '', eventTime: '', eventLocation: '', isFeatured: false, isPublished: true, author: ''
+      })
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Create News/Event</DialogTitle>
+          <DialogDescription>Add a new article, announcement, or event</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="newsType">Type</Label>
+              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="news">News Article</SelectItem>
+                  <SelectItem value="announcement">Announcement</SelectItem>
+                  <SelectItem value="event">Event</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="newsAuthor">Author</Label>
+              <Input 
+                id="newsAuthor" 
+                value={formData.author} 
+                onChange={(e) => setFormData({ ...formData, author: e.target.value })} 
+                placeholder="G2 Melody Team"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="newsTitle">Title</Label>
+            <Input 
+              id="newsTitle" 
+              value={formData.title} 
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+              placeholder="Enter title..."
+              required 
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="newsSummary">Summary</Label>
+            <Input 
+              id="newsSummary" 
+              value={formData.summary} 
+              onChange={(e) => setFormData({ ...formData, summary: e.target.value })} 
+              placeholder="Brief summary (shown in previews)..."
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="newsContent">Content</Label>
+            <Textarea 
+              id="newsContent" 
+              value={formData.content} 
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })} 
+              rows={4} 
+              placeholder="Full article content..."
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="newsImage">Cover Image URL</Label>
+            <Input 
+              id="newsImage" 
+              value={formData.image} 
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })} 
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+
+          {formData.type === 'event' && (
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg space-y-4">
+              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Event Details</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="eventDate">Event Date</Label>
+                  <Input 
+                    id="eventDate" 
+                    type="date"
+                    value={formData.eventDate} 
+                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="eventTime">Event Time</Label>
+                  <Input 
+                    id="eventTime" 
+                    value={formData.eventTime} 
+                    onChange={(e) => setFormData({ ...formData, eventTime: e.target.value })} 
+                    placeholder="e.g., 6:00 PM"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="eventLocation">Location</Label>
+                <Input 
+                  id="eventLocation" 
+                  value={formData.eventLocation} 
+                  onChange={(e) => setFormData({ ...formData, eventLocation: e.target.value })} 
+                  placeholder="e.g., Church of Christ, Buea"
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Switch 
+                id="isFeatured" 
+                checked={formData.isFeatured}
+                onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
+              />
+              <Label htmlFor="isFeatured">Featured</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch 
+                id="isPublished" 
+                checked={formData.isPublished}
+                onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked })}
+              />
+              <Label htmlFor="isPublished">Publish Immediately</Label>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-amber-500 to-orange-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Create
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
