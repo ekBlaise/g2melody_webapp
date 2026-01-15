@@ -567,7 +567,15 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!session || session.user.role !== 'ADMIN') return null
+  if (status === 'unauthenticated') {
+    router.push('/admin/login')
+    return null
+  }
+
+  if (!session || session.user.role !== 'ADMIN') {
+    router.push('/admin/login')
+    return null
+  }
 
   const totalRevenue = (stats?.donations?.total || 0) + (stats?.purchases?.total || 0)
 
