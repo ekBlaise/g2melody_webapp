@@ -50,14 +50,25 @@ export default function NewsPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <SharedNavigation currentPage="news" />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-32 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section with Image */}
+      <section className="relative pt-20 sm:pt-24">
+        <div className="absolute inset-0 h-[400px] sm:h-[450px]">
+          <img 
+            src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920"
+            alt="G2 Melody News"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/70 to-gray-900/90"></div>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-24 sm:pb-32">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 mb-4">
+              <Newspaper className="w-3 h-3 mr-1" /> Stay Informed
+            </Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
               News & Events
             </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
               Stay updated with the latest happenings, announcements, and upcoming events from G2 Melody
             </p>
           </div>
@@ -65,18 +76,18 @@ export default function NewsPage() {
       </section>
 
       {/* Filter Tabs */}
-      <section className="bg-white border-b border-gray-200 sticky top-16 z-30">
+      <section className="bg-white border-b border-gray-200 sticky top-16 z-30 -mt-8 sm:-mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-2 py-4">
+          <div className="flex gap-2 py-4 overflow-x-auto scrollbar-hide">
             {[
               { id: 'all', label: 'All Updates', icon: Newspaper },
-              { id: 'news', label: 'News & Announcements', icon: Megaphone },
-              { id: 'events', label: 'Upcoming Events', icon: CalendarDays }
+              { id: 'news', label: 'News', icon: Megaphone },
+              { id: 'events', label: 'Events', icon: CalendarDays }
             ].map((filter) => (
               <Button
                 key={filter.id}
                 variant={activeFilter === filter.id ? 'default' : 'outline'}
-                className={activeFilter === filter.id ? 'bg-amber-500 hover:bg-amber-600' : ''}
+                className={`flex-shrink-0 ${activeFilter === filter.id ? 'bg-amber-500 hover:bg-amber-600' : ''}`}
                 onClick={() => setActiveFilter(filter.id)}
               >
                 <filter.icon className="w-4 h-4 mr-2" />
@@ -88,7 +99,7 @@ export default function NewsPage() {
       </section>
 
       {/* Content */}
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex items-center justify-center py-20">
@@ -108,68 +119,70 @@ export default function NewsPage() {
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured</h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     {allItems.filter(item => item.isFeatured).slice(0, 2).map((item) => (
-                      <Card key={item.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow group">
-                        <div className="relative h-56">
-                          {item.image ? (
-                            <img 
-                              src={item.image} 
-                              alt={item.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                              {item.type === 'event' ? (
-                                <Calendar className="w-16 h-16 text-white/80" />
-                              ) : (
-                                <Megaphone className="w-16 h-16 text-white/80" />
-                              )}
+                      <Link key={item.id} href={`/news/${item.id}`}>
+                        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group h-full">
+                          <div className="relative h-56">
+                            {item.image ? (
+                              <img 
+                                src={item.image} 
+                                alt={item.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                                {item.type === 'event' ? (
+                                  <Calendar className="w-16 h-16 text-white/80" />
+                                ) : (
+                                  <Megaphone className="w-16 h-16 text-white/80" />
+                                )}
+                              </div>
+                            )}
+                            <div className="absolute top-4 left-4 flex gap-2">
+                              <Badge className={`${
+                                item.type === 'event' ? 'bg-blue-500' : 
+                                item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
+                              } text-white`}>
+                                {item.type}
+                              </Badge>
+                              <Badge className="bg-purple-500 text-white">Featured</Badge>
                             </div>
-                          )}
-                          <div className="absolute top-4 left-4 flex gap-2">
-                            <Badge className={`${
-                              item.type === 'event' ? 'bg-blue-500' : 
-                              item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
-                            } text-white`}>
-                              {item.type}
-                            </Badge>
-                            <Badge className="bg-purple-500 text-white">Featured</Badge>
                           </div>
-                        </div>
-                        <CardContent className="p-6">
-                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600 mb-4 line-clamp-2">{item.summary}</p>
-                          {item.type === 'event' && item.eventDate && (
-                            <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-4 h-4" />
-                                {formatDate(item.eventDate)}
+                          <CardContent className="p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
+                              {item.title}
+                            </h3>
+                            <p className="text-gray-600 mb-4 line-clamp-2">{item.summary}</p>
+                            {item.type === 'event' && item.eventDate && (
+                              <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-4 h-4" />
+                                  {formatDate(item.eventDate)}
+                                </span>
+                                {item.eventTime && (
+                                  <span className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4" />
+                                    {item.eventTime}
+                                  </span>
+                                )}
+                                {item.eventLocation && (
+                                  <span className="flex items-center gap-1">
+                                    <MapPin className="w-4 h-4" />
+                                    {item.eventLocation}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-gray-400">
+                                {formatDate(item.publishedAt)}
                               </span>
-                              {item.eventTime && (
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-4 h-4" />
-                                  {item.eventTime}
-                                </span>
-                              )}
-                              {item.eventLocation && (
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="w-4 h-4" />
-                                  {item.eventLocation}
-                                </span>
-                              )}
+                              <span className="text-amber-600 group-hover:text-amber-700 font-medium flex items-center">
+                                Read More <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                              </span>
                             </div>
-                          )}
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-400">
-                              {formatDate(item.publishedAt)}
-                            </span>
-                            <Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700">
-                              Read More <ArrowRight className="w-4 h-4 ml-1" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
+                          </CardContent>
+                        </Card>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -183,65 +196,67 @@ export default function NewsPage() {
                 </h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {allItems.filter(item => activeFilter !== 'all' || !item.isFeatured).map((item) => (
-                    <Card key={item.id} className="overflow-hidden border border-gray-200 hover:border-amber-300 hover:shadow-lg transition-all group">
-                      <div className="relative h-40">
-                        {item.image ? (
-                          <img 
-                            src={item.image} 
-                            alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className={`w-full h-full flex items-center justify-center ${
-                            item.type === 'event' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' :
-                            item.type === 'announcement' ? 'bg-gradient-to-br from-amber-500 to-orange-500' :
-                            'bg-gradient-to-br from-gray-700 to-gray-900'
-                          }`}>
-                            {item.type === 'event' ? (
-                              <Calendar className="w-12 h-12 text-white/80" />
-                            ) : item.type === 'announcement' ? (
-                              <Megaphone className="w-12 h-12 text-white/80" />
-                            ) : (
-                              <FileText className="w-12 h-12 text-white/80" />
-                            )}
-                          </div>
-                        )}
-                        <Badge className={`absolute top-3 left-3 ${
-                          item.type === 'event' ? 'bg-blue-500' : 
-                          item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
-                        } text-white text-xs`}>
-                          {item.type}
-                        </Badge>
-                      </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
-                          {item.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.summary}</p>
-                        {item.type === 'event' && item.eventDate && (
-                          <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-3">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              {formatDate(item.eventDate)}
-                            </span>
-                            {item.eventLocation && (
-                              <span className="flex items-center gap-1">
-                                <MapPin className="w-3 h-3" />
-                                {item.eventLocation}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                          <span className="text-xs text-gray-400">
-                            {formatDate(item.publishedAt)}
-                          </span>
-                          <Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700 text-xs h-7">
-                            Read More
-                          </Button>
+                    <Link key={item.id} href={`/news/${item.id}`}>
+                      <Card className="overflow-hidden border border-gray-200 hover:border-amber-300 hover:shadow-lg transition-all duration-300 group h-full">
+                        <div className="relative h-40">
+                          {item.image ? (
+                            <img 
+                              src={item.image} 
+                              alt={item.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className={`w-full h-full flex items-center justify-center ${
+                              item.type === 'event' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' :
+                              item.type === 'announcement' ? 'bg-gradient-to-br from-amber-500 to-orange-500' :
+                              'bg-gradient-to-br from-gray-700 to-gray-900'
+                            }`}>
+                              {item.type === 'event' ? (
+                                <Calendar className="w-12 h-12 text-white/80" />
+                              ) : item.type === 'announcement' ? (
+                                <Megaphone className="w-12 h-12 text-white/80" />
+                              ) : (
+                                <FileText className="w-12 h-12 text-white/80" />
+                              )}
+                            </div>
+                          )}
+                          <Badge className={`absolute top-3 left-3 ${
+                            item.type === 'event' ? 'bg-blue-500' : 
+                            item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
+                          } text-white text-xs`}>
+                            {item.type}
+                          </Badge>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <CardContent className="p-4">
+                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                            {item.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.summary}</p>
+                          {item.type === 'event' && item.eventDate && (
+                            <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-3">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {formatDate(item.eventDate)}
+                              </span>
+                              {item.eventLocation && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  {item.eventLocation}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                            <span className="text-xs text-gray-400">
+                              {formatDate(item.publishedAt)}
+                            </span>
+                            <span className="text-amber-600 group-hover:text-amber-700 text-xs font-medium flex items-center">
+                              Read More <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               </div>
