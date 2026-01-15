@@ -605,7 +605,15 @@ export default function AdminDashboard() {
                 <ExternalLink className="h-4 w-4" /> Visit Website
               </Button>
             </Link>
-            <Button variant="ghost" size="sm" className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => signOut({ callbackUrl: '/admin/login' })}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" 
+              onClick={async () => {
+                await signOut({ redirect: false })
+                window.location.href = '/admin/login'
+              }}
+            >
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>
