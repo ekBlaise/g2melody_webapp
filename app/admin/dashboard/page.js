@@ -292,7 +292,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, projectsRes, musicRes, usersRes, settingsRes, foundersRes, membersRes, historyRes, newsRes] = await Promise.all([
+        const [statsRes, projectsRes, musicRes, usersRes, settingsRes, foundersRes, membersRes, historyRes, newsRes, awardsRes, galleryRes] = await Promise.all([
           fetch('/api/admin/stats'),
           fetch('/api/projects'),
           fetch('/api/music'),
@@ -301,10 +301,12 @@ export default function AdminDashboard() {
           fetch('/api/founders'),
           fetch('/api/choir-members'),
           fetch('/api/history'),
-          fetch('/api/news')
+          fetch('/api/news'),
+          fetch('/api/awards'),
+          fetch('/api/gallery')
         ])
 
-        const [statsData, projectsData, musicData, usersData, settingsData, foundersData, membersData, historyData, newsData] = await Promise.all([
+        const [statsData, projectsData, musicData, usersData, settingsData, foundersData, membersData, historyData, newsData, awardsData, galleryData] = await Promise.all([
           statsRes.json(),
           projectsRes.json(),
           musicRes.json(),
@@ -313,7 +315,9 @@ export default function AdminDashboard() {
           foundersRes.json(),
           membersRes.json(),
           historyRes.json(),
-          newsRes.json()
+          newsRes.json(),
+          awardsRes.json(),
+          galleryRes.json()
         ])
 
         setStats(statsData)
@@ -325,6 +329,8 @@ export default function AdminDashboard() {
         setChoirMembers(Array.isArray(membersData) ? membersData : [])
         setHistoryEvents(Array.isArray(historyData) ? historyData : [])
         setNewsEvents(Array.isArray(newsData) ? newsData : [])
+        setAwards(Array.isArray(awardsData) ? awardsData : [])
+        setGalleryItems(Array.isArray(galleryData) ? galleryData : [])
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
