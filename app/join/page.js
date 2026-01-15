@@ -411,20 +411,6 @@ export default function JoinPage() {
                           <Label>Occupation / Course of Study</Label>
                           <Input value={memberForm.occupation} onChange={(e) => setMemberForm({...memberForm, occupation: e.target.value})} placeholder="e.g., Software Engineer, Medical Student" className="mt-1" />
                         </div>
-                        <div className="sm:col-span-2">
-                          <Label>What is your availability for rehearsals? *</Label>
-                          <Select value={memberForm.availability} onValueChange={(v) => setMemberForm({...memberForm, availability: v})}>
-                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select availability" /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="weekdays-evening">Weekday Evenings (after 5pm)</SelectItem>
-                              <SelectItem value="weekends">Weekends Only</SelectItem>
-                              <SelectItem value="saturdays">Saturday Only</SelectItem>
-                              <SelectItem value="sundays">Sunday Only</SelectItem>
-                              <SelectItem value="flexible">Flexible / Anytime</SelectItem>
-                              <SelectItem value="limited">Limited Availability</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
                       </div>
                     </div>
 
@@ -460,14 +446,6 @@ export default function JoinPage() {
                               <SelectItem value="no">No, but willing to learn</SelectItem>
                             </SelectContent>
                           </Select>
-                        </div>
-                        <div>
-                          <Label>Do you play any instrument?</Label>
-                          <Input value={memberForm.instrument} onChange={(e) => setMemberForm({...memberForm, instrument: e.target.value})} placeholder="e.g., Piano, Guitar, None" className="mt-1" />
-                        </div>
-                        <div>
-                          <Label>Previous Choir Experience</Label>
-                          <Input value={memberForm.previousChoirs} onChange={(e) => setMemberForm({...memberForm, previousChoirs: e.target.value})} placeholder="List any choirs you've been part of" className="mt-1" />
                         </div>
                         <div className="sm:col-span-2">
                           <Label>Tell us about your musical experience</Label>
