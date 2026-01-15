@@ -75,23 +75,20 @@ export default function GalleryPage() {
       <SharedNavigation currentPage="gallery" />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 mt-16 text-white overflow-hidden">
+      <section className="relative pt-24 pb-12 mt-16 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxjaG9pciUyMGNvbmNlcnR8ZW58MHx8fHwxNzA5NDQyMDAwfDA&ixlib=rb-4.1.0&q=85"
             alt="Gallery"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-indigo-800/80 to-purple-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 mb-6 shadow-xl">
-            <Camera className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Photo <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300">Gallery</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-200 max-w-3xl mx-auto">
+          <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Relive our memorable moments through concerts, rehearsals, community events, and fellowship gatherings.
           </p>
         </div>
