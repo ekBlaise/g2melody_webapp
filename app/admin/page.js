@@ -809,6 +809,92 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
+          {/* News Tab */}
+          <TabsContent value="news" className="space-y-6">
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Megaphone className="h-5 w-5 text-amber-500" />
+                    News & Events
+                  </CardTitle>
+                  <CardDescription>Manage news articles, announcements, and events ({newsEvents.length} total)</CardDescription>
+                </div>
+                <Button className="bg-gradient-to-r from-amber-500 to-orange-500 gap-2" onClick={() => setCreateNewsDialogOpen(true)}>
+                  <Plus className="h-4 w-4" /> Create New
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {newsEvents.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <Megaphone className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No news or events yet</p>
+                    <p className="text-sm mt-1">Create your first news article or event announcement</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {newsEvents.map((news) => (
+                      <div key={news.id} className="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                        {news.image ? (
+                          <img src={news.image} alt={news.title} className="w-24 h-16 rounded-lg object-cover flex-shrink-0" />
+                        ) : (
+                          <div className="w-24 h-16 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
+                            {news.type === 'event' ? <Calendar className="h-6 w-6 text-gray-400" /> : 
+                             news.type === 'announcement' ? <Megaphone className="h-6 w-6 text-gray-400" /> :
+                             <FileText className="h-6 w-6 text-gray-400" />}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge className={`text-xs ${
+                              news.type === 'event' ? 'bg-blue-100 text-blue-700' :
+                              news.type === 'announcement' ? 'bg-amber-100 text-amber-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {news.type}
+                            </Badge>
+                            {news.isFeatured && (
+                              <Badge className="bg-purple-100 text-purple-700 text-xs">Featured</Badge>
+                            )}
+                            <Badge className={`text-xs ${news.isPublished ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {news.isPublished ? 'Published' : 'Draft'}
+                            </Badge>
+                          </div>
+                          <h4 className="font-semibold text-gray-900 dark:text-white line-clamp-1">{news.title}</h4>
+                          <p className="text-sm text-gray-500 line-clamp-1 mt-1">{news.summary}</p>
+                          {news.eventDate && (
+                            <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(news.eventDate).toLocaleDateString()} {news.eventTime && `at ${news.eventTime}`}
+                              {news.eventLocation && (
+                                <span className="flex items-center gap-1 ml-2">
+                                  <MapPin className="h-3 w-3" /> {news.eventLocation}
+                                </span>
+                              )}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className={news.isPublished ? 'text-amber-600' : 'text-green-600'}
+                            onClick={() => handleToggleNewsPublish(news)}
+                          >
+                            {news.isPublished ? <Eye className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                          </Button>
+                          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => handleDeleteNews(news.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Users Tab */}
           <TabsContent value="users" className="space-y-6">
             <Card className="border-0 shadow-xl dark:bg-gray-900">
