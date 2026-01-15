@@ -56,7 +56,6 @@ export function SharedNavigation({ currentPage = 'home' }) {
 
   const aboutSubLinks = [
     { href: '/about', label: 'About Us', icon: Users, key: 'about' },
-    { href: '/awards', label: 'Awards & Recognition', icon: Award, key: 'awards' },
     { href: '/gallery', label: 'Gallery', icon: Image, key: 'gallery' },
   ]
 
