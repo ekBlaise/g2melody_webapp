@@ -12,23 +12,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
 import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
   Music, GraduationCap, Heart, Users, Mic2, BookOpen,
-  CheckCircle2, Loader2, ArrowRight, Church, Eye, EyeOff, Check, X
+  CheckCircle2, Loader2, ArrowRight, Church, Eye, EyeOff, Check, X,
+  User, Calendar, MapPin, Briefcase, Home
 } from 'lucide-react'
 
 // Password Strength Component
 function PasswordStrength({ password }) {
   const [strength, setStrength] = useState(0)
   const [checks, setChecks] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    special: false
+    length: false, uppercase: false, lowercase: false, number: false, special: false
   })
 
   useEffect(() => {
@@ -40,8 +36,7 @@ function PasswordStrength({ password }) {
       special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
     }
     setChecks(newChecks)
-    const passedChecks = Object.values(newChecks).filter(Boolean).length
-    setStrength((passedChecks / 5) * 100)
+    setStrength((Object.values(newChecks).filter(Boolean).length / 5) * 100)
   }, [password])
 
   if (!password) return null
@@ -66,7 +61,7 @@ function PasswordStrength({ password }) {
           { key: 'uppercase', label: 'One uppercase letter' },
           { key: 'lowercase', label: 'One lowercase letter' },
           { key: 'number', label: 'One number' },
-          { key: 'special', label: 'One special character (!@#$...)' }
+          { key: 'special', label: 'One special character' }
         ].map(item => (
           <div key={item.key} className={`flex items-center gap-2 text-sm ${checks[item.key] ? 'text-amber-600' : 'text-gray-400'}`}>
             {checks[item.key] ? <CheckCircle2 className="w-4 h-4" /> : <div className="w-4 h-4 rounded-full border-2 border-current" />}
@@ -79,8 +74,7 @@ function PasswordStrength({ password }) {
 }
 
 function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
 export default function JoinPage() {
@@ -91,10 +85,37 @@ export default function JoinPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [emailError, setEmailError] = useState('')
   
+  // Extended member form with all survey fields
   const [memberForm, setMemberForm] = useState({
-    fullName: '', email: '', phone: '', dateOfBirth: '', location: '',
-    congregation: '', musicalExperience: '', vocalPart: '', instrument: '',
-    canReadMusic: '', whyJoin: '', howHeard: '', commitment: false, agreeToValues: false
+    // Personal Info
+    fullName: '',
+    email: '',
+    phone: '',
+    gender: '',
+    dateOfBirth: '',
+    address: '',
+    city: '',
+    country: 'Cameroon',
+    // Church/Worship Info
+    congregation: '',
+    churchBranch: '',
+    memberOfChurchOfChrist: '',
+    // Current Status
+    currentCommitment: '',
+    occupation: '',
+    // Musical Background
+    musicalExperience: '',
+    vocalPart: '',
+    instrument: '',
+    canReadMusic: '',
+    previousChoirs: '',
+    // Availability & Motivation
+    availability: '',
+    whyJoin: '',
+    howHeard: '',
+    // Agreements
+    commitment: false,
+    agreeToValues: false
   })
 
   const [supporterForm, setSupporterForm] = useState({
@@ -151,9 +172,10 @@ export default function JoinPage() {
       if (!res.ok) throw new Error(data.error || 'Application failed')
       toast.success('Application Submitted!', { description: 'We will review and contact you soon.' })
       setMemberForm({
-        fullName: '', email: '', phone: '', dateOfBirth: '', location: '',
-        congregation: '', musicalExperience: '', vocalPart: '', instrument: '',
-        canReadMusic: '', whyJoin: '', howHeard: '', commitment: false, agreeToValues: false
+        fullName: '', email: '', phone: '', gender: '', dateOfBirth: '', address: '', city: '', country: 'Cameroon',
+        congregation: '', churchBranch: '', memberOfChurchOfChrist: '', currentCommitment: '', occupation: '',
+        musicalExperience: '', vocalPart: '', instrument: '', canReadMusic: '', previousChoirs: '',
+        availability: '', whyJoin: '', howHeard: '', commitment: false, agreeToValues: false
       })
     } catch (error) {
       toast.error(error.message || 'Submission failed')
@@ -177,346 +199,338 @@ export default function JoinPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/70" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Family</span></h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            Whether you want to support our mission or become an active choir member, there's a place for you.
-          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Join the G2 Melody <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Family</span></h1>
+          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">Whether you want to sing or support, there's a place for you in our ministry.</p>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-12 -mt-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-10 p-1.5 bg-white shadow-lg rounded-2xl h-14">
-            <TabsTrigger value="supporter" className="rounded-xl text-base font-medium data-[state=active]:bg-amber-500 data-[state=active]:text-white">
-              <Heart className="w-4 h-4 mr-2" /> Join our Community
-            </TabsTrigger>
-            <TabsTrigger value="member" className="rounded-xl text-base font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-              <Mic2 className="w-4 h-4 mr-2" /> Join the Choir
-            </TabsTrigger>
-          </TabsList>
+      <section className="py-8 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 h-14 rounded-xl bg-gray-100 p-1">
+              <TabsTrigger value="supporter" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white h-full">
+                <Heart className="w-4 h-4 mr-2" /> Supporter
+              </TabsTrigger>
+              <TabsTrigger value="member" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white h-full">
+                <Music className="w-4 h-4 mr-2" /> Choir Member
+              </TabsTrigger>
+            </TabsList>
 
-          {/* SUPPORTER TAB */}
-          <TabsContent value="supporter">
-            <div className="grid lg:grid-cols-5 gap-8 items-start">
-              {/* Left - Info Panel */}
-              <div className="lg:col-span-2 relative rounded-3xl overflow-hidden min-h-[580px] shadow-xl">
-                <img
-                  src="https://images.unsplash.com/photo-1560251445-ba979d304eb9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwzfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
-                  alt="Community"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/60" />
-                <div className="absolute inset-0 p-8 flex flex-col justify-between">
-                  <div>
-                    <span className="inline-block px-3 py-1 bg-amber-500 text-white text-sm font-medium rounded-full mb-4">
-                      Free Account
-                    </span>
-                    <h2 className="text-3xl font-bold text-white mb-3">Become a Supporter</h2>
-                    <p className="text-white/80 text-lg leading-relaxed">
-                      Join our global community of supporters who help spread the Gospel through music.
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-white font-semibold text-lg">What you get:</h3>
-                    {[
-                      { icon: Heart, text: 'Donate to ministry projects' },
-                      { icon: Music, text: 'Purchase & download music' },
-                      { icon: GraduationCap, text: 'Access learning resources' },
-                      { icon: Users, text: 'Join our global community' }
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 text-white/90">
-                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                          <item.icon className="w-5 h-5" />
-                        </div>
-                        <span>{item.text}</span>
-                      </div>
-                    ))}
+            {/* SUPPORTER TAB */}
+            <TabsContent value="supporter">
+              <div className="grid lg:grid-cols-5 gap-8 items-start">
+                {/* Left Info Panel */}
+                <div className="lg:col-span-2 relative rounded-3xl overflow-hidden min-h-[500px] shadow-xl hidden lg:block">
+                  <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg" alt="Support" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-amber-900 via-amber-900/80 to-amber-900/60" />
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <span className="inline-block px-3 py-1 bg-amber-500 text-white text-sm font-medium rounded-full mb-4 w-fit">Become a Supporter</span>
+                    <h2 className="text-3xl font-bold text-white mb-3">Support Our Ministry</h2>
+                    <p className="text-white/80 text-lg leading-relaxed">Create an account to donate, access exclusive content, and follow our journey.</p>
                   </div>
                 </div>
-              </div>
 
-              {/* Right - Form */}
-              <Card className="lg:col-span-3 border-0 shadow-xl rounded-3xl">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-2xl">Create Your Account</CardTitle>
-                  <CardDescription>Quick and easy - start supporting in minutes</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <form onSubmit={handleSupporterSubmit} className="space-y-5">
-                    <div>
-                      <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
-                      <Input
-                        id="name"
-                        value={supporterForm.name}
-                        onChange={(e) => setSupporterForm({...supporterForm, name: e.target.value})}
-                        placeholder="John Doe"
-                        className="mt-1.5 h-12 rounded-xl"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={supporterForm.email}
-                        onChange={(e) => { setSupporterForm({...supporterForm, email: e.target.value}); validateEmail(e.target.value) }}
-                        placeholder="john@example.com"
-                        className={`mt-1.5 h-12 rounded-xl ${emailError ? 'border-red-500 focus:ring-red-500' : ''}`}
-                        required
-                      />
-                      {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                      <div className="relative mt-1.5">
-                        <Input
-                          id="password"
-                          type={showPassword ? 'text' : 'password'}
-                          value={supporterForm.password}
-                          onChange={(e) => setSupporterForm({...supporterForm, password: e.target.value})}
-                          placeholder="Create a strong password"
-                          className="h-12 rounded-xl pr-12"
-                          required
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                {/* Form */}
+                <Card className="lg:col-span-3 border-0 shadow-xl rounded-3xl">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-2xl">Create Supporter Account</CardTitle>
+                    <CardDescription>Join our community of supporters and stay connected</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <form onSubmit={handleSupporterSubmit} className="space-y-5">
+                      <div>
+                        <Label htmlFor="name">Full Name *</Label>
+                        <Input id="name" value={supporterForm.name} onChange={(e) => setSupporterForm({...supporterForm, name: e.target.value})} className="mt-1.5 h-12 rounded-xl" required />
                       </div>
-                      <PasswordStrength password={supporterForm.password} />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
-                      <div className="relative mt-1.5">
-                        <Input
-                          id="confirmPassword"
-                          type={showConfirmPassword ? 'text' : 'password'}
-                          value={supporterForm.confirmPassword}
-                          onChange={(e) => setSupporterForm({...supporterForm, confirmPassword: e.target.value})}
-                          placeholder="Confirm your password"
-                          className={`h-12 rounded-xl pr-12 ${supporterForm.confirmPassword && supporterForm.password !== supporterForm.confirmPassword ? 'border-red-500' : ''}`}
-                          required
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
-                          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                      <div>
+                        <Label htmlFor="email">Email Address *</Label>
+                        <Input id="email" type="email" value={supporterForm.email} onChange={(e) => { setSupporterForm({...supporterForm, email: e.target.value}); validateEmail(e.target.value) }} className="mt-1.5 h-12 rounded-xl" required />
+                        {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
                       </div>
-                      {supporterForm.confirmPassword && supporterForm.password !== supporterForm.confirmPassword && (
-                        <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                          <X className="w-4 h-4" /> Passwords do not match
-                        </p>
-                      )}
-                      {supporterForm.confirmPassword && supporterForm.password === supporterForm.confirmPassword && supporterForm.password.length >= 8 && (
-                        <p className="text-green-600 text-sm mt-1 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4" /> Passwords match
-                        </p>
-                      )}
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
-                      disabled={loading}
-                    >
-                      {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-                      Create Account
-                    </Button>
-                  </form>
-                </CardContent>
-                <CardFooter className="justify-center pt-2 pb-6">
-                  <p className="text-gray-500">
-                    Already have an account?{' '}
-                    <Link href="/login" className="text-amber-600 font-semibold hover:underline">Sign In</Link>
-                  </p>
-                </CardFooter>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* MEMBER TAB */}
-          <TabsContent value="member">
-            <div className="grid lg:grid-cols-5 gap-8 items-start">
-              {/* Left - Info Panel */}
-              <div className="lg:col-span-2 relative rounded-3xl overflow-hidden min-h-[700px] shadow-xl">
-                <img
-                  src="https://images.unsplash.com/photo-1593678820334-91d5f99be314?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBjaG9pcnxlbnwwfHx8fDE3NjgyNDgxMTF8MA&ixlib=rb-4.1.0&q=85"
-                  alt="Choir"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/80 to-blue-900/60" />
-                <div className="absolute inset-0 p-8 flex flex-col justify-between">
-                  <div>
-                    <span className="inline-block px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full mb-4">
-                      Membership Application
-                    </span>
-                    <h2 className="text-3xl font-bold text-white mb-3">Join Our Choir</h2>
-                    <p className="text-white/80 text-lg leading-relaxed">
-                      Be part of our mission to evangelize through music. Participate in rehearsals, performances, and receive comprehensive training.
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-white font-semibold text-lg">Member Benefits:</h3>
-                    {[
-                      { icon: Mic2, text: 'Participate in performances' },
-                      { icon: BookOpen, text: 'Professional music training' },
-                      { icon: Church, text: 'Serve in worship ministry' },
-                      { icon: Users, text: 'Leadership opportunities' }
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 text-white/90">
-                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                          <item.icon className="w-5 h-5" />
+                      <div>
+                        <Label htmlFor="password">Password *</Label>
+                        <div className="relative mt-1.5">
+                          <Input id="password" type={showPassword ? 'text' : 'password'} value={supporterForm.password} onChange={(e) => setSupporterForm({...supporterForm, password: e.target.value})} className="h-12 rounded-xl pr-12" required />
+                          <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
                         </div>
-                        <span>{item.text}</span>
+                        <PasswordStrength password={supporterForm.password} />
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="p-4 bg-white/10 backdrop-blur rounded-xl">
-                    <p className="text-white/90 text-sm">
-                      <strong>Note:</strong> Membership requires commitment to rehearsals and alignment with our values. Applications are reviewed by leadership.
-                    </p>
-                  </div>
-                </div>
+                      <div>
+                        <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                        <div className="relative mt-1.5">
+                          <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={supporterForm.confirmPassword} onChange={(e) => setSupporterForm({...supporterForm, confirmPassword: e.target.value})} className={`h-12 rounded-xl pr-12 ${supporterForm.confirmPassword && supporterForm.password !== supporterForm.confirmPassword ? 'border-red-500' : ''}`} required />
+                          <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                            {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
+                        {supporterForm.confirmPassword && supporterForm.password !== supporterForm.confirmPassword && (
+                          <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><X className="w-4 h-4" /> Passwords do not match</p>
+                        )}
+                        {supporterForm.confirmPassword && supporterForm.password === supporterForm.confirmPassword && supporterForm.password.length >= 8 && (
+                          <p className="text-green-600 text-sm mt-1 flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Passwords match</p>
+                        )}
+                      </div>
+                      <Button type="submit" className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" disabled={loading}>
+                        {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null} Create Account
+                      </Button>
+                    </form>
+                  </CardContent>
+                  <CardFooter className="justify-center pt-2 pb-6">
+                    <p className="text-gray-500">Already have an account? <Link href="/login" className="text-amber-600 font-semibold hover:underline">Sign In</Link></p>
+                  </CardFooter>
+                </Card>
               </div>
+            </TabsContent>
 
-              {/* Right - Application Form */}
-              <Card className="lg:col-span-3 border-0 shadow-xl rounded-3xl">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-2xl">Membership Application</CardTitle>
-                  <CardDescription>Tell us about yourself and your musical background</CardDescription>
+            {/* MEMBER TAB - Extended Form */}
+            <TabsContent value="member">
+              <Card className="border-0 shadow-xl rounded-3xl">
+                <CardHeader className="border-b border-gray-100 pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                      <Music className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl">Choir Membership Application</CardTitle>
+                      <CardDescription>Complete this form to apply for G2 Melody choir membership</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent className="pt-4">
-                  <form onSubmit={handleMemberSubmit} className="space-y-6">
-                    {/* Personal Info */}
+                <CardContent className="pt-6">
+                  <form onSubmit={handleMemberSubmit} className="space-y-8">
+                    
+                    {/* Section 1: Personal Information */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-sm flex items-center justify-center">1</span>
-                        Personal Information
-                      </h3>
+                      <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
+                        <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center">1</span>
+                        <h3 className="font-semibold text-gray-900 text-lg">Personal Information</h3>
+                      </div>
+                      
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
                           <Label>Full Name *</Label>
-                          <Input value={memberForm.fullName} onChange={(e) => setMemberForm({...memberForm, fullName: e.target.value})} className="mt-1" required />
+                          <Input value={memberForm.fullName} onChange={(e) => setMemberForm({...memberForm, fullName: e.target.value})} placeholder="Enter your full name" className="mt-1" required />
                         </div>
                         <div>
-                          <Label>Email *</Label>
-                          <Input type="email" value={memberForm.email} onChange={(e) => setMemberForm({...memberForm, email: e.target.value})} className="mt-1" required />
-                        </div>
-                        <div>
-                          <Label>Phone *</Label>
-                          <Input value={memberForm.phone} onChange={(e) => setMemberForm({...memberForm, phone: e.target.value})} placeholder="+237..." className="mt-1" required />
-                        </div>
-                        <div>
-                          <Label>Location *</Label>
-                          <Input value={memberForm.location} onChange={(e) => setMemberForm({...memberForm, location: e.target.value})} placeholder="City, Country" className="mt-1" required />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Musical Background */}
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-sm flex items-center justify-center">2</span>
-                        Musical Background
-                      </h3>
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label>Vocal Part *</Label>
-                          <Select value={memberForm.vocalPart} onValueChange={(v) => setMemberForm({...memberForm, vocalPart: v})}>
-                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                          <Label>Gender *</Label>
+                          <Select value={memberForm.gender} onValueChange={(v) => setMemberForm({...memberForm, gender: v})}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select gender" /></SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="soprano">Soprano</SelectItem>
-                              <SelectItem value="alto">Alto</SelectItem>
-                              <SelectItem value="tenor">Tenor</SelectItem>
-                              <SelectItem value="bass">Bass</SelectItem>
-                              <SelectItem value="unsure">Not Sure</SelectItem>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
-                          <Label>Can you read music?</Label>
-                          <Select value={memberForm.canReadMusic} onValueChange={(v) => setMemberForm({...memberForm, canReadMusic: v})}>
+                          <Label>Date of Birth *</Label>
+                          <Input type="date" value={memberForm.dateOfBirth} onChange={(e) => setMemberForm({...memberForm, dateOfBirth: e.target.value})} className="mt-1" required />
+                        </div>
+                        <div>
+                          <Label>Email Address *</Label>
+                          <Input type="email" value={memberForm.email} onChange={(e) => setMemberForm({...memberForm, email: e.target.value})} placeholder="your@email.com" className="mt-1" required />
+                        </div>
+                        <div>
+                          <Label>Phone Number *</Label>
+                          <Input value={memberForm.phone} onChange={(e) => setMemberForm({...memberForm, phone: e.target.value})} placeholder="+237 6XX XXX XXX" className="mt-1" required />
+                        </div>
+                        <div>
+                          <Label>City/Town *</Label>
+                          <Input value={memberForm.city} onChange={(e) => setMemberForm({...memberForm, city: e.target.value})} placeholder="e.g., Buea, Douala, Yaoundé" className="mt-1" required />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <Label>Address / Neighborhood</Label>
+                          <Input value={memberForm.address} onChange={(e) => setMemberForm({...memberForm, address: e.target.value})} placeholder="Street address or neighborhood" className="mt-1" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section 2: Church / Worship Information */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
+                        <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center">2</span>
+                        <h3 className="font-semibold text-gray-900 text-lg">Church / Worship Information</h3>
+                      </div>
+                      
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label>Are you a member of the Church of Christ? *</Label>
+                          <Select value={memberForm.memberOfChurchOfChrist} onValueChange={(v) => setMemberForm({...memberForm, memberOfChurchOfChrist: v})}>
                             <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="yes">Yes</SelectItem>
                               <SelectItem value="no">No</SelectItem>
-                              <SelectItem value="learning">Learning</SelectItem>
+                              <SelectItem value="interested">No, but interested</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Church/Congregation Name *</Label>
+                          <Input value={memberForm.congregation} onChange={(e) => setMemberForm({...memberForm, congregation: e.target.value})} placeholder="Where do you worship?" className="mt-1" required />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <Label>Church Branch/Location</Label>
+                          <Input value={memberForm.churchBranch} onChange={(e) => setMemberForm({...memberForm, churchBranch: e.target.value})} placeholder="e.g., Church of Christ Buea, Molyko" className="mt-1" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section 3: Current Commitment */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
+                        <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center">3</span>
+                        <h3 className="font-semibold text-gray-900 text-lg">Current Commitment / Status</h3>
+                      </div>
+                      
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label>What is your current commitment? *</Label>
+                          <Select value={memberForm.currentCommitment} onValueChange={(v) => setMemberForm({...memberForm, currentCommitment: v})}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select your status" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="student">Student</SelectItem>
+                              <SelectItem value="employed">Employed / Working</SelectItem>
+                              <SelectItem value="self-employed">Self-Employed / Business</SelectItem>
+                              <SelectItem value="unemployed">Unemployed / Job Seeking</SelectItem>
+                              <SelectItem value="national-service">National Service</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Occupation / Course of Study</Label>
+                          <Input value={memberForm.occupation} onChange={(e) => setMemberForm({...memberForm, occupation: e.target.value})} placeholder="e.g., Software Engineer, Medical Student" className="mt-1" />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <Label>What is your availability for rehearsals? *</Label>
+                          <Select value={memberForm.availability} onValueChange={(v) => setMemberForm({...memberForm, availability: v})}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select availability" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="weekdays-evening">Weekday Evenings (after 5pm)</SelectItem>
+                              <SelectItem value="weekends">Weekends Only</SelectItem>
+                              <SelectItem value="saturdays">Saturday Only</SelectItem>
+                              <SelectItem value="sundays">Sunday Only</SelectItem>
+                              <SelectItem value="flexible">Flexible / Anytime</SelectItem>
+                              <SelectItem value="limited">Limited Availability</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                       </div>
-                      <div>
-                        <Label>Musical Experience</Label>
-                        <Textarea value={memberForm.musicalExperience} onChange={(e) => setMemberForm({...memberForm, musicalExperience: e.target.value})} placeholder="Describe your choir or musical background..." className="mt-1" rows={3} />
-                      </div>
                     </div>
 
-                    {/* Motivation */}
+                    {/* Section 4: Musical Background */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-sm flex items-center justify-center">3</span>
-                        Your Motivation
-                      </h3>
-                      <div>
-                        <Label>Why do you want to join G2 Melody? *</Label>
-                        <Textarea value={memberForm.whyJoin} onChange={(e) => setMemberForm({...memberForm, whyJoin: e.target.value})} placeholder="Tell us about your motivation..." className="mt-1" rows={3} required />
+                      <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
+                        <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center">4</span>
+                        <h3 className="font-semibold text-gray-900 text-lg">Musical Background</h3>
                       </div>
-                      <div>
-                        <Label>How did you hear about us?</Label>
-                        <Select value={memberForm.howHeard} onValueChange={(v) => setMemberForm({...memberForm, howHeard: v})}>
-                          <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="church">Church Event</SelectItem>
-                            <SelectItem value="social">Social Media</SelectItem>
-                            <SelectItem value="friend">Friend/Family</SelectItem>
-                            <SelectItem value="website">Website</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label>Vocal Part *</Label>
+                          <Select value={memberForm.vocalPart} onValueChange={(v) => setMemberForm({...memberForm, vocalPart: v})}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select your part" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="soprano">Soprano (High Female)</SelectItem>
+                              <SelectItem value="alto">Alto (Low Female)</SelectItem>
+                              <SelectItem value="tenor">Tenor (High Male)</SelectItem>
+                              <SelectItem value="bass">Bass (Low Male)</SelectItem>
+                              <SelectItem value="unsure">Not Sure Yet</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Can you read music notation?</Label>
+                          <Select value={memberForm.canReadMusic} onValueChange={(v) => setMemberForm({...memberForm, canReadMusic: v})}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="yes-fluent">Yes, fluently</SelectItem>
+                              <SelectItem value="yes-basic">Yes, basic level</SelectItem>
+                              <SelectItem value="learning">Currently learning</SelectItem>
+                              <SelectItem value="no">No, but willing to learn</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Do you play any instrument?</Label>
+                          <Input value={memberForm.instrument} onChange={(e) => setMemberForm({...memberForm, instrument: e.target.value})} placeholder="e.g., Piano, Guitar, None" className="mt-1" />
+                        </div>
+                        <div>
+                          <Label>Previous Choir Experience</Label>
+                          <Input value={memberForm.previousChoirs} onChange={(e) => setMemberForm({...memberForm, previousChoirs: e.target.value})} placeholder="List any choirs you've been part of" className="mt-1" />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <Label>Tell us about your musical experience</Label>
+                          <Textarea value={memberForm.musicalExperience} onChange={(e) => setMemberForm({...memberForm, musicalExperience: e.target.value})} placeholder="Describe your musical background, training, performances, etc." className="mt-1" rows={3} />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Commitments */}
-                    <div className="space-y-3 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                      <h4 className="font-medium text-blue-900">Commitments</h4>
-                      <div className="flex items-start gap-3">
-                        <Checkbox id="commitment" checked={memberForm.commitment} onCheckedChange={(c) => setMemberForm({...memberForm, commitment: c})} className="mt-0.5" />
-                        <Label htmlFor="commitment" className="text-sm text-gray-700 leading-relaxed font-normal">
-                          I commit to attending rehearsals regularly and participating in G2 Melody activities.
-                        </Label>
+                    {/* Section 5: Motivation */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 pb-2 border-b border-gray-200">
+                        <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold flex items-center justify-center">5</span>
+                        <h3 className="font-semibold text-gray-900 text-lg">Your Motivation</h3>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <Checkbox id="values" checked={memberForm.agreeToValues} onCheckedChange={(c) => setMemberForm({...memberForm, agreeToValues: c})} className="mt-0.5" />
-                        <Label htmlFor="values" className="text-sm text-gray-700 leading-relaxed font-normal">
-                          I agree with G2 Melody's core values: Holiness, Stewardship, Teamwork, Agape Love, and Discipline.
-                        </Label>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Why do you want to join G2 Melody? *</Label>
+                          <Textarea value={memberForm.whyJoin} onChange={(e) => setMemberForm({...memberForm, whyJoin: e.target.value})} placeholder="Tell us about your motivation for joining the choir..." className="mt-1" rows={4} required />
+                        </div>
+                        <div>
+                          <Label>How did you hear about G2 Melody?</Label>
+                          <Select value={memberForm.howHeard} onValueChange={(v) => setMemberForm({...memberForm, howHeard: v})}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="church">Church Service/Event</SelectItem>
+                              <SelectItem value="social">Social Media (Facebook, Instagram, etc.)</SelectItem>
+                              <SelectItem value="youtube">YouTube</SelectItem>
+                              <SelectItem value="friend">Friend or Family Member</SelectItem>
+                              <SelectItem value="member">Current G2 Member</SelectItem>
+                              <SelectItem value="website">Website</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700" disabled={loading}>
-                      {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
+                    {/* Section 6: Commitments */}
+                    <div className="space-y-4 p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                      <h4 className="font-semibold text-blue-900 text-lg">Commitments & Agreements</h4>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Checkbox id="commitment" checked={memberForm.commitment} onCheckedChange={(c) => setMemberForm({...memberForm, commitment: c})} className="mt-0.5" />
+                          <Label htmlFor="commitment" className="text-sm text-gray-700 leading-relaxed font-normal cursor-pointer">
+                            I commit to attending rehearsals regularly and participating in G2 Melody activities. I understand that consistent participation is essential for the choir's success.
+                          </Label>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Checkbox id="values" checked={memberForm.agreeToValues} onCheckedChange={(c) => setMemberForm({...memberForm, agreeToValues: c})} className="mt-0.5" />
+                          <Label htmlFor="values" className="text-sm text-gray-700 leading-relaxed font-normal cursor-pointer">
+                            I agree to uphold the values of G2 Melody, including respect, dedication, and the mission to spread the gospel through music. I will conduct myself in a manner befitting a member of this ministry.
+                          </Label>
+                        </div>
+                      </div>
+                      <p className="text-xs text-blue-700 mt-4 bg-blue-100 p-3 rounded-lg">
+                        <strong>Note:</strong> Membership requires commitment to rehearsals and alignment with our values. All applications are reviewed by the G2 Melody leadership team.
+                      </p>
+                    </div>
+
+                    <Button type="submit" className="w-full h-14 rounded-xl text-lg font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600" disabled={loading}>
+                      {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <CheckCircle2 className="w-5 h-5 mr-2" />}
                       Submit Application
                     </Button>
                   </form>
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
 
       <SharedFooter />
     </div>
