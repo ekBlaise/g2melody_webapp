@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 export default function AboutPage() {
   const [founders, setFounders] = useState([])
   const [members, setMembers] = useState([])
+  const [awards, setAwards] = useState([])
   const [activeTab, setActiveTab] = useState('all')
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,9 +26,10 @@ export default function AboutPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [foundersRes, membersRes] = await Promise.all([
+        const [foundersRes, membersRes, awardsRes] = await Promise.all([
           fetch('/api/founders'),
-          fetch('/api/choir-members')
+          fetch('/api/choir-members'),
+          fetch('/api/awards')
         ])
         
         if (foundersRes.ok) {
@@ -38,6 +40,11 @@ export default function AboutPage() {
         if (membersRes.ok) {
           const membersData = await membersRes.json()
           setMembers(membersData)
+        }
+
+        if (awardsRes.ok) {
+          const awardsData = await awardsRes.json()
+          setAwards(awardsData)
         }
       } catch (error) {
         console.error('Error fetching data:', error)
