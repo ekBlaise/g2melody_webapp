@@ -1109,7 +1109,7 @@ function Footer() {
     { icon: Facebook, href: 'https://www.facebook.com/g2melody', label: 'Facebook' },
     { icon: Youtube, href: 'https://www.youtube.com/@g2melody', label: 'YouTube' },
     { icon: Instagram, href: 'https://www.instagram.com/g2melody/', label: 'Instagram' },
-    { icon: Music, href: 'https://www.tiktok.com/@g2melody_official', label: 'TikTok' }, // Using Music icon for TikTok
+    { icon: TikTokIcon, href: 'https://www.tiktok.com/@g2melody_official', label: 'TikTok' }, // Using Music icon for TikTok
   ]
 
   return (
