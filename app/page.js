@@ -812,8 +812,8 @@ function LearnMuzikSection() {
           {programs.map((program, index) => (
             <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
               <CardHeader>
-                <div className="w-14 h-14 rounded-2xl bg-[#0891b2]/10 flex items-center justify-center mb-4 group-hover:bg-[#0891b2] transition-all duration-300">
-                  <program.icon className="w-7 h-7 text-[#0891b2] group-hover:text-white transition-colors" />
+                <div className="w-14 h-14 rounded-2xl bg-[#1e40af]/10 flex items-center justify-center mb-4 group-hover:bg-[#1e40af] transition-all duration-300">
+                  <program.icon className="w-7 h-7 text-[#1e40af] group-hover:text-white transition-colors" />
                 </div>
                 <CardTitle className="text-xl">{program.title}</CardTitle>
                 <CardDescription>{program.desc}</CardDescription>
@@ -826,7 +826,7 @@ function LearnMuzikSection() {
               </CardContent>
               <CardFooter>
                 <Link href="/register" className="w-full">
-                  <Button variant="outline" className="w-full group-hover:bg-[#0891b2] group-hover:text-white group-hover:border-[#0891b2] transition-colors">
+                  <Button variant="outline" className="w-full group-hover:bg-[#1e40af] group-hover:text-white group-hover:border-[#1e40af] transition-colors">
                     Learn More <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
