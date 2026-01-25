@@ -28,7 +28,7 @@ import {
 function TikTokIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
     </svg>
   )
 }
@@ -70,21 +70,20 @@ function Navigation({ isScrolled, activeSection }) {
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <img 
-              src="/logo.png" 
-              alt="G2 Melody" 
+            <img
+              src="/logo.png"
+              alt="G2 Melody"
               className="h-12 w-auto group-hover:scale-105 transition-transform duration-300"
             />
-            <span className={`hidden sm:block text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
+            <span className={`hidden sm:block text-xl font-bold tracking-tight font-heading ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             <Link
               href="/"
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
             >
               Home
             </Link>
@@ -93,14 +92,13 @@ function Navigation({ isScrolled, activeSection }) {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${
-                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 About
                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {/* Dropdown Menu */}
               {aboutDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -122,9 +120,8 @@ function Navigation({ isScrolled, activeSection }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {link.label}
               </Link>
@@ -146,7 +143,7 @@ function Navigation({ isScrolled, activeSection }) {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -169,7 +166,7 @@ function Navigation({ isScrolled, activeSection }) {
               >
                 Home
               </Link>
-              
+
               {/* About Section in Mobile */}
               <div className="border-t border-gray-100 pt-2 mt-2">
                 <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">About</p>
@@ -216,7 +213,7 @@ function Navigation({ isScrolled, activeSection }) {
 // Hero Section
 function HeroSection({ siteSettings }) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  
+
   const slides = [
     {
       image: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
@@ -266,11 +263,11 @@ function HeroSection({ siteSettings }) {
           />
         </div>
       ))}
-      
+
       {/* Gradient Overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-gray-900/30" />
-      
+
       {/* Decorative Elements */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -360,7 +357,7 @@ function AboutSection() {
       {/* Decorative Background */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-50 to-transparent opacity-50" />
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -372,7 +369,7 @@ function AboutSection() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Melody</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Founded in late 2016, G2 Melody began as a small group from the Church of Christ, Muea, formerly known as Melodious Voices. 
+            Founded in late 2016, G2 Melody began as a small group from the Church of Christ, Muea, formerly known as Melodious Voices.
             The group has since grown into a powerful force for musical evangelism and worship excellence.
           </p>
         </div>
@@ -389,8 +386,8 @@ function AboutSection() {
             </CardHeader>
             <CardContent>
               <p className="text-white/90 leading-relaxed">
-                Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music, 
-                and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church, 
+                Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music,
+                and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church,
                 while extending Christ's love to individuals from diverse backgrounds.
               </p>
             </CardContent>
@@ -406,8 +403,8 @@ function AboutSection() {
             </CardHeader>
             <CardContent>
               <p className="text-white/90 leading-relaxed">
-                A future where the musical landscape of the Church is revitalized, young choirs are nurtured, 
-                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond. 
+                A future where the musical landscape of the Church is revitalized, young choirs are nurtured,
+                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond.
                 We envision establishing a music academy and nurturing worship leaders globally.
               </p>
             </CardContent>
@@ -455,7 +452,7 @@ function ProjectsSection({ projects, onDonate }) {
   // Get total counts for tabs
   const allCurrentProjects = projects.filter(p => p.status === 'CURRENT')
   const allPastProjects = projects.filter(p => p.status === 'PAST')
-  
+
   // Limit to 3 projects for homepage display
   const currentProjects = allCurrentProjects.slice(0, 3)
   const pastProjects = allPastProjects.slice(0, 3)
@@ -541,8 +538,8 @@ function ProjectsSection({ projects, onDonate }) {
                         View Details
                       </Button>
                     </Link>
-                    <Button 
-                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg" 
+                    <Button
+                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg"
                       onClick={() => onDonate(project)}
                     >
                       <Heart className="mr-2 h-4 w-4" /> Donate
@@ -589,9 +586,9 @@ function ProjectsSection({ projects, onDonate }) {
         {/* G2 Meloverse Vision - Featured Section */}
         <div className="mt-20 relative overflow-hidden rounded-3xl">
           <div className="absolute inset-0">
-            <img 
-              src="/g2-meloverse.jpg" 
-              alt="G2 Meloverse" 
+            <img
+              src="/g2-meloverse.jpg"
+              alt="G2 Meloverse"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
@@ -832,7 +829,7 @@ function LearnMuzikSection() {
             <div>
               <h3 className="text-3xl md:text-4xl font-bold mb-4">G2 Melody Music Academy</h3>
               <p className="text-white/90 mb-6 text-lg">
-                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies. 
+                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies.
                 Until then, we offer comprehensive training programs for aspiring musicians and worship leaders.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -1019,7 +1016,7 @@ function ContactSection() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 text-sm mb-4">
-                  We're available for weddings, church programs, concerts, and special events. 
+                  We're available for weddings, church programs, concerts, and special events.
                   Contact us to discuss your requirements and get a quote.
                 </p>
                 <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">
@@ -1043,7 +1040,7 @@ function ContactSection() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="John Doe"
                       className="mt-1"
                       required
@@ -1055,7 +1052,7 @@ function ContactSection() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="john@example.com"
                       className="mt-1"
                       required
@@ -1064,7 +1061,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <Label htmlFor="subject">Subject</Label>
-                  <Select value={formData.subject} onValueChange={(value) => setFormData({...formData, subject: value})}>
+                  <Select value={formData.subject} onValueChange={(value) => setFormData({ ...formData, subject: value })}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select a subject" />
                     </SelectTrigger>
@@ -1083,15 +1080,15 @@ function ContactSection() {
                   <Textarea
                     id="message"
                     value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="How can we help you?"
                     rows={5}
                     className="mt-1"
                     required
                   />
                 </div>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
                   disabled={sending}
                 >
@@ -1480,7 +1477,7 @@ export default function App() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
-      
+
       // Update active section
       const sections = ['home', 'about', 'projects', 'music', 'learn', 'contact']
       for (const section of sections.reverse()) {
@@ -1498,22 +1495,43 @@ export default function App() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        await fetch('/api/seed', { method: 'POST' })
-        
+        // Fetch data in parallel first
         const [projectsRes, musicRes, settingsRes] = await Promise.all([
           fetch('/api/projects'),
           fetch('/api/music'),
           fetch('/api/settings')
         ])
-        
-        const projectsData = await projectsRes.json()
-        const musicData = await musicRes.json()
+
+        let projectsData = await projectsRes.json()
+        let musicData = await musicRes.json()
         const settingsData = await settingsRes.json()
-        
-        setProjects(projectsData)
-        setMusic(musicData)
-        if (settingsData && !settingsData.error) {
-          setSiteSettings(settingsData)
+
+        // If no projects, then seed and re-fetch
+        if (projectsData.length === 0) {
+          console.log('No data found, seeding...')
+          await fetch('/api/seed', { method: 'POST' })
+
+          const [newProjectsRes, newMusicRes, newSettingsRes] = await Promise.all([
+            fetch('/api/projects'),
+            fetch('/api/music'),
+            fetch('/api/settings')
+          ])
+
+          projectsData = await newProjectsRes.json()
+          musicData = await newMusicRes.json()
+          const newSettingsData = await newSettingsRes.json()
+
+          setProjects(projectsData)
+          setMusic(musicData)
+          if (newSettingsData && !newSettingsData.error) {
+            setSiteSettings(newSettingsData)
+          }
+        } else {
+          setProjects(projectsData)
+          setMusic(musicData)
+          if (settingsData && !settingsData.error) {
+            setSiteSettings(settingsData)
+          }
         }
       } catch (error) {
         console.error('Error initializing data:', error)
@@ -1537,14 +1555,49 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
-        <div className="text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Music className="w-10 h-10 text-white" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600/20 rounded-full blur-[120px] animate-pulse delay-700" />
+
+        <div className="relative z-10 flex flex-col items-center">
+          {/* Logo Animation */}
+          <div className="relative mb-12">
+            <div className="absolute inset-0 bg-amber-500 rounded-3xl blur-2xl opacity-20 animate-pulse" />
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-2xl relative border border-white/10 group">
+              <Music className="w-12 h-12 text-white animate-bounce" />
+            </div>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">G2 Melody</h2>
-          <p className="text-gray-400">Loading...</p>
+
+          {/* Music Wave Animation */}
+          <div className="flex items-end gap-1.5 h-12 mb-8">
+            {[0.6, 0.8, 1.2, 0.9, 1.5, 0.7, 1.1, 0.5].map((delay, i) => (
+              <div
+                key={i}
+                className="w-1.5 bg-gradient-to-t from-amber-500 to-orange-400 rounded-full animate-music-wave"
+                style={{ animationDelay: `${delay}s`, animationDuration: `${delay + 0.5}s` }}
+              />
+            ))}
+          </div>
+
+          {/* Text with Shimmer */}
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white mb-2 tracking-tight animate-shimmer font-heading">
+              G2 Melody
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-amber-500 rounded-full animate-ping" />
+              <p className="text-amber-500/80 font-medium tracking-[0.2em] uppercase text-xs">
+                Preparing the Atmosphere
+              </p>
+            </div>
+          </div>
         </div>
+
+        {/* Loading Progress Subtext */}
+        <p className="absolute bottom-12 text-white/20 text-sm font-light tracking-widest uppercase">
+          Excelling in Worship
+        </p>
       </div>
     )
   }

@@ -1,7 +1,20 @@
 import './globals.css'
 import { Toaster } from 'sonner'
+import { Spectral, Lato } from 'next/font/google'
 import Providers from '@/components/providers'
 import Chatbot from '@/components/chatbot'
+
+const spectral = Spectral({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-spectral',
+})
+
+const lato = Lato({
+  subsets: ['latin'],
+  weight: ['100', '300', '400', '700', '900'],
+  variable: '--font-lato',
+})
 
 export const metadata = {
   title: 'G2 Melody | Choir Music Platform',
@@ -20,7 +33,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
-      <body className="min-h-screen antialiased">
+      <body className={`${lato.variable} ${spectral.variable} font-sans min-h-screen antialiased`}>
         <Providers>
           {children}
           <Chatbot />
