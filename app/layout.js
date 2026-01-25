@@ -6,13 +6,13 @@ import Chatbot from '@/components/chatbot'
 
 const dancingScript = Dancing_Script({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  display: 'swap',
   variable: '--font-dancing-script',
 })
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
-  weight: ['200', '300', '400', '600', '700', '800', '900'],
+  display: 'swap',
   variable: '--font-nunito-sans',
 })
 
