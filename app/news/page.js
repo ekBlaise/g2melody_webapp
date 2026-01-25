@@ -6,7 +6,22 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { SharedNavigation, SharedFooter } from '@/components/shared'
-import { Calendar, Clock, MapPin, ArrowRight, Megaphone, FileText, Loader2, Newspaper, CalendarDays } from 'lucide-react'
+import { Calendar, Clock, MapPin, ArrowRight, Megaphone, FileText, Newspaper, CalendarDays } from 'lucide-react'
+
+const NewsSkeleton = () => (
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[1, 2, 3, 4, 5, 6].map((i) => (
+      <Card key={i} className="overflow-hidden border-0 shadow-lg">
+        <div className="h-40 bg-gray-200 animate-pulse" />
+        <CardContent className="p-4 space-y-3">
+          <div className="h-5 bg-gray-200 animate-pulse rounded w-3/4" />
+          <div className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+          <div className="h-4 bg-gray-200 animate-pulse rounded w-1/4" />
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+)
 
 export default function NewsPage() {
   const [news, setNews] = useState([])
@@ -53,7 +68,7 @@ export default function NewsPage() {
       {/* Hero Section with Image */}
       <section className="relative pt-20 sm:pt-24">
         <div className="absolute inset-0 h-[400px] sm:h-[450px]">
-          <img 
+          <img
             src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920"
             alt="G2 Melody News"
             className="w-full h-full object-cover"
@@ -102,13 +117,11 @@ export default function NewsPage() {
       <main className="flex-1 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-[#1e40af]" />
-            </div>
+            <NewsSkeleton />
           ) : allItems.length === 0 ? (
             <div className="text-center py-20">
               <Megaphone className="w-16 h-16 mx-auto mb-6 text-gray-300" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No updates yet</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 font-heading">No updates yet</h3>
               <p className="text-gray-500">Check back soon for news and events</p>
             </div>
           ) : (
@@ -267,4 +280,5 @@ export default function NewsPage() {
 
       <SharedFooter />
     </div>
-  )}
+  )
+}

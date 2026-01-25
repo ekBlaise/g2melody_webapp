@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
   Music, Heart, Users, Calendar, ChevronRight, Menu, X, Mail, MapPin, 
-  Facebook, Instagram, Youtube, Church
+  Facebook, Instagram, Youtube, Church, ChevronDown, Award, Image
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // TikTok Icon Component
 function TikTokIcon({ className }) {
@@ -20,7 +20,9 @@ function TikTokIcon({ className }) {
 // Shared Navigation Component - Matches Homepage Navigation
 export function SharedNavigation({ currentPage = 'home' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(currentPage !== 'home') // Only transparent on homepage
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     if (currentPage === 'home') {
@@ -32,15 +34,32 @@ export function SharedNavigation({ currentPage = 'home' }) {
     }
   }, [currentPage])
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setAboutDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const navLinks = [
     { href: '/', label: 'Home', key: 'home' },
-    { href: '/about', label: 'About', key: 'about' },
     { href: '/projects', label: 'Projects', key: 'projects' },
     { href: '/music', label: 'Music', key: 'music' },
     { href: '/news', label: 'News', key: 'news' },
     { href: '/learn', label: 'Learn Muzik', key: 'learn' },
     { href: '/contact', label: 'Contact', key: 'contact' },
   ]
+
+  const aboutSubLinks = [
+    { href: '/about', label: 'About Us', icon: Users, key: 'about' },
+    { href: '/gallery', label: 'Gallery', icon: Image, key: 'gallery' },
+  ]
+
+  const isAboutActive = ['about', 'awards', 'gallery'].includes(currentPage)
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-100' : 'bg-transparent'}`}>
@@ -58,7 +77,54 @@ export function SharedNavigation({ currentPage = 'home' }) {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
+            <Link
+              href="/"
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+                currentPage === 'home' 
+                  ? (isScrolled ? 'text-amber-600 bg-amber-50' : 'text-amber-400 bg-white/10')
+                  : (isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10')
+              }`}
+            >
+              Home
+            </Link>
+
+            {/* About Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${
+                  isAboutActive 
+                    ? (isScrolled ? 'text-amber-600 bg-amber-50' : 'text-amber-400 bg-white/10')
+                    : (isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10')
+                }`}
+              >
+                About
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {/* Dropdown Menu */}
+              {aboutDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {aboutSubLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setAboutDropdownOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                        currentPage === link.key 
+                          ? 'bg-amber-50 text-amber-700' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <link.icon className="h-4 w-4 text-amber-500" />
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {navLinks.filter(link => link.key !== 'home').map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -104,20 +170,54 @@ export function SharedNavigation({ currentPage = 'home' }) {
         {mobileMenuOpen && (
           <div className="lg:hidden bg-white rounded-2xl shadow-2xl p-6 mt-2 mb-4 animate-in slide-in-from-top-5">
             <div className="space-y-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-3 px-4 rounded-xl font-medium transition-colors ${
-                    currentPage === link.key 
-                      ? 'bg-amber-50 text-amber-700' 
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-3 px-4 rounded-xl font-medium transition-colors ${
+                  currentPage === 'home' 
+                    ? 'bg-amber-50 text-amber-700' 
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Home
+              </Link>
+
+              {/* About Section in Mobile */}
+              <div className="border-t border-gray-100 pt-2 mt-2">
+                <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">About</p>
+                {aboutSubLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 py-3 px-4 rounded-xl font-medium transition-colors ${
+                      currentPage === link.key 
+                        ? 'bg-amber-50 text-amber-700' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <link.icon className="h-4 w-4 text-amber-500" />
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="border-t border-gray-100 pt-2 mt-2">
+                {navLinks.filter(link => link.key !== 'home').map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block py-3 px-4 rounded-xl font-medium transition-colors ${
+                      currentPage === link.key 
+                        ? 'bg-amber-50 text-amber-700' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
             <div className="flex space-x-3 pt-6 mt-6 border-t">
               <Link href="/login" className="flex-1">
@@ -206,7 +306,7 @@ export function SharedFooter() {
             <ul className="space-y-4">
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                <span>Bomaka, Buea<br />Cameroon</span>
+                <span>Buea, Cameroon</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-amber-500" />

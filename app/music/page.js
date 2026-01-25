@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 import { SharedNavigation, SharedFooter } from '@/components/shared'
 import {
-  Music, Headphones, Play, Pause, ShoppingCart, Search, Loader2, 
+  Music, Headphones, Play, Pause, ShoppingCart, Search, Loader2,
   Download, Disc3, Clock, ArrowLeft, X, Volume2
 } from 'lucide-react'
 
@@ -29,11 +29,17 @@ export default function MusicPage() {
   useEffect(() => {
     const fetchMusic = async () => {
       try {
-        await fetch('/api/seed', { method: 'POST' })
         const res = await fetch('/api/music')
-        const data = await res.json()
+        let data = await res.json()
+
+        if (data.length === 0) {
+          await fetch('/api/seed', { method: 'POST' })
+          const reRes = await fetch('/api/music')
+          data = await reRes.json()
+        }
+
         setMusic(data)
-        
+
         // Group by albums
         const albumsMap = new Map()
         data.forEach(track => {
@@ -91,16 +97,22 @@ export default function MusicPage() {
     setPurchaseDialog({ open: true, item, type })
   }
 
-  const filteredAlbums = albums.filter(album => 
+  const filteredAlbums = albums.filter(album =>
     album.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     album.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||
     album.tracks.some(t => t.title.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
-  if (loading) {
+  function MusicSkeleton() {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#1e40af]-600" />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="animate-pulse">
+            <div className="aspect-square rounded-xl bg-gray-200 mb-3" />
+            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+            <div className="h-3 bg-gray-200 rounded w-1/2" />
+          </div>
+        ))}
       </div>
     )
   }
@@ -126,7 +138,7 @@ export default function MusicPage() {
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-6">
             Experience the power of acapella worship. Stream our music for free, or purchase to download high-quality tracks.
           </p>
-          
+
           {/* Search */}
           <div className="max-w-md mx-auto relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -142,8 +154,8 @@ export default function MusicPage() {
 
       {/* Album View or Grid View */}
       {selectedAlbum ? (
-        <AlbumDetail 
-          album={selectedAlbum} 
+        <AlbumDetail
+          album={selectedAlbum}
           onBack={() => setSelectedAlbum(null)}
           onPlay={handlePlay}
           onPurchase={handlePurchase}
@@ -156,43 +168,47 @@ export default function MusicPage() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-bold">Albums & Collections</h2>
-                <p className="text-gray-500">{albums.length} albums available</p>
+                <h2 className="text-2xl font-bold font-heading">Albums & Collections</h2>
+                <p className="text-gray-500">{loading ? 'Loading...' : `${albums.length} albums available`}</p>
               </div>
             </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {filteredAlbums.map((album, index) => (
-                <div 
-                  key={index}
-                  className="group cursor-pointer"
-                  onClick={() => setSelectedAlbum(album)}
-                >
-                  <div className="relative aspect-square rounded-xl overflow-hidden mb-3 shadow-lg group-hover:shadow-xl transition-all">
-                    <img
-                      src={album.coverImage || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f'}
-                      alt={album.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-14 h-14 rounded-full bg-[#1e40af]-500 flex items-center justify-center shadow-xl">
-                        <Play className="w-6 h-6 text-white ml-1" />
+
+            {loading ? (
+              <MusicSkeleton />
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {filteredAlbums.map((album, index) => (
+                  <div
+                    key={index}
+                    className="group cursor-pointer"
+                    onClick={() => setSelectedAlbum(album)}
+                  >
+                    <div className="relative aspect-square rounded-xl overflow-hidden mb-3 shadow-lg group-hover:shadow-xl transition-all">
+                      <img
+                        src={album.coverImage || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f'}
+                        alt={album.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="w-14 h-14 rounded-full bg-amber-500 flex items-center justify-center shadow-xl">
+                          <Play className="w-6 h-6 text-white ml-1" />
+                        </div>
                       </div>
+                      <Badge className="absolute bottom-2 right-2 bg-black/60 text-white text-xs">
+                        {album.tracks.length} tracks
+                      </Badge>
                     </div>
-                    <Badge className="absolute bottom-2 right-2 bg-black/60 text-white text-xs">
-                      {album.tracks.length} tracks
-                    </Badge>
+                    <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-amber-600 transition-colors">
+                      {album.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 line-clamp-1">{album.artist}</p>
+                    <p className="text-sm font-medium text-amber-600 mt-1">
+                      {formatCurrency(album.totalPrice)}
+                    </p>
                   </div>
-                  <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-[#1e40af]-600 transition-colors">
-                    {album.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 line-clamp-1">{album.artist}</p>
-                  <p className="text-sm font-medium text-[#1e40af]-600 mt-1">
-                    {formatCurrency(album.totalPrice)}
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {filteredAlbums.length === 0 && (
               <div className="text-center py-16">
@@ -205,7 +221,7 @@ export default function MusicPage() {
       )}
 
       {/* Purchase Dialog */}
-      <PurchaseDialog 
+      <PurchaseDialog
         open={purchaseDialog.open}
         onOpenChange={(open) => setPurchaseDialog({ ...purchaseDialog, open })}
         item={purchaseDialog.item}
@@ -230,7 +246,7 @@ function AlbumDetail({ album, onBack, onPlay, onPurchase, playingTrack, formatDu
     <section className="py-12">
       <div className="max-w-5xl mx-auto px-4">
         {/* Back Button */}
-        <button 
+        <button
           onClick={onBack}
           className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors"
         >
@@ -284,14 +300,14 @@ function AlbumDetail({ album, onBack, onPlay, onPurchase, playingTrack, formatDu
           </div>
           <div className="divide-y divide-gray-100">
             {album.tracks.map((track, index) => (
-              <div 
+              <div
                 key={track.id}
                 className={`grid grid-cols-[auto_1fr_auto_auto] gap-4 px-6 py-4 items-center hover:bg-gray-100 transition-colors group ${
                   playingTrack?.id === track.id ? 'bg-[#1e40af]-50' : ''
                 }`}
               >
                 <span className="w-8 text-center">
-                  <button 
+                  <button
                     onClick={() => onPlay(track)}
                     className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#1e40af]-100 transition-colors"
                   >
@@ -373,8 +389,8 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
           body: JSON.stringify({ musicId: item.id, guestEmail: email })
         })
       }
-      toast.success('Purchase successful!', { 
-        description: 'Download links have been sent to your email.' 
+      toast.success('Purchase successful!', {
+        description: 'Download links have been sent to your email.'
       })
       onOpenChange(false)
       setEmail('')
@@ -392,10 +408,10 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
           <DialogTitle>Purchase {isAlbum ? 'Album' : 'Track'}</DialogTitle>
           <DialogDescription>Complete your purchase to download</DialogDescription>
         </DialogHeader>
-        
+
         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-          <img 
-            src={isAlbum ? item.coverImage : item.coverImage || ''} 
+          <img
+            src={isAlbum ? item.coverImage : item.coverImage || ''}
             alt={title}
             className="w-16 h-16 rounded-lg object-cover"
           />
@@ -410,7 +426,7 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
 
         <div>
           <Label htmlFor="email">Email for download link</Label>
-          <Input 
+          <Input
             id="email"
             type="email"
             placeholder="your@email.com"
@@ -421,14 +437,14 @@ function PurchaseDialog({ open, onOpenChange, item, type, formatCurrency }) {
         </div>
 
         <div className="text-xs text-gray-500 p-3 bg-gray-50 rounded-lg">
-          <p><strong>Note:</strong> Digital downloads are for personal use only. 
-          Download links will be sent to your email after payment.</p>
+          <p><strong>Note:</strong> Digital downloads are for personal use only.
+            Download links will be sent to your email after payment.</p>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button 
-            onClick={handlePurchase} 
+          <Button
+            onClick={handlePurchase}
             disabled={loading || !email}
             className="bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700"
           >

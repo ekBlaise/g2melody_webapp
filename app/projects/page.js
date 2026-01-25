@@ -19,9 +19,15 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        await fetch('/api/seed', { method: 'POST' })
         const res = await fetch('/api/projects')
-        const data = await res.json()
+        let data = await res.json()
+
+        if (data.length === 0) {
+          await fetch('/api/seed', { method: 'POST' })
+          const reRes = await fetch('/api/projects')
+          data = await reRes.json()
+        }
+
         setProjects(data)
       } catch (error) {
         console.error('Error:', error)
@@ -49,10 +55,25 @@ export default function ProjectsPage() {
   const pastProjects = projectsArray.filter(p => p.status === 'PAST')
   const meloverse = projectsArray.find(p => p.id === 'proj-meloverse')
 
-  if (loading) {
+  function ProjectSkeleton() {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#1e40af]-600" />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="overflow-hidden border-0 shadow-lg">
+            <div className="h-48 bg-gray-200 animate-pulse" />
+            <CardHeader className="pb-2 space-y-2">
+              <div className="h-6 bg-gray-200 animate-pulse rounded w-3/4" />
+              <div className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="h-2 bg-gray-200 animate-pulse rounded w-full" />
+            </CardContent>
+            <CardFooter className="flex gap-2">
+              <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+              <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     )
   }
@@ -120,46 +141,50 @@ export default function ProjectsPage() {
         <div className="max-w-7xl mx-auto px-4">
           <Tabs defaultValue="current" className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-              <TabsTrigger value="current">Active ({currentProjects.length})</TabsTrigger>
-              <TabsTrigger value="past">Completed ({pastProjects.length})</TabsTrigger>
+              <TabsTrigger value="current">Active ({loading ? '...' : currentProjects.length})</TabsTrigger>
+              <TabsTrigger value="past">Completed ({loading ? '...' : pastProjects.length})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="current">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentProjects.filter(p => p.id !== 'proj-meloverse').map((project) => (
-                  <Card key={project.id} className="overflow-hidden hover:shadow-xl transition-all">
-                    <div className="relative h-48">
-                      <img src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'} alt={project.title} className="w-full h-full object-cover" />
-                      {project.deadline && (
-                        <Badge className="absolute top-3 right-3 bg-[#0891b2]-500">
-                          <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days
-                        </Badge>
-                      )}
-                    </div>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg line-clamp-2">{project.title}</CardTitle>
-                      <CardDescription className="line-clamp-2">{project.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 mb-2" />
-                      <div className="flex justify-between text-sm">
-                        <span className="font-semibold text-[#1e40af]-600">{formatCurrency(project.currentAmount)}</span>
-                        <span className="text-gray-500">of {formatCurrency(project.goalAmount)}</span>
+              {loading && currentProjects.length === 0 ? (
+                <ProjectSkeleton />
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentProjects.filter(p => p.id !== 'proj-meloverse').map((project) => (
+                    <Card key={project.id} className="overflow-hidden hover:shadow-xl transition-all">
+                      <div className="relative h-48">
+                        <img src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'} alt={project.title} className="w-full h-full object-cover" />
+                        {project.deadline && (
+                          <Badge className="absolute top-3 right-3 bg-orange-500">
+                            <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days
+                          </Badge>
+                        )}
                       </div>
-                    </CardContent>
-                    <CardFooter className="gap-2">
-                      <Link href={`/projects/${project.id}`} className="flex-1">
-                        <Button variant="outline" className="w-full">View Details</Button>
-                      </Link>
-                      <Link href={`/projects/${project.id}`} className="flex-1">
-                        <Button className="w-full bg-gradient-to-r from-[#1e40af] to-[#0891b2] hover:from-[#1e3a8a] hover:to-cyan-700">
-                          <Heart className="w-4 h-4 mr-1" /> Donate
-                        </Button>
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg line-clamp-2">{project.title}</CardTitle>
+                        <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 mb-2" />
+                        <div className="flex justify-between text-sm">
+                          <span className="font-semibold text-amber-600">{formatCurrency(project.currentAmount)}</span>
+                          <span className="text-gray-500">of {formatCurrency(project.goalAmount)}</span>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="gap-2">
+                        <Link href={`/projects/${project.id}`} className="flex-1">
+                          <Button variant="outline" className="w-full">View Details</Button>
+                        </Link>
+                        <Link href={`/projects/${project.id}`} className="flex-1">
+                          <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                            <Heart className="w-4 h-4 mr-1" /> Donate
+                          </Button>
+                        </Link>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="past">

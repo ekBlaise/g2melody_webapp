@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 export default function AboutPage() {
   const [founders, setFounders] = useState([])
   const [members, setMembers] = useState([])
+  const [awards, setAwards] = useState([])
   const [activeTab, setActiveTab] = useState('all')
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,9 +26,10 @@ export default function AboutPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [foundersRes, membersRes] = await Promise.all([
+        const [foundersRes, membersRes, awardsRes] = await Promise.all([
           fetch('/api/founders'),
-          fetch('/api/choir-members')
+          fetch('/api/choir-members'),
+          fetch('/api/awards')
         ])
         
         if (foundersRes.ok) {
@@ -38,6 +40,11 @@ export default function AboutPage() {
         if (membersRes.ok) {
           const membersData = await membersRes.json()
           setMembers(membersData)
+        }
+
+        if (awardsRes.ok) {
+          const awardsData = await awardsRes.json()
+          setAwards(awardsData)
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -135,7 +142,7 @@ export default function AboutPage() {
             Gospel Guardians <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1e40af]-400 to-[#0891b2]-400">Melody</span>
           </h1>
           <p className="text-lg text-white/90 max-w-3xl mx-auto">
-            "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" — Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea.
+           "WE ARE BETTER TOGETHER, UNITY IS STRENGTH" - Since 2016, G2 Melody has grown from Melodious Voices of the Church of Christ, Muea, into a vibrant musical ministry.
           </p>
         </div>
       </section>
@@ -366,6 +373,52 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Awards & Recognition */}
+      {awards.length > 0 && (
+        <section className="py-16 bg-gradient-to-br from-amber-50 to-orange-50">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 mb-4">
+                <Award className="w-7 h-7 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Awards & Recognition</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Celebrating our achievements and the recognition we've received for our dedication to spreading the Gospel through music.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {awards.map((award) => (
+                <Card key={award.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden bg-white">
+                  <div className="h-40 bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
+                    {award.image ? (
+                      <img src={award.image} alt={award.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <Award className="w-16 h-16 text-amber-400" />
+                    )}
+                  </div>
+                  <CardContent className="p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{award.year}</Badge>
+                      {award.category && (
+                        <Badge variant="outline" className="text-xs">{award.category}</Badge>
+                      )}
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-1">{award.title}</h3>
+                    {award.awardingOrganization && (
+                      <p className="text-sm text-amber-600 mb-2">{award.awardingOrganization}</p>
+                    )}
+                    {award.description && (
+                      <p className="text-sm text-gray-600 line-clamp-2">{award.description}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Members Section - Improved UI */}
       <section className="py-16 bg-gray-50">

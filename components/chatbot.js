@@ -62,7 +62,7 @@ const getBotResponse = (message) => {
   
   if (lower.includes('contact') || lower.includes('reach') || lower.includes('email') || lower.includes('phone')) {
     return {
-      text: "You can reach us through:\n\n📧 Email: g2melodycmr@gmail.com\n📍 Location: Bomaka, Buea, Cameroon\n\nOr send us a message through our contact form!",
+      text: "You can reach us through:\n\n📧 Email: g2melodycmr@gmail.com\n📍 Location: Buea, Cameroon\n\nOr send us a message through our contact form!",
       link: { url: '/contact', label: 'Contact Us' }
     }
   }

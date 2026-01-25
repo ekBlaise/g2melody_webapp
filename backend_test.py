@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-G2 Melody Music Platform Backend API Tests
-Testing new Site Settings API and existing APIs
+Backend API Testing Script for G2 Melody Learning Platform APIs
+Tests all the new Learning Platform endpoints as specified in the review request.
 """
 
 import requests
@@ -10,344 +10,238 @@ import sys
 from datetime import datetime
 
 # Base URL from environment
-BASE_URL = "https://musicportal-6.preview.emergentagent.com/api"
+BASE_URL = "https://music-platform-36.preview.emergentagent.com/api"
 
-# Test credentials
-ADMIN_EMAIL = "admin@g2melody.com"
-ADMIN_PASSWORD = "admin123"
-
-class G2MelodyAPITester:
-    def __init__(self):
-        self.base_url = BASE_URL
-        self.session = requests.Session()
-        self.test_results = []
+def test_api_endpoint(method, endpoint, data=None, params=None, expected_status=200):
+    """Test an API endpoint and return the response"""
+    url = f"{BASE_URL}{endpoint}"
+    
+    try:
+        if method == "GET":
+            response = requests.get(url, params=params)
+        elif method == "POST":
+            response = requests.post(url, json=data)
+        elif method == "PUT":
+            response = requests.put(url, json=data)
+        elif method == "DELETE":
+            response = requests.delete(url)
+        else:
+            print(f"❌ Unsupported method: {method}")
+            return None
+            
+        print(f"📡 {method} {endpoint} - Status: {response.status_code}")
         
-    def log_test(self, test_name, success, message="", response_data=None):
-        """Log test results"""
+        if response.status_code == expected_status:
+            try:
+                result = response.json()
+                print(f"✅ SUCCESS: {method} {endpoint}")
+                return result
+            except json.JSONDecodeError:
+                print(f"✅ SUCCESS: {method} {endpoint} (No JSON response)")
+                return True
+        else:
+            print(f"❌ FAILED: {method} {endpoint} - Expected {expected_status}, got {response.status_code}")
+            try:
+                error_data = response.json()
+                print(f"   Error: {error_data}")
+            except:
+                print(f"   Error: {response.text}")
+            return None
+            
+    except requests.exceptions.RequestException as e:
+        print(f"❌ NETWORK ERROR: {method} {endpoint} - {str(e)}")
+        return None
+
+def main():
+    print("🚀 Starting G2 Melody Learning Platform API Tests")
+    print("=" * 60)
+    
+    test_results = []
+    
+    # Test 1: GET /api/courses - Should return 4 courses
+    print("\n1️⃣ Testing GET /api/courses")
+    courses = test_api_endpoint("GET", "/courses")
+    if courses and isinstance(courses, list):
+        print(f"   📊 Found {len(courses)} courses")
+        if len(courses) >= 4:
+            print("   ✅ Expected 4+ courses found")
+            test_results.append(("GET /api/courses", True, f"Found {len(courses)} courses"))
+        else:
+            print("   ⚠️  Expected 4+ courses, found fewer")
+            test_results.append(("GET /api/courses", False, f"Expected 4+ courses, found {len(courses)}"))
+    else:
+        test_results.append(("GET /api/courses", False, "Failed to retrieve courses"))
+    
+    # Test 2: POST /api/enrollments - Create enrollment
+    print("\n2️⃣ Testing POST /api/enrollments")
+    enrollment_data = {
+        "userId": "admin-1",
+        "courseId": "course-3"
+    }
+    enrollment = test_api_endpoint("POST", "/enrollments", data=enrollment_data)
+    if enrollment:
+        print(f"   ✅ Enrollment created successfully")
+        test_results.append(("POST /api/enrollments", True, "Enrollment created"))
+    else:
+        test_results.append(("POST /api/enrollments", False, "Failed to create enrollment"))
+    
+    # Test 3: GET /api/enrollments?userId=admin-1 - Should return enrolled courses
+    print("\n3️⃣ Testing GET /api/enrollments?userId=admin-1")
+    enrollments = test_api_endpoint("GET", "/enrollments", params={"userId": "admin-1"})
+    if enrollments and isinstance(enrollments, list):
+        print(f"   📊 Found {len(enrollments)} enrollments for admin-1")
+        test_results.append(("GET /api/enrollments", True, f"Found {len(enrollments)} enrollments"))
+    else:
+        test_results.append(("GET /api/enrollments", False, "Failed to retrieve enrollments"))
+    
+    # Test 4: GET /api/practice-tracks - Should return 10 practice tracks
+    print("\n4️⃣ Testing GET /api/practice-tracks")
+    tracks = test_api_endpoint("GET", "/practice-tracks")
+    if tracks and isinstance(tracks, list):
+        print(f"   📊 Found {len(tracks)} practice tracks")
+        if len(tracks) >= 10:
+            print("   ✅ Expected 10+ practice tracks found")
+            test_results.append(("GET /api/practice-tracks", True, f"Found {len(tracks)} tracks"))
+        else:
+            print("   ⚠️  Expected 10+ tracks, found fewer")
+            test_results.append(("GET /api/practice-tracks", False, f"Expected 10+ tracks, found {len(tracks)}"))
+    else:
+        test_results.append(("GET /api/practice-tracks", False, "Failed to retrieve practice tracks"))
+    
+    # Test 5: GET /api/achievements - Should return 8 achievements
+    print("\n5️⃣ Testing GET /api/achievements")
+    achievements = test_api_endpoint("GET", "/achievements")
+    if achievements and isinstance(achievements, list):
+        print(f"   📊 Found {len(achievements)} achievements")
+        if len(achievements) >= 8:
+            print("   ✅ Expected 8+ achievements found")
+            test_results.append(("GET /api/achievements", True, f"Found {len(achievements)} achievements"))
+        else:
+            print("   ⚠️  Expected 8+ achievements, found fewer")
+            test_results.append(("GET /api/achievements", False, f"Expected 8+ achievements, found {len(achievements)}"))
+    else:
+        test_results.append(("GET /api/achievements", False, "Failed to retrieve achievements"))
+    
+    # Test 6: GET /api/schedule - Should return upcoming events (4 items)
+    print("\n6️⃣ Testing GET /api/schedule")
+    schedule = test_api_endpoint("GET", "/schedule")
+    if schedule and isinstance(schedule, list):
+        print(f"   📊 Found {len(schedule)} schedule items")
+        if len(schedule) >= 4:
+            print("   ✅ Expected 4+ schedule items found")
+            test_results.append(("GET /api/schedule", True, f"Found {len(schedule)} schedule items"))
+        else:
+            print("   ⚠️  Expected 4+ schedule items, found fewer")
+            test_results.append(("GET /api/schedule", False, f"Expected 4+ items, found {len(schedule)}"))
+    else:
+        test_results.append(("GET /api/schedule", False, "Failed to retrieve schedule"))
+    
+    # Test 7: GET /api/dashboard/learner?userId=admin-1 - Should return aggregated learner data
+    print("\n7️⃣ Testing GET /api/dashboard/learner?userId=admin-1")
+    learner_data = test_api_endpoint("GET", "/dashboard/learner", params={"userId": "admin-1"})
+    if learner_data and isinstance(learner_data, dict):
+        required_keys = ["progress", "courses", "practiceTracks", "achievements", "notifications", "schedule", "stats"]
+        missing_keys = [key for key in required_keys if key not in learner_data]
+        if not missing_keys:
+            print("   ✅ All required learner dashboard fields present")
+            test_results.append(("GET /api/dashboard/learner", True, "All required fields present"))
+        else:
+            print(f"   ❌ Missing required fields: {missing_keys}")
+            test_results.append(("GET /api/dashboard/learner", False, f"Missing fields: {missing_keys}"))
+    else:
+        test_results.append(("GET /api/dashboard/learner", False, "Failed to retrieve learner dashboard"))
+    
+    # Test 8: GET /api/dashboard/supporter?userId=admin-1 - Should return supporter stats
+    print("\n8️⃣ Testing GET /api/dashboard/supporter?userId=admin-1")
+    supporter_data = test_api_endpoint("GET", "/dashboard/supporter", params={"userId": "admin-1"})
+    if supporter_data and isinstance(supporter_data, dict):
+        required_keys = ["stats", "donations", "leaderboard", "impact"]
+        missing_keys = [key for key in required_keys if key not in supporter_data]
+        if not missing_keys:
+            print("   ✅ All required supporter dashboard fields present")
+            test_results.append(("GET /api/dashboard/supporter", True, "All required fields present"))
+        else:
+            print(f"   ❌ Missing required fields: {missing_keys}")
+            test_results.append(("GET /api/dashboard/supporter", False, f"Missing fields: {missing_keys}"))
+    else:
+        test_results.append(("GET /api/dashboard/supporter", False, "Failed to retrieve supporter dashboard"))
+    
+    # Test 9: POST /api/practice-sessions - Log practice
+    print("\n9️⃣ Testing POST /api/practice-sessions")
+    practice_data = {
+        "userId": "admin-1",
+        "trackId": "track-1",
+        "duration": 15,
+        "notes": "Great practice session"
+    }
+    practice_session = test_api_endpoint("POST", "/practice-sessions", data=practice_data)
+    if practice_session:
+        print("   ✅ Practice session logged successfully")
+        test_results.append(("POST /api/practice-sessions", True, "Practice session logged"))
+    else:
+        test_results.append(("POST /api/practice-sessions", False, "Failed to log practice session"))
+    
+    # Test 10: GET /api/user-stats?userId=admin-1 - Should return user stats after practice logged
+    print("\n🔟 Testing GET /api/user-stats?userId=admin-1")
+    user_stats = test_api_endpoint("GET", "/user-stats", params={"userId": "admin-1"})
+    if user_stats and isinstance(user_stats, dict):
+        if "totalPracticeMinutes" in user_stats:
+            print(f"   ✅ User stats retrieved - Practice minutes: {user_stats.get('totalPracticeMinutes', 0)}")
+            test_results.append(("GET /api/user-stats", True, f"Stats retrieved with {user_stats.get('totalPracticeMinutes', 0)} practice minutes"))
+        else:
+            print("   ❌ Missing totalPracticeMinutes field")
+            test_results.append(("GET /api/user-stats", False, "Missing totalPracticeMinutes field"))
+    else:
+        test_results.append(("GET /api/user-stats", False, "Failed to retrieve user stats"))
+    
+    # Test 11: POST /api/notifications - Create notification
+    print("\n1️⃣1️⃣ Testing POST /api/notifications")
+    notification_data = {
+        "userId": "admin-1",
+        "title": "Test Notification",
+        "message": "This is a test notification from the API test suite",
+        "type": "info"
+    }
+    notification = test_api_endpoint("POST", "/notifications", data=notification_data)
+    if notification:
+        print("   ✅ Notification created successfully")
+        test_results.append(("POST /api/notifications", True, "Notification created"))
+    else:
+        test_results.append(("POST /api/notifications", False, "Failed to create notification"))
+    
+    # Test 12: GET /api/notifications?userId=admin-1 - Should return notifications
+    print("\n1️⃣2️⃣ Testing GET /api/notifications?userId=admin-1")
+    notifications = test_api_endpoint("GET", "/notifications", params={"userId": "admin-1"})
+    if notifications and isinstance(notifications, list):
+        print(f"   📊 Found {len(notifications)} notifications for admin-1")
+        test_results.append(("GET /api/notifications", True, f"Found {len(notifications)} notifications"))
+    else:
+        test_results.append(("GET /api/notifications", False, "Failed to retrieve notifications"))
+    
+    # Print Summary
+    print("\n" + "=" * 60)
+    print("📊 TEST SUMMARY")
+    print("=" * 60)
+    
+    passed = 0
+    failed = 0
+    
+    for test_name, success, details in test_results:
         status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} {test_name}: {message}")
-        
-        self.test_results.append({
-            "test": test_name,
-            "success": success,
-            "message": message,
-            "response_data": response_data
-        })
-        
-    def test_site_settings_get(self):
-        """Test GET /api/settings - Should return site settings"""
-        try:
-            response = self.session.get(f"{self.base_url}/settings")
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                # Check required fields
-                required_fields = ['memberCount', 'studentsCount', 'programsCount', 'yearsActive']
-                missing_fields = [field for field in required_fields if field not in data]
-                
-                if missing_fields:
-                    self.log_test("GET /api/settings", False, f"Missing required fields: {missing_fields}", data)
-                else:
-                    self.log_test("GET /api/settings", True, f"Retrieved settings: memberCount={data.get('memberCount')}, studentsCount={data.get('studentsCount')}, programsCount={data.get('programsCount')}, yearsActive={data.get('yearsActive')}", data)
-                    return data
-            else:
-                self.log_test("GET /api/settings", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("GET /api/settings", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_site_settings_update(self):
-        """Test PUT /api/admin/settings - Should update site settings"""
-        try:
-            # Test data - updating memberCount to 75 as requested
-            update_data = {
-                "memberCount": 75,
-                "studentsCount": 120,
-                "programsCount": 8,
-                "yearsActive": 10,
-                "albumDescription": "Updated description for testing"
-            }
-            
-            response = self.session.put(
-                f"{self.base_url}/admin/settings",
-                json=update_data,
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                # Verify the update worked
-                if data.get('memberCount') == 75:
-                    self.log_test("PUT /api/admin/settings", True, f"Successfully updated memberCount to 75. Full response: {data}", data)
-                    return data
-                else:
-                    self.log_test("PUT /api/admin/settings", False, f"memberCount not updated correctly. Expected 75, got {data.get('memberCount')}", data)
-            else:
-                self.log_test("PUT /api/admin/settings", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("PUT /api/admin/settings", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_projects_api(self):
-        """Test GET /api/projects - Should return all projects"""
-        try:
-            response = self.session.get(f"{self.base_url}/projects")
-            
-            if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, list):
-                    self.log_test("GET /api/projects", True, f"Retrieved {len(data)} projects")
-                    return data
-                else:
-                    self.log_test("GET /api/projects", False, f"Expected list, got {type(data)}")
-            else:
-                self.log_test("GET /api/projects", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("GET /api/projects", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_donations_api(self):
-        """Test POST /api/donations - Should create donation and update project amount"""
-        try:
-            # First get a project to donate to
-            projects = self.test_projects_api()
-            if not projects:
-                self.log_test("POST /api/donations", False, "No projects available for donation test")
-                return None
-                
-            project = projects[0]
-            original_amount = project.get('currentAmount', 0)
-            
-            donation_data = {
-                "amount": 5000,
-                "currency": "XAF",
-                "donorName": "Test Donor",
-                "donorEmail": "testdonor@example.com",
-                "message": "Test donation for API testing",
-                "anonymous": False,
-                "projectId": project['id'],
-                "paymentMethod": "card"
-            }
-            
-            response = self.session.post(
-                f"{self.base_url}/donations",
-                json=donation_data,
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                # Verify donation was created
-                if data.get('amount') == 5000 and data.get('projectId') == project['id']:
-                    # Check if project amount was updated
-                    updated_projects = self.test_projects_api()
-                    if updated_projects:
-                        updated_project = next((p for p in updated_projects if p['id'] == project['id']), None)
-                        if updated_project and updated_project.get('currentAmount') == original_amount + 5000:
-                            self.log_test("POST /api/donations", True, f"Donation created and project amount updated from {original_amount} to {updated_project.get('currentAmount')}")
-                            return data
-                        else:
-                            self.log_test("POST /api/donations", False, f"Project amount not updated correctly")
-                    else:
-                        self.log_test("POST /api/donations", False, "Could not verify project amount update")
-                else:
-                    self.log_test("POST /api/donations", False, f"Donation data incorrect: {data}")
-            else:
-                self.log_test("POST /api/donations", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("POST /api/donations", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_admin_stats_api(self):
-        """Test GET /api/admin/stats - Should return admin statistics"""
-        try:
-            response = self.session.get(f"{self.base_url}/admin/stats")
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                # Check required fields
-                required_fields = ['donations', 'purchases', 'users', 'members', 'projects', 'recentDonations']
-                missing_fields = [field for field in required_fields if field not in data]
-                
-                if missing_fields:
-                    self.log_test("GET /api/admin/stats", False, f"Missing required fields: {missing_fields}")
-                else:
-                    donations_total = data['donations'].get('total', 0)
-                    donations_count = data['donations'].get('count', 0)
-                    users_count = data.get('users', 0)
-                    self.log_test("GET /api/admin/stats", True, f"Stats retrieved: {donations_count} donations totaling {donations_total} XAF, {users_count} users")
-                    return data
-            else:
-                self.log_test("GET /api/admin/stats", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("GET /api/admin/stats", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_admin_users_api(self):
-        """Test GET /api/admin/users - Should return user list"""
-        try:
-            response = self.session.get(f"{self.base_url}/admin/users")
-            
-            if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, list):
-                    admin_users = [u for u in data if u.get('role') == 'ADMIN']
-                    self.log_test("GET /api/admin/users", True, f"Retrieved {len(data)} users, {len(admin_users)} admins")
-                    return data
-                else:
-                    self.log_test("GET /api/admin/users", False, f"Expected list, got {type(data)}")
-            else:
-                self.log_test("GET /api/admin/users", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("GET /api/admin/users", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_create_project_api(self):
-        """Test POST /api/projects - Should create new project"""
-        try:
-            project_data = {
-                "title": "Test Project API",
-                "description": "A test project created via API testing",
-                "image": "https://images.pexels.com/photos/280221/pexels-photo-280221.jpeg",
-                "goalAmount": 1000000,
-                "status": "CURRENT",
-                "deadline": "2025-12-31"
-            }
-            
-            response = self.session.post(
-                f"{self.base_url}/projects",
-                json=project_data,
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                if data.get('title') == "Test Project API" and data.get('goalAmount') == 1000000:
-                    self.log_test("POST /api/projects", True, f"Project created with ID: {data.get('id')}")
-                    return data
-                else:
-                    self.log_test("POST /api/projects", False, f"Project data incorrect: {data}")
-            else:
-                self.log_test("POST /api/projects", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("POST /api/projects", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def test_create_music_api(self):
-        """Test POST /api/music - Should create new music track"""
-        try:
-            music_data = {
-                "title": "Test Track API",
-                "artist": "G2 Melody Test",
-                "album": "API Test Album",
-                "genre": "Gospel",
-                "duration": 180,
-                "price": 500,
-                "currency": "XAF",
-                "coverImage": "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg",
-                "isHymn": False
-            }
-            
-            response = self.session.post(
-                f"{self.base_url}/music",
-                json=music_data,
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                if data.get('title') == "Test Track API" and data.get('price') == 500:
-                    self.log_test("POST /api/music", True, f"Music track created with ID: {data.get('id')}")
-                    return data
-                else:
-                    self.log_test("POST /api/music", False, f"Music data incorrect: {data}")
-            else:
-                self.log_test("POST /api/music", False, f"HTTP {response.status_code}: {response.text}")
-                
-        except Exception as e:
-            self.log_test("POST /api/music", False, f"Exception: {str(e)}")
-            
-        return None
-        
-    def run_all_tests(self):
-        """Run all backend API tests"""
-        print("=" * 80)
-        print("G2 MELODY MUSIC PLATFORM - BACKEND API TESTS")
-        print("=" * 80)
-        print(f"Testing against: {self.base_url}")
-        print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print()
-        
-        # Test new Site Settings API (main focus)
-        print("🎯 TESTING NEW SITE SETTINGS API")
-        print("-" * 40)
-        original_settings = self.test_site_settings_get()
-        updated_settings = self.test_site_settings_update()
-        
-        # Verify the update persisted
-        if updated_settings:
-            print("\n🔄 Verifying settings update persisted...")
-            current_settings = self.test_site_settings_get()
-            if current_settings and current_settings.get('memberCount') == 75:
-                self.log_test("Settings Persistence", True, "memberCount update persisted correctly")
-            else:
-                self.log_test("Settings Persistence", False, "memberCount update did not persist")
-        
-        print("\n🔍 TESTING EXISTING APIs (SANITY CHECK)")
-        print("-" * 40)
-        
-        # Test existing APIs
-        self.test_projects_api()
-        self.test_donations_api()
-        self.test_admin_stats_api()
-        self.test_admin_users_api()
-        self.test_create_project_api()
-        self.test_create_music_api()
-        
-        # Summary
-        print("\n" + "=" * 80)
-        print("TEST SUMMARY")
-        print("=" * 80)
-        
-        passed = sum(1 for result in self.test_results if result['success'])
-        total = len(self.test_results)
-        
-        print(f"Total Tests: {total}")
-        print(f"Passed: {passed}")
-        print(f"Failed: {total - passed}")
-        print(f"Success Rate: {(passed/total)*100:.1f}%")
-        
-        if total - passed > 0:
-            print("\n❌ FAILED TESTS:")
-            for result in self.test_results:
-                if not result['success']:
-                    print(f"  - {result['test']}: {result['message']}")
-        
-        print(f"\nTest completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        
-        return passed == total
+        print(f"{status} {test_name} - {details}")
+        if success:
+            passed += 1
+        else:
+            failed += 1
+    
+    print(f"\n📈 RESULTS: {passed} passed, {failed} failed out of {len(test_results)} tests")
+    
+    if failed == 0:
+        print("🎉 ALL TESTS PASSED! Learning Platform APIs are working correctly.")
+        return 0
+    else:
+        print(f"⚠️  {failed} tests failed. Please check the issues above.")
+        return 1
 
 if __name__ == "__main__":
-    tester = G2MelodyAPITester()
-    success = tester.run_all_tests()
-    sys.exit(0 if success else 1)
+    sys.exit(main())

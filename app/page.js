@@ -24,13 +24,23 @@ import {
   Video, FileText, Zap, Shield, Users2, Building, Lightbulb, HandHeart
 } from 'lucide-react'
 
+// TikTok Icon Component
+function TikTokIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+    </svg>
+  )
+}
+
 // Navigation Component
 function Navigation({ isScrolled, activeSection }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
     { href: '/projects', label: 'Projects' },
     { href: '/music', label: 'Music' },
     { href: '/news', label: 'News' },
@@ -38,29 +48,80 @@ function Navigation({ isScrolled, activeSection }) {
     { href: '/contact', label: 'Contact' },
   ]
 
+  const aboutSubLinks = [
+    { href: '/about', label: 'About Us' },
+    { href: '/gallery', label: 'Gallery' },
+  ]
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setAboutDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-100' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <img 
-              src="/logo.png" 
-              alt="G2 Melody" 
+            <img
+              src="/logo.png"
+              alt="G2 Melody"
               className="h-12 w-auto group-hover:scale-105 transition-transform duration-300"
             />
-            <span className={`hidden sm:block text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
+            <span className={`hidden sm:block text-xl font-bold tracking-tight font-heading ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
+            <Link
+              href="/"
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+            >
+              Home
+            </Link>
+
+            {/* About Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
+              >
+                About
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {aboutDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {aboutSubLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setAboutDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {navLinks.filter(link => link.label !== 'Home').map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {link.label}
               </Link>
@@ -82,7 +143,7 @@ function Navigation({ isScrolled, activeSection }) {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -127,7 +188,7 @@ function Navigation({ isScrolled, activeSection }) {
 // Hero Section
 function HeroSection({ siteSettings }) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  
+
   const slides = [
     {
       image: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
@@ -179,11 +240,11 @@ function HeroSection({ siteSettings }) {
           />
         </div>
       ))}
-      
+
       {/* Gradient Overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-gray-900/30" />
-      
+
       {/* Decorative Elements */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-[#1e40af]/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#1e40af]/15 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -300,8 +361,8 @@ function AboutSection() {
             <span className="text-[#1e40af] font-bold">Melody</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Founded in late 2016, G2 Melody originated from "Melodious Voices" of The Church of Christ Muea, 
-            evolving into a powerful force for musical evangelism and worship excellence.
+            Founded in late 2016, G2 Melody began as a small group from the Church of Christ, Muea, formerly known as Melodious Voices.
+            The group has since grown into a powerful force for musical evangelism and worship excellence.
           </p>
         </div>
 
@@ -334,8 +395,8 @@ function AboutSection() {
             </CardHeader>
             <CardContent>
               <p className="text-white/90 leading-relaxed">
-                A future where the musical landscape of the Church is revitalized, young choirs are nurtured, 
-                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond. 
+                A future where the musical landscape of the Church is revitalized, young choirs are nurtured,
+                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond.
                 We envision establishing a music academy and nurturing worship leaders globally.
               </p>
             </CardContent>
@@ -388,12 +449,61 @@ function AboutSection() {
   )
 }
 
+// Skeleton Loader components
+function SkeletonCard({ className }) {
+  return (
+    <div className={`bg-gray-200 animate-pulse rounded-2xl ${className}`} />
+  )
+}
+
+function MusicSkeleton() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-lg">
+          <div className="aspect-square bg-gray-200 animate-pulse" />
+          <CardContent className="p-3 space-y-2">
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4" />
+            <div className="h-3 bg-gray-200 animate-pulse rounded w-1/2" />
+          </CardContent>
+          <CardFooter className="p-3 pt-0 flex justify-between">
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-1/4" />
+            <div className="h-7 bg-gray-200 animate-pulse rounded w-1/3" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+function ProjectSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[1, 2, 3].map((i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-lg">
+          <div className="h-56 bg-gray-200 animate-pulse" />
+          <CardHeader className="pb-2 space-y-2">
+            <div className="h-6 bg-gray-200 animate-pulse rounded w-3/4" />
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-8 bg-gray-200 animate-pulse rounded w-3/4" />
+          </CardContent>
+          <CardFooter className="flex gap-2">
+            <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+            <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
 // Projects Section
-function ProjectsSection({ projects, onDonate }) {
-  // Get total counts for tabs
+function ProjectsSection({ projects, onDonate, loading }) {
   const allCurrentProjects = projects.filter(p => p.status === 'CURRENT')
   const allPastProjects = projects.filter(p => p.status === 'PAST')
-  
+
   // Limit to 3 projects for homepage display
   const currentProjects = allCurrentProjects.slice(0, 3)
   const pastProjects = allPastProjects.slice(0, 3)
@@ -472,11 +582,33 @@ function ProjectsSection({ projects, onDonate }) {
                         <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
                       </div>
                     </div>
-                  </CardContent>
-                  <CardFooter className="pt-0 flex gap-2">
-                    <Link href={`/projects/${project.id}`} className="flex-1">
-                      <Button variant="outline" className="w-full">
-                        View Details
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl line-clamp-2">{project.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex justify-between items-end mb-4">
+                        <div>
+                          <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
+                          <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-semibold text-gray-900">{Math.round(getProgress(project.currentAmount, project.goalAmount))}%</p>
+                          <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="pt-0 flex gap-2">
+                      <Link href={`/projects/${project.id}`} className="flex-1">
+                        <Button variant="outline" className="w-full">
+                          View Details
+                        </Button>
+                      </Link>
+                      <Button
+                        className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg"
+                        onClick={() => onDonate(project)}
+                      >
+                        <Heart className="mr-2 h-4 w-4" /> Donate
                       </Button>
                     </Link>
                     <Button 
@@ -527,9 +659,9 @@ function ProjectsSection({ projects, onDonate }) {
         {/* G2 Meloverse Vision - Featured Section */}
         <div className="mt-20 relative overflow-hidden rounded-3xl">
           <div className="absolute inset-0">
-            <img 
-              src="/g2-meloverse.jpg" 
-              alt="G2 Meloverse" 
+            <img
+              src="/g2-meloverse.jpg"
+              alt="G2 Meloverse"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gray-900/70" />
@@ -581,7 +713,7 @@ function ProjectsSection({ projects, onDonate }) {
 }
 
 // Music Store Section
-function MusicStoreSection({ music, onPurchase }) {
+function MusicStoreSection({ music, onPurchase, loading }) {
   const [playingId, setPlayingId] = useState(null)
 
   // Limit to 4 music tracks for homepage display
@@ -610,7 +742,7 @@ function MusicStoreSection({ music, onPurchase }) {
             Our <span className="text-purple-950">Music Collection</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Experience the power of acapella worship. Purchase and download our original compositions, hymns, and gospel tracks.
+            Experience the power of a cappella worship. Stream our music for free, or purchase and download our original compositions, hymns, and gospel songs.
           </p>
         </div>
 
@@ -770,7 +902,7 @@ function LearnMuzikSection() {
             <div>
               <h3 className="text-3xl md:text-4xl font-bold mb-4">G2 Melody Music Academy</h3>
               <p className="text-white/90 mb-6 text-lg">
-                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies. 
+                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies.
                 Until then, we offer comprehensive training programs for aspiring musicians and worship leaders.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -904,7 +1036,7 @@ function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Location</h4>
-                    <p className="text-gray-400">Bomaka, Buea<br />South West Region, Cameroon</p>
+                    <p className="text-gray-400">Buea, South West Region, Cameroon</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
@@ -957,7 +1089,7 @@ function ContactSection() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 text-sm mb-4">
-                  We're available for weddings, church programs, concerts, and special events. 
+                  We're available for weddings, church programs, concerts, and special events.
                   Contact us to discuss your requirements and get a quote.
                 </p>
                 <Button className="w-full bg-[#1e40af] hover:bg-[#1e3a8a]">
@@ -981,7 +1113,7 @@ function ContactSection() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="John Doe"
                       className="mt-1"
                       required
@@ -993,7 +1125,7 @@ function ContactSection() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="john@example.com"
                       className="mt-1"
                       required
@@ -1002,7 +1134,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <Label htmlFor="subject">Subject</Label>
-                  <Select value={formData.subject} onValueChange={(value) => setFormData({...formData, subject: value})}>
+                  <Select value={formData.subject} onValueChange={(value) => setFormData({ ...formData, subject: value })}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select a subject" />
                     </SelectTrigger>
@@ -1021,7 +1153,7 @@ function ContactSection() {
                   <Textarea
                     id="message"
                     value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="How can we help you?"
                     rows={5}
                     className="mt-1"
@@ -1056,7 +1188,7 @@ function Footer() {
     { icon: Facebook, href: 'https://www.facebook.com/g2melody', label: 'Facebook' },
     { icon: Youtube, href: 'https://www.youtube.com/@g2melody', label: 'YouTube' },
     { icon: Instagram, href: 'https://www.instagram.com/g2melody/', label: 'Instagram' },
-    { icon: Music, href: 'https://www.tiktok.com/@g2melody_official', label: 'TikTok' }, // Using Music icon for TikTok
+    { icon: TikTokIcon, href: 'https://www.tiktok.com/@g2melody_official', label: 'TikTok' }, // Using Music icon for TikTok
   ]
 
   return (
@@ -1418,7 +1550,7 @@ export default function App() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
-      
+
       // Update active section
       const sections = ['home', 'about', 'projects', 'music', 'learn', 'contact']
       for (const section of sections.reverse()) {
@@ -1436,16 +1568,15 @@ export default function App() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        await fetch('/api/seed', { method: 'POST' })
-        
+        // Fetch data in parallel first
         const [projectsRes, musicRes, settingsRes] = await Promise.all([
           fetch('/api/projects'),
           fetch('/api/music'),
           fetch('/api/settings')
         ])
-        
-        const projectsData = await projectsRes.json()
-        const musicData = await musicRes.json()
+
+        let projectsData = await projectsRes.json()
+        let musicData = await musicRes.json()
         const settingsData = await settingsRes.json()
         
         setProjects(Array.isArray(projectsData) ? projectsData : [])
@@ -1494,8 +1625,8 @@ export default function App() {
       <Navigation isScrolled={isScrolled} activeSection={activeSection} />
       <HeroSection siteSettings={siteSettings} />
       <AboutSection />
-      <ProjectsSection projects={projects} onDonate={handleDonate} />
-      <MusicStoreSection music={music} onPurchase={handlePurchase} />
+      <ProjectsSection projects={projects} onDonate={handleDonate} loading={loading} />
+      <MusicStoreSection music={music} onPurchase={handlePurchase} loading={loading} />
       <LearnMuzikSection />
       <ContactSection />
       <Footer />

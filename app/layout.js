@@ -1,7 +1,20 @@
 import './globals.css'
 import { Toaster } from 'sonner'
+import { Dancing_Script, Nunito_Sans } from 'next/font/google'
 import Providers from '@/components/providers'
 import Chatbot from '@/components/chatbot'
+
+const dancingScript = Dancing_Script({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-dancing-script',
+})
+
+const nunitoSans = Nunito_Sans({
+  subsets: ['latin'],
+  weight: ['200', '300', '400', '600', '700', '800', '900'],
+  variable: '--font-nunito-sans',
+})
 
 export const metadata = {
   title: 'G2 Melody | Choir Music Platform',
@@ -20,7 +33,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
-      <body className="min-h-screen antialiased">
+      <body className={`${nunitoSans.variable} ${dancingScript.variable} font-sans min-h-screen antialiased`}>
         <Providers>
           {children}
           <Chatbot />

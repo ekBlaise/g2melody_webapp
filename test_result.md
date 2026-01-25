@@ -232,7 +232,148 @@ backend:
     status_history:
       - working: true
         agent: "main"
-        comment: "POST /api/seed creates sample projects, music, and admin user"
+        comment: "POST /api/seed creates sample projects, music, admin user, courses, lessons, practice tracks, achievements, schedule items"
+
+  - task: "Courses API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/courses returns all courses. POST creates new courses. Tested manually - returns 4 courses with correct data."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/courses successfully returned 4 courses as expected. API working correctly."
+
+  - task: "Enrollments API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/enrollments?userId=X returns user enrollments with course data. POST enrolls user in course. Tested - enrollment creates successfully."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/enrollments successfully created enrollment for admin-1 in course-3. GET /api/enrollments returned 3 enrollments for admin-1. API working correctly."
+
+  - task: "Practice Tracks API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/practice-tracks returns all tracks with filters (type, vocalPart). Tested - returns 10 tracks correctly."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/practice-tracks successfully returned 10 practice tracks as expected. API working correctly."
+
+  - task: "Learner Dashboard API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/dashboard/learner?userId=X returns aggregated learner data including progress, courses, practice tracks, achievements, notifications, schedule. Tested - returns correct data structure."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/dashboard/learner successfully returned all required fields (progress, courses, practiceTracks, achievements, notifications, schedule, stats). Aggregated learner dashboard API working correctly."
+
+  - task: "Supporter Dashboard API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/dashboard/supporter?userId=X returns supporter stats, donations, leaderboard, impact metrics. Tested - returns correct data."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/dashboard/supporter successfully returned all required fields (stats, donations, leaderboard, impact). Supporter dashboard API working correctly."
+
+  - task: "Schedule API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/schedule returns upcoming public events and user-specific items. POST creates new schedule items. Tested - returns 4 events correctly."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/schedule successfully returned 4 schedule items as expected. API working correctly."
+
+  - task: "Achievements API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/achievements returns all achievement definitions. POST /api/user-achievements awards achievement to user. Tested - returns 8 achievements."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/achievements successfully returned 8 achievements as expected. API working correctly."
+
+  - task: "Practice Sessions API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/practice-sessions successfully logged practice session for admin-1 with trackId track-1 and 15 minutes duration. API working correctly."
+
+  - task: "User Stats API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: GET /api/user-stats successfully returned user statistics including totalPracticeMinutes (15 minutes after practice session). API working correctly."
+
+  - task: "Notifications API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: POST /api/notifications successfully created test notification for admin-1. GET /api/notifications returned 1 notification. API working correctly."
 
   - task: "Site Settings GET API"
     implemented: true
@@ -381,8 +522,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Site Settings GET API"
-    - "Site Settings UPDATE API"
+    - "Learning Platform APIs"
+    - "Dashboard Aggregation APIs"
   stuck_tasks:
     - "User Registration API"
   test_all: false
@@ -451,3 +592,57 @@ agent_communication:
     ✅ POST /api/music - Created new music track successfully
     
     All 12 tests passed (100% success rate). The new Site Settings API is fully functional and all existing APIs continue to work correctly. No critical issues found."
+  - agent: "main"
+    message: "PHASE 1 COMPLETED - Learning Platform APIs implemented and connected to dashboard:
+    
+    **NEW LEARNING PLATFORM APIs:**
+    - GET/POST /api/courses - Course management
+    - GET/POST /api/lessons - Lesson management
+    - GET/POST /api/enrollments - User course enrollments
+    - GET/POST /api/lesson-progress - Track lesson completion
+    - GET/POST /api/practice-tracks - Practice audio tracks
+    - GET/POST /api/practice-sessions - Log user practice
+    - GET/PUT /api/user-stats - User learning statistics
+    - GET/POST /api/achievements - Achievement definitions
+    - GET/POST /api/user-achievements - User earned achievements
+    - GET/POST /api/notifications - User notifications
+    - GET/POST /api/schedule - Upcoming events and deadlines
+    - GET /api/dashboard/learner - Aggregated learner dashboard data
+    - GET /api/dashboard/supporter - Aggregated supporter dashboard data
+    
+    **SEED DATA CREATED:**
+    - 4 courses (Vocal Fundamentals, Four-Part Harmony, Sight Reading, Gospel Mastery)
+    - 20 lessons across courses
+    - 10 practice tracks for different vocal parts
+    - 8 achievements (streaks, milestones, courses)
+    - 4 schedule items (rehearsals, lessons, deadlines)
+    
+    **DASHBOARD UPDATED:**
+    - Frontend now fetches real data from /api/dashboard/learner
+    - Courses displayed from user enrollments
+    - Practice tracks from database
+    - Achievements from user achievements
+    - Schedule from public events
+    - Supporter stats from donations
+    
+    Ready for backend API testing of new Learning Platform APIs."
+  - agent: "testing"
+    message: "LEARNING PLATFORM API TESTING COMPLETED - 100% SUCCESS RATE:
+    
+    **PRIMARY LEARNING PLATFORM APIs TESTED:**
+    ✅ GET /api/courses - Successfully returned 4 courses as expected
+    ✅ POST /api/enrollments - Successfully created enrollment for admin-1 in course-3
+    ✅ GET /api/enrollments?userId=admin-1 - Successfully returned 3 enrollments
+    ✅ GET /api/practice-tracks - Successfully returned 10 practice tracks as expected
+    ✅ GET /api/achievements - Successfully returned 8 achievements as expected
+    ✅ GET /api/schedule - Successfully returned 4 schedule items as expected
+    ✅ GET /api/dashboard/learner?userId=admin-1 - Successfully returned all required fields (progress, courses, practiceTracks, achievements, notifications, schedule, stats)
+    ✅ GET /api/dashboard/supporter?userId=admin-1 - Successfully returned all required fields (stats, donations, leaderboard, impact)
+    
+    **ADDITIONAL APIs TESTED:**
+    ✅ POST /api/practice-sessions - Successfully logged practice session (15 minutes for admin-1)
+    ✅ GET /api/user-stats?userId=admin-1 - Successfully returned user stats with updated practice minutes (15)
+    ✅ POST /api/notifications - Successfully created test notification for admin-1
+    ✅ GET /api/notifications?userId=admin-1 - Successfully returned 1 notification
+    
+    All 12 Learning Platform API tests passed (100% success rate). The entire Learning Platform backend is fully functional with proper data aggregation, user enrollment, practice tracking, achievements, and notifications. No critical issues found."

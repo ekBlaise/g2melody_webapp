@@ -2,6 +2,9 @@ import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid'
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
+import { writeFile, mkdir } from 'fs/promises'
+import { existsSync } from 'fs'
+import path from 'path'
 
 const prisma = new PrismaClient()
 
@@ -725,6 +728,1009 @@ async function handleRoute(request, { params }) {
       return handleCORS(NextResponse.json({ success: true }))
     }
 
+    // ==================== LEARNING PLATFORM APIs ====================
+    
+    // COURSES
+    if (route === '/courses' && method === 'GET') {
+      const url = new URL(request.url)
+      const published = url.searchParams.get('published')
+      
+      const where = {}
+      if (published === 'true') where.isPublished = true
+      
+      const courses = await prisma.course.findMany({
+        where,
+        orderBy: { order: 'asc' },
+        include: {
+          _count: { select: { lessons: true, enrollments: true } }
+        }
+      })
+      return handleCORS(NextResponse.json(courses))
+    }
+
+    if (route === '/courses' && method === 'POST') {
+      const body = await request.json()
+      const course = await prisma.course.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          image: body.image,
+          emoji: body.emoji || '🎵',
+          duration: body.duration,
+          level: body.level || 'Beginner',
+          totalLessons: body.totalLessons || 0,
+          isPublished: body.isPublished ?? true,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(course))
+    }
+
+    const courseMatch = route.match(/^\/courses\/([^/]+)$/)
+    if (courseMatch && method === 'GET') {
+      const course = await prisma.course.findUnique({
+        where: { id: courseMatch[1] },
+        include: {
+          lessons: { orderBy: { order: 'asc' } },
+          _count: { select: { enrollments: true } }
+        }
+      })
+      if (!course) {
+        return handleCORS(NextResponse.json({ error: 'Course not found' }, { status: 404 }))
+      }
+      return handleCORS(NextResponse.json(course))
+    }
+
+    if (courseMatch && method === 'PUT') {
+      const body = await request.json()
+      const course = await prisma.course.update({
+        where: { id: courseMatch[1] },
+        data: body
+      })
+      return handleCORS(NextResponse.json(course))
+    }
+
+    if (courseMatch && method === 'DELETE') {
+      await prisma.course.delete({ where: { id: courseMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // LESSONS
+    if (route === '/lessons' && method === 'GET') {
+      const url = new URL(request.url)
+      const courseId = url.searchParams.get('courseId')
+      
+      const where = {}
+      if (courseId) where.courseId = courseId
+      
+      const lessons = await prisma.lesson.findMany({
+        where,
+        orderBy: { order: 'asc' },
+        include: { course: { select: { title: true } } }
+      })
+      return handleCORS(NextResponse.json(lessons))
+    }
+
+    if (route === '/lessons' && method === 'POST') {
+      const body = await request.json()
+      const lesson = await prisma.lesson.create({
+        data: {
+          id: uuidv4(),
+          courseId: body.courseId,
+          title: body.title,
+          description: body.description,
+          content: body.content,
+          videoUrl: body.videoUrl,
+          audioUrl: body.audioUrl,
+          duration: body.duration,
+          order: body.order || 0,
+          isPublished: body.isPublished ?? true
+        }
+      })
+      
+      // Update course totalLessons count
+      await prisma.course.update({
+        where: { id: body.courseId },
+        data: { totalLessons: { increment: 1 } }
+      })
+      
+      return handleCORS(NextResponse.json(lesson))
+    }
+
+    const lessonMatch = route.match(/^\/lessons\/([^/]+)$/)
+    if (lessonMatch && method === 'GET') {
+      const lesson = await prisma.lesson.findUnique({
+        where: { id: lessonMatch[1] },
+        include: { course: true }
+      })
+      if (!lesson) {
+        return handleCORS(NextResponse.json({ error: 'Lesson not found' }, { status: 404 }))
+      }
+      return handleCORS(NextResponse.json(lesson))
+    }
+
+    if (lessonMatch && method === 'PUT') {
+      const body = await request.json()
+      const lesson = await prisma.lesson.update({
+        where: { id: lessonMatch[1] },
+        data: body
+      })
+      return handleCORS(NextResponse.json(lesson))
+    }
+
+    if (lessonMatch && method === 'DELETE') {
+      const lesson = await prisma.lesson.findUnique({ where: { id: lessonMatch[1] } })
+      if (lesson) {
+        await prisma.lesson.delete({ where: { id: lessonMatch[1] } })
+        // Update course totalLessons count
+        await prisma.course.update({
+          where: { id: lesson.courseId },
+          data: { totalLessons: { decrement: 1 } }
+        })
+      }
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // USER ENROLLMENTS
+    if (route === '/enrollments' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const enrollments = await prisma.enrollment.findMany({
+        where: { userId },
+        include: {
+          course: {
+            include: { lessons: { orderBy: { order: 'asc' } } }
+          }
+        },
+        orderBy: { lastAccessedAt: 'desc' }
+      })
+      return handleCORS(NextResponse.json(enrollments))
+    }
+
+    if (route === '/enrollments' && method === 'POST') {
+      const body = await request.json()
+      
+      // Check if already enrolled
+      const existing = await prisma.enrollment.findUnique({
+        where: { userId_courseId: { userId: body.userId, courseId: body.courseId } }
+      })
+      if (existing) {
+        return handleCORS(NextResponse.json(existing))
+      }
+      
+      const enrollment = await prisma.enrollment.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          courseId: body.courseId
+        },
+        include: { course: true }
+      })
+      return handleCORS(NextResponse.json(enrollment))
+    }
+
+    const enrollmentMatch = route.match(/^\/enrollments\/([^/]+)$/)
+    if (enrollmentMatch && method === 'PUT') {
+      const body = await request.json()
+      const enrollment = await prisma.enrollment.update({
+        where: { id: enrollmentMatch[1] },
+        data: {
+          progress: body.progress,
+          completedLessons: body.completedLessons,
+          lastAccessedAt: new Date(),
+          completedAt: body.progress >= 100 ? new Date() : null
+        }
+      })
+      return handleCORS(NextResponse.json(enrollment))
+    }
+
+    // LESSON PROGRESS
+    if (route === '/lesson-progress' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const lessonId = url.searchParams.get('lessonId')
+      
+      const where = {}
+      if (userId) where.userId = userId
+      if (lessonId) where.lessonId = lessonId
+      
+      const progress = await prisma.lessonProgress.findMany({
+        where,
+        include: { lesson: { select: { title: true, courseId: true } } }
+      })
+      return handleCORS(NextResponse.json(progress))
+    }
+
+    if (route === '/lesson-progress' && method === 'POST') {
+      const body = await request.json()
+      
+      const progress = await prisma.lessonProgress.upsert({
+        where: { userId_lessonId: { userId: body.userId, lessonId: body.lessonId } },
+        update: {
+          completed: body.completed ?? false,
+          watchTime: body.watchTime ? { increment: body.watchTime } : undefined,
+          completedAt: body.completed ? new Date() : null
+        },
+        create: {
+          id: uuidv4(),
+          userId: body.userId,
+          lessonId: body.lessonId,
+          completed: body.completed ?? false,
+          watchTime: body.watchTime || 0,
+          completedAt: body.completed ? new Date() : null
+        }
+      })
+      
+      // Update enrollment progress if lesson completed
+      if (body.completed) {
+        const lesson = await prisma.lesson.findUnique({ where: { id: body.lessonId } })
+        if (lesson) {
+          const course = await prisma.course.findUnique({ where: { id: lesson.courseId } })
+          const completedCount = await prisma.lessonProgress.count({
+            where: { userId: body.userId, completed: true, lesson: { courseId: lesson.courseId } }
+          })
+          const progressPercent = course.totalLessons > 0 
+            ? Math.round((completedCount / course.totalLessons) * 100) 
+            : 0
+          
+          await prisma.enrollment.updateMany({
+            where: { userId: body.userId, courseId: lesson.courseId },
+            data: { 
+              progress: progressPercent, 
+              completedLessons: completedCount,
+              lastAccessedAt: new Date(),
+              completedAt: progressPercent >= 100 ? new Date() : null
+            }
+          })
+        }
+      }
+      
+      return handleCORS(NextResponse.json(progress))
+    }
+
+    // PRACTICE TRACKS
+    if (route === '/practice-tracks' && method === 'GET') {
+      const url = new URL(request.url)
+      const type = url.searchParams.get('type')
+      const vocalPart = url.searchParams.get('vocalPart')
+      
+      const where = { isPublished: true }
+      if (type) where.type = type
+      if (vocalPart) where.vocalPart = vocalPart.toUpperCase()
+      
+      const tracks = await prisma.practiceTrack.findMany({
+        where,
+        orderBy: { order: 'asc' }
+      })
+      return handleCORS(NextResponse.json(tracks))
+    }
+
+    if (route === '/practice-tracks' && method === 'POST') {
+      const body = await request.json()
+      const track = await prisma.practiceTrack.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          audioUrl: body.audioUrl,
+          duration: body.duration,
+          type: body.type || 'Exercise',
+          vocalPart: body.vocalPart || 'NONE',
+          difficulty: body.difficulty || 'Beginner',
+          isPublished: body.isPublished ?? true,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(track))
+    }
+
+    const practiceTrackMatch = route.match(/^\/practice-tracks\/([^/]+)$/)
+    if (practiceTrackMatch && method === 'PUT') {
+      const body = await request.json()
+      const track = await prisma.practiceTrack.update({
+        where: { id: practiceTrackMatch[1] },
+        data: body
+      })
+      return handleCORS(NextResponse.json(track))
+    }
+
+    if (practiceTrackMatch && method === 'DELETE') {
+      await prisma.practiceTrack.delete({ where: { id: practiceTrackMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // PRACTICE SESSIONS (User logging practice)
+    if (route === '/practice-sessions' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const sessions = await prisma.practiceSession.findMany({
+        where: { userId },
+        orderBy: { date: 'desc' },
+        take: 30
+      })
+      return handleCORS(NextResponse.json(sessions))
+    }
+
+    if (route === '/practice-sessions' && method === 'POST') {
+      const body = await request.json()
+      
+      const session = await prisma.practiceSession.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          trackId: body.trackId,
+          duration: body.duration,
+          notes: body.notes
+        }
+      })
+      
+      // Update user stats
+      await prisma.userStats.upsert({
+        where: { userId: body.userId },
+        update: {
+          totalPracticeMinutes: { increment: body.duration },
+          lastPracticeDate: new Date(),
+          currentStreak: { increment: 1 }
+        },
+        create: {
+          id: uuidv4(),
+          userId: body.userId,
+          totalPracticeMinutes: body.duration,
+          lastPracticeDate: new Date(),
+          currentStreak: 1
+        }
+      })
+      
+      return handleCORS(NextResponse.json(session))
+    }
+
+    // USER STATS
+    if (route === '/user-stats' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      let stats = await prisma.userStats.findUnique({ where: { userId } })
+      
+      if (!stats) {
+        // Create default stats
+        stats = await prisma.userStats.create({
+          data: {
+            id: uuidv4(),
+            userId
+          }
+        })
+      }
+      
+      // Also get lesson completion count
+      const completedLessons = await prisma.lessonProgress.count({
+        where: { userId, completed: true }
+      })
+      
+      return handleCORS(NextResponse.json({ ...stats, totalLessonsCompleted: completedLessons }))
+    }
+
+    if (route === '/user-stats' && method === 'PUT') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const body = await request.json()
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const stats = await prisma.userStats.upsert({
+        where: { userId },
+        update: body,
+        create: {
+          id: uuidv4(),
+          userId,
+          ...body
+        }
+      })
+      return handleCORS(NextResponse.json(stats))
+    }
+
+    // ACHIEVEMENTS
+    if (route === '/achievements' && method === 'GET') {
+      const achievements = await prisma.achievement.findMany({
+        orderBy: { createdAt: 'asc' }
+      })
+      return handleCORS(NextResponse.json(achievements))
+    }
+
+    if (route === '/achievements' && method === 'POST') {
+      const body = await request.json()
+      const achievement = await prisma.achievement.create({
+        data: {
+          id: uuidv4(),
+          name: body.name,
+          description: body.description,
+          icon: body.icon,
+          type: body.type || 'milestone',
+          requirement: body.requirement
+        }
+      })
+      return handleCORS(NextResponse.json(achievement))
+    }
+
+    // USER ACHIEVEMENTS
+    if (route === '/user-achievements' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const userAchievements = await prisma.userAchievement.findMany({
+        where: { userId },
+        include: { achievement: true },
+        orderBy: { earnedAt: 'desc' }
+      })
+      
+      // Map to just return achievements with earnedAt
+      const result = userAchievements.map(ua => ({
+        ...ua.achievement,
+        earnedAt: ua.earnedAt
+      }))
+      
+      return handleCORS(NextResponse.json(result))
+    }
+
+    if (route === '/user-achievements' && method === 'POST') {
+      const body = await request.json()
+      
+      // Check if already earned
+      const existing = await prisma.userAchievement.findUnique({
+        where: { userId_achievementId: { userId: body.userId, achievementId: body.achievementId } }
+      })
+      if (existing) {
+        return handleCORS(NextResponse.json({ message: 'Achievement already earned' }))
+      }
+      
+      const userAchievement = await prisma.userAchievement.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          achievementId: body.achievementId
+        },
+        include: { achievement: true }
+      })
+      return handleCORS(NextResponse.json(userAchievement))
+    }
+
+    // NOTIFICATIONS
+    if (route === '/notifications' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const unreadOnly = url.searchParams.get('unreadOnly')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const where = { userId }
+      if (unreadOnly === 'true') where.isRead = false
+      
+      const notifications = await prisma.notification.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: 20
+      })
+      return handleCORS(NextResponse.json(notifications))
+    }
+
+    if (route === '/notifications' && method === 'POST') {
+      const body = await request.json()
+      const notification = await prisma.notification.create({
+        data: {
+          id: uuidv4(),
+          userId: body.userId,
+          title: body.title,
+          message: body.message,
+          type: body.type || 'info',
+          link: body.link
+        }
+      })
+      return handleCORS(NextResponse.json(notification))
+    }
+
+    const notificationMatch = route.match(/^\/notifications\/([^/]+)\/read$/)
+    if (notificationMatch && method === 'PUT') {
+      const notification = await prisma.notification.update({
+        where: { id: notificationMatch[1] },
+        data: { isRead: true }
+      })
+      return handleCORS(NextResponse.json(notification))
+    }
+
+    if (route === '/notifications/mark-all-read' && method === 'PUT') {
+      const body = await request.json()
+      await prisma.notification.updateMany({
+        where: { userId: body.userId, isRead: false },
+        data: { isRead: true }
+      })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // SCHEDULE ITEMS
+    if (route === '/schedule' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      const fromDate = url.searchParams.get('from')
+      
+      // Get both public events and user-specific events
+      const where = {
+        OR: [
+          { isPublic: true },
+          { userId: userId || '' }
+        ],
+        date: fromDate ? { gte: new Date(fromDate) } : { gte: new Date() }
+      }
+      
+      const schedule = await prisma.scheduleItem.findMany({
+        where,
+        orderBy: { date: 'asc' },
+        take: 10
+      })
+      return handleCORS(NextResponse.json(schedule))
+    }
+
+    if (route === '/schedule' && method === 'POST') {
+      const body = await request.json()
+      const item = await prisma.scheduleItem.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          date: new Date(body.date),
+          time: body.time,
+          type: body.type || 'event',
+          isPublic: body.isPublic ?? true,
+          userId: body.userId
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    const scheduleMatch = route.match(/^\/schedule\/([^/]+)$/)
+    if (scheduleMatch && method === 'PUT') {
+      const body = await request.json()
+      const item = await prisma.scheduleItem.update({
+        where: { id: scheduleMatch[1] },
+        data: {
+          title: body.title,
+          description: body.description,
+          date: body.date ? new Date(body.date) : undefined,
+          time: body.time,
+          type: body.type,
+          isPublic: body.isPublic
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    if (scheduleMatch && method === 'DELETE') {
+      await prisma.scheduleItem.delete({ where: { id: scheduleMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // DASHBOARD SUMMARY (aggregated data for dashboard)
+    if (route === '/dashboard/learner' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      // Get all data in parallel
+      const [
+        enrollments,
+        userStats,
+        practiceSessions,
+        userAchievements,
+        notifications,
+        schedule,
+        practiceTracks
+      ] = await Promise.all([
+        prisma.enrollment.findMany({
+          where: { userId },
+          include: { course: { include: { lessons: true } } },
+          orderBy: { lastAccessedAt: 'desc' }
+        }),
+        prisma.userStats.findUnique({ where: { userId } }),
+        prisma.practiceSession.findMany({
+          where: { userId },
+          orderBy: { date: 'desc' },
+          take: 10
+        }),
+        prisma.userAchievement.findMany({
+          where: { userId },
+          include: { achievement: true }
+        }),
+        prisma.notification.findMany({
+          where: { userId },
+          orderBy: { createdAt: 'desc' },
+          take: 5
+        }),
+        prisma.scheduleItem.findMany({
+          where: {
+            OR: [{ isPublic: true }, { userId }],
+            date: { gte: new Date() }
+          },
+          orderBy: { date: 'asc' },
+          take: 5
+        }),
+        prisma.practiceTrack.findMany({
+          where: { isPublished: true },
+          orderBy: { order: 'asc' },
+          take: 10
+        })
+      ])
+      
+      // Calculate overall progress
+      const totalLessons = enrollments.reduce((sum, e) => sum + (e.course?.totalLessons || 0), 0)
+      const completedLessons = enrollments.reduce((sum, e) => sum + (e.completedLessons || 0), 0)
+      const overallProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+      
+      return handleCORS(NextResponse.json({
+        progress: {
+          overallProgress,
+          totalLessons,
+          completedLessons,
+          practiceHours: userStats ? Math.round(userStats.totalPracticeMinutes / 60 * 10) / 10 : 0,
+          currentStreak: userStats?.currentStreak || 0,
+          nextMilestone: completedLessons < 10 ? 'Complete 10 lessons' : 
+                         completedLessons < 25 ? 'Complete 25 lessons' : 'Complete 50 lessons'
+        },
+        courses: enrollments.map(e => ({
+          id: e.course.id,
+          title: e.course.title,
+          emoji: e.course.emoji,
+          progress: e.progress,
+          totalLessons: e.course.totalLessons,
+          completedLessons: e.completedLessons
+        })),
+        practiceTracks,
+        achievements: userAchievements.map(ua => ({
+          ...ua.achievement,
+          earnedAt: ua.earnedAt
+        })),
+        notifications,
+        schedule,
+        stats: userStats || { currentStreak: 0, totalPracticeMinutes: 0, vocalPart: 'NONE' }
+      }))
+    }
+
+    // SUPPORTER DASHBOARD
+    if (route === '/dashboard/supporter' && method === 'GET') {
+      const url = new URL(request.url)
+      const userId = url.searchParams.get('userId')
+      
+      if (!userId) {
+        return handleCORS(NextResponse.json({ error: 'userId required' }, { status: 400 }))
+      }
+      
+      const [userDonations, topDonors] = await Promise.all([
+        prisma.donation.findMany({
+          where: { userId, status: 'COMPLETED' },
+          include: { project: { select: { title: true } } },
+          orderBy: { createdAt: 'desc' }
+        }),
+        prisma.donation.groupBy({
+          by: ['donorName'],
+          where: { status: 'COMPLETED', anonymous: false },
+          _sum: { amount: true },
+          orderBy: { _sum: { amount: 'desc' } },
+          take: 10
+        })
+      ])
+      
+      const totalDonations = userDonations.reduce((sum, d) => sum + d.amount, 0)
+      
+      return handleCORS(NextResponse.json({
+        stats: {
+          totalDonations,
+          donationCount: userDonations.length,
+          studentsSupported: Math.floor(totalDonations / 50000), // Estimate
+          badgesEarned: totalDonations >= 100000 ? 3 : totalDonations >= 50000 ? 2 : totalDonations > 0 ? 1 : 0
+        },
+        donations: userDonations,
+        leaderboard: topDonors.map((d, i) => ({
+          rank: i + 1,
+          name: d.donorName || 'Anonymous',
+          amount: d._sum.amount,
+          badge: d._sum.amount >= 500000 ? 'Gold Patron' : 
+                 d._sum.amount >= 250000 ? 'Silver Patron' : 'Bronze Patron'
+        })),
+        impact: {
+          learnersSupported: Math.floor(totalDonations / 50000),
+          lessonsEnabled: Math.floor(totalDonations / 5000),
+          songsRecorded: Math.floor(totalDonations / 100000)
+        }
+      }))
+    }
+
+    // ==================== IMAGE UPLOAD ====================
+    if (route === '/upload' && method === 'POST') {
+      try {
+        const formData = await request.formData()
+        const file = formData.get('file')
+        
+        if (!file) {
+          return handleCORS(NextResponse.json({ error: 'No file provided' }, { status: 400 }))
+        }
+
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+
+        // Generate unique filename
+        const ext = file.name.split('.').pop()
+        const filename = `${uuidv4()}.${ext}`
+        
+        // Ensure uploads directory exists
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads')
+        if (!existsSync(uploadDir)) {
+          await mkdir(uploadDir, { recursive: true })
+        }
+
+        // Write file
+        const filepath = path.join(uploadDir, filename)
+        await writeFile(filepath, buffer)
+
+        // Return the public URL
+        const url = `/uploads/${filename}`
+        return handleCORS(NextResponse.json({ url, filename }))
+      } catch (error) {
+        console.error('Upload error:', error)
+        return handleCORS(NextResponse.json({ error: 'Failed to upload file' }, { status: 500 }))
+      }
+    }
+
+    // ==================== NEWS & EVENTS ====================
+    
+    // Get all news/events
+    if (route === '/news' && method === 'GET') {
+      const url = new URL(request.url)
+      const type = url.searchParams.get('type') // news, event, announcement
+      const featured = url.searchParams.get('featured')
+      const limit = parseInt(url.searchParams.get('limit') || '20')
+      
+      const where = { isPublished: true }
+      if (type) where.type = type
+      if (featured === 'true') where.isFeatured = true
+      
+      const news = await prisma.newsEvent.findMany({
+        where,
+        orderBy: { publishedAt: 'desc' },
+        take: limit
+      })
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Get single news/event
+    const newsDetailMatch = route.match(/^\/news\/([^/]+)$/)
+    if (newsDetailMatch && method === 'GET') {
+      const news = await prisma.newsEvent.findUnique({
+        where: { id: newsDetailMatch[1] }
+      })
+      if (!news) {
+        return handleCORS(NextResponse.json({ error: 'Not found' }, { status: 404 }))
+      }
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Admin: Create news/event
+    if (route === '/admin/news' && method === 'POST') {
+      const body = await request.json()
+      const news = await prisma.newsEvent.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          slug: body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          summary: body.summary,
+          content: body.content,
+          image: body.image,
+          type: body.type || 'news',
+          eventDate: body.eventDate ? new Date(body.eventDate) : null,
+          eventTime: body.eventTime,
+          eventLocation: body.eventLocation,
+          isFeatured: body.isFeatured ?? false,
+          isPublished: body.isPublished ?? true,
+          publishedAt: body.isPublished ? new Date() : null,
+          author: body.author
+        }
+      })
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Admin: Update news/event
+    const adminNewsMatch = route.match(/^\/admin\/news\/([^/]+)$/)
+    if (adminNewsMatch && method === 'PUT') {
+      const body = await request.json()
+      const news = await prisma.newsEvent.update({
+        where: { id: adminNewsMatch[1] },
+        data: {
+          title: body.title,
+          slug: body.slug,
+          summary: body.summary,
+          content: body.content,
+          image: body.image,
+          type: body.type,
+          eventDate: body.eventDate ? new Date(body.eventDate) : null,
+          eventTime: body.eventTime,
+          eventLocation: body.eventLocation,
+          isFeatured: body.isFeatured,
+          isPublished: body.isPublished,
+          publishedAt: body.isPublished && !body.publishedAt ? new Date() : body.publishedAt,
+          author: body.author,
+          updatedAt: new Date()
+        }
+      })
+      return handleCORS(NextResponse.json(news))
+    }
+
+    // Admin: Delete news/event
+    if (adminNewsMatch && method === 'DELETE') {
+      await prisma.newsEvent.delete({ where: { id: adminNewsMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // ==================== AWARDS ====================
+    
+    // Get all awards (public)
+    if (route === '/awards' && method === 'GET') {
+      const awards = await prisma.award.findMany({
+        orderBy: [{ year: 'desc' }, { order: 'asc' }]
+      })
+      return handleCORS(NextResponse.json(awards))
+    }
+
+    // Admin: Create award
+    if (route === '/admin/awards' && method === 'POST') {
+      const body = await request.json()
+      const award = await prisma.award.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          year: parseInt(body.year),
+          image: body.image,
+          awardingOrganization: body.awardingOrganization,
+          category: body.category,
+          order: body.order || 0
+        }
+      })
+      return handleCORS(NextResponse.json(award))
+    }
+
+    // Admin: Update award
+    const awardMatch = route.match(/^\/admin\/awards\/([^/]+)$/)
+    if (awardMatch && method === 'PUT') {
+      const body = await request.json()
+      const award = await prisma.award.update({
+        where: { id: awardMatch[1] },
+        data: {
+          title: body.title,
+          description: body.description,
+          year: body.year ? parseInt(body.year) : undefined,
+          image: body.image,
+          awardingOrganization: body.awardingOrganization,
+          category: body.category,
+          order: body.order
+        }
+      })
+      return handleCORS(NextResponse.json(award))
+    }
+
+    // Admin: Delete award
+    if (awardMatch && method === 'DELETE') {
+      await prisma.award.delete({ where: { id: awardMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
+    // ==================== GALLERY ====================
+    
+    // Get gallery items (public) - supports filtering by year and category
+    if (route === '/gallery' && method === 'GET') {
+      const url = new URL(request.url)
+      const year = url.searchParams.get('year')
+      const category = url.searchParams.get('category')
+      const featured = url.searchParams.get('featured')
+      
+      const where = {}
+      if (year) where.year = parseInt(year)
+      if (category) where.category = category
+      if (featured === 'true') where.isFeatured = true
+      
+      const items = await prisma.galleryItem.findMany({
+        where,
+        orderBy: [{ year: 'desc' }, { order: 'asc' }]
+      })
+      return handleCORS(NextResponse.json(items))
+    }
+
+    // Get unique years and categories for filters
+    if (route === '/gallery/filters' && method === 'GET') {
+      const [years, categories] = await Promise.all([
+        prisma.galleryItem.findMany({
+          select: { year: true },
+          distinct: ['year'],
+          orderBy: { year: 'desc' }
+        }),
+        prisma.galleryItem.findMany({
+          select: { category: true },
+          distinct: ['category'],
+          orderBy: { category: 'asc' }
+        })
+      ])
+      return handleCORS(NextResponse.json({
+        years: years.map(y => y.year),
+        categories: categories.map(c => c.category)
+      }))
+    }
+
+    // Admin: Create gallery item
+    if (route === '/admin/gallery' && method === 'POST') {
+      const body = await request.json()
+      const item = await prisma.galleryItem.create({
+        data: {
+          id: uuidv4(),
+          title: body.title,
+          description: body.description,
+          imageUrl: body.imageUrl,
+          year: parseInt(body.year),
+          category: body.category,
+          eventName: body.eventName,
+          order: body.order || 0,
+          isFeatured: body.isFeatured || false
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    // Admin: Update gallery item
+    const galleryMatch = route.match(/^\/admin\/gallery\/([^/]+)$/)
+    if (galleryMatch && method === 'PUT') {
+      const body = await request.json()
+      const item = await prisma.galleryItem.update({
+        where: { id: galleryMatch[1] },
+        data: {
+          title: body.title,
+          description: body.description,
+          imageUrl: body.imageUrl,
+          year: body.year ? parseInt(body.year) : undefined,
+          category: body.category,
+          eventName: body.eventName,
+          order: body.order,
+          isFeatured: body.isFeatured
+        }
+      })
+      return handleCORS(NextResponse.json(item))
+    }
+
+    // Admin: Delete gallery item
+    if (galleryMatch && method === 'DELETE') {
+      await prisma.galleryItem.delete({ where: { id: galleryMatch[1] } })
+      return handleCORS(NextResponse.json({ success: true }))
+    }
+
     // ==================== SEED DATA ====================
     if (route === '/seed' && method === 'POST') {
       // Create G2 Meloverse sub-projects
@@ -1089,13 +2095,315 @@ async function handleRoute(request, { params }) {
         })
       ])
 
+      // ==================== LEARNING PLATFORM SEED DATA ====================
+      
+      // Create courses
+      const courses = await Promise.all([
+        prisma.course.upsert({
+          where: { id: 'course-1' },
+          update: {},
+          create: {
+            id: 'course-1',
+            title: 'Vocal Fundamentals',
+            description: 'Learn the basics of vocal technique, breathing, and voice control. Perfect for beginners starting their musical journey.',
+            emoji: '🎤',
+            duration: '8 weeks',
+            level: 'Beginner',
+            totalLessons: 12,
+            isPublished: true,
+            order: 1
+          }
+        }),
+        prisma.course.upsert({
+          where: { id: 'course-2' },
+          update: {},
+          create: {
+            id: 'course-2',
+            title: 'Four-Part Harmony',
+            description: 'Master the art of four-part harmony singing. Learn how Soprano, Alto, Tenor, and Bass voices blend together.',
+            emoji: '🎵',
+            duration: '10 weeks',
+            level: 'Intermediate',
+            totalLessons: 8,
+            isPublished: true,
+            order: 2
+          }
+        }),
+        prisma.course.upsert({
+          where: { id: 'course-3' },
+          update: {},
+          create: {
+            id: 'course-3',
+            title: 'Sight Reading Basics',
+            description: 'Learn to read music notation and develop your sight-reading skills. Essential for any serious musician.',
+            emoji: '📖',
+            duration: '6 weeks',
+            level: 'Beginner',
+            totalLessons: 10,
+            isPublished: true,
+            order: 3
+          }
+        }),
+        prisma.course.upsert({
+          where: { id: 'course-4' },
+          update: {},
+          create: {
+            id: 'course-4',
+            title: 'Gospel Music Mastery',
+            description: 'Dive deep into gospel music styles, techniques, and performance. Learn from the G2 Melody tradition.',
+            emoji: '🙏',
+            duration: '12 weeks',
+            level: 'Advanced',
+            totalLessons: 15,
+            isPublished: true,
+            order: 4
+          }
+        })
+      ])
+
+      // Create lessons for Vocal Fundamentals course
+      const vocalLessons = await Promise.all([
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-1' },
+          update: {},
+          create: { id: 'lesson-1-1', courseId: 'course-1', title: 'Introduction to Singing', description: 'Welcome to vocal training! Learn about your voice and what to expect.', duration: 15, order: 1 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-2' },
+          update: {},
+          create: { id: 'lesson-1-2', courseId: 'course-1', title: 'Breathing Techniques', description: 'Learn proper diaphragmatic breathing for powerful singing.', duration: 20, order: 2 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-3' },
+          update: {},
+          create: { id: 'lesson-1-3', courseId: 'course-1', title: 'Posture and Stance', description: 'Correct posture is essential for optimal vocal performance.', duration: 15, order: 3 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-4' },
+          update: {},
+          create: { id: 'lesson-1-4', courseId: 'course-1', title: 'Warm-up Exercises', description: 'Essential warm-up routines to prepare your voice.', duration: 20, order: 4 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-5' },
+          update: {},
+          create: { id: 'lesson-1-5', courseId: 'course-1', title: 'Finding Your Range', description: 'Discover your vocal range and comfortable singing zones.', duration: 25, order: 5 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-6' },
+          update: {},
+          create: { id: 'lesson-1-6', courseId: 'course-1', title: 'Pitch Control', description: 'Develop accurate pitch and intonation skills.', duration: 20, order: 6 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-7' },
+          update: {},
+          create: { id: 'lesson-1-7', courseId: 'course-1', title: 'Vowel Shapes', description: 'Master vowel formation for clear, resonant singing.', duration: 20, order: 7 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-8' },
+          update: {},
+          create: { id: 'lesson-1-8', courseId: 'course-1', title: 'Consonant Articulation', description: 'Clear consonants for better diction and understanding.', duration: 20, order: 8 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-9' },
+          update: {},
+          create: { id: 'lesson-1-9', courseId: 'course-1', title: 'Dynamics and Expression', description: 'Add emotion and dynamics to your singing.', duration: 25, order: 9 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-10' },
+          update: {},
+          create: { id: 'lesson-1-10', courseId: 'course-1', title: 'Practice Song #1', description: 'Apply your skills to your first practice song.', duration: 30, order: 10 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-11' },
+          update: {},
+          create: { id: 'lesson-1-11', courseId: 'course-1', title: 'Cool-down Exercises', description: 'Important vocal cool-down routines after singing.', duration: 15, order: 11 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-1-12' },
+          update: {},
+          create: { id: 'lesson-1-12', courseId: 'course-1', title: 'Course Recap & Next Steps', description: 'Review what you learned and plan your continued journey.', duration: 20, order: 12 }
+        })
+      ])
+
+      // Create lessons for Four-Part Harmony course
+      const harmonyLessons = await Promise.all([
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-1' },
+          update: {},
+          create: { id: 'lesson-2-1', courseId: 'course-2', title: 'Introduction to Harmony', description: 'Understanding how voices combine to create harmony.', duration: 20, order: 1 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-2' },
+          update: {},
+          create: { id: 'lesson-2-2', courseId: 'course-2', title: 'Soprano Voice Role', description: 'The melody line and its importance in four-part harmony.', duration: 25, order: 2 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-3' },
+          update: {},
+          create: { id: 'lesson-2-3', courseId: 'course-2', title: 'Alto Voice Role', description: 'Supporting harmonies from the alto section.', duration: 25, order: 3 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-4' },
+          update: {},
+          create: { id: 'lesson-2-4', courseId: 'course-2', title: 'Tenor Voice Role', description: 'The middle ground of male voices in harmony.', duration: 25, order: 4 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-5' },
+          update: {},
+          create: { id: 'lesson-2-5', courseId: 'course-2', title: 'Bass Voice Role', description: 'The foundation of four-part harmony.', duration: 25, order: 5 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-6' },
+          update: {},
+          create: { id: 'lesson-2-6', courseId: 'course-2', title: 'Blending Voices', description: 'Techniques for achieving perfect vocal blend.', duration: 30, order: 6 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-7' },
+          update: {},
+          create: { id: 'lesson-2-7', courseId: 'course-2', title: 'Harmony Practice Song', description: 'Practice all four parts together on a classic hymn.', duration: 35, order: 7 }
+        }),
+        prisma.lesson.upsert({
+          where: { id: 'lesson-2-8' },
+          update: {},
+          create: { id: 'lesson-2-8', courseId: 'course-2', title: 'Advanced Harmony Techniques', description: 'Take your harmony skills to the next level.', duration: 30, order: 8 }
+        })
+      ])
+
+      // Create practice tracks
+      const practiceTracks = await Promise.all([
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-1' },
+          update: {},
+          create: { id: 'track-1', title: 'Soprano Scale Practice', description: 'Major and minor scales for soprano voices', duration: '5:30', type: 'Exercise', vocalPart: 'SOPRANO', difficulty: 'Beginner', order: 1 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-2' },
+          update: {},
+          create: { id: 'track-2', title: 'Alto Harmony Drills', description: 'Practice harmony lines for alto section', duration: '6:15', type: 'Exercise', vocalPart: 'ALTO', difficulty: 'Intermediate', order: 2 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-3' },
+          update: {},
+          create: { id: 'track-3', title: 'Tenor Range Exercises', description: 'Expand your tenor range with these exercises', duration: '4:45', type: 'Exercise', vocalPart: 'TENOR', difficulty: 'Beginner', order: 3 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-4' },
+          update: {},
+          create: { id: 'track-4', title: 'Bass Foundation Drills', description: 'Strengthen your bass voice fundamentals', duration: '5:00', type: 'Exercise', vocalPart: 'BASS', difficulty: 'Beginner', order: 4 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-5' },
+          update: {},
+          create: { id: 'track-5', title: 'Breathing Exercises', description: 'Diaphragmatic breathing for all voice types', duration: '3:00', type: 'Warm-up', vocalPart: 'NONE', difficulty: 'Beginner', order: 5 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-6' },
+          update: {},
+          create: { id: 'track-6', title: 'Unfathomable Love - Soprano Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'SOPRANO', difficulty: 'Intermediate', order: 6 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-7' },
+          update: {},
+          create: { id: 'track-7', title: 'Unfathomable Love - Alto Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'ALTO', difficulty: 'Intermediate', order: 7 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-8' },
+          update: {},
+          create: { id: 'track-8', title: 'Unfathomable Love - Tenor Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'TENOR', difficulty: 'Intermediate', order: 8 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-9' },
+          update: {},
+          create: { id: 'track-9', title: 'Unfathomable Love - Bass Part', description: 'Practice track for G2 Melody original', duration: '4:15', type: 'Song', vocalPart: 'BASS', difficulty: 'Intermediate', order: 9 }
+        }),
+        prisma.practiceTrack.upsert({
+          where: { id: 'track-10' },
+          update: {},
+          create: { id: 'track-10', title: 'Harmony Drill #3', description: 'Four-part harmony practice exercise', duration: '6:45', type: 'Exercise', vocalPart: 'NONE', difficulty: 'Advanced', order: 10 }
+        })
+      ])
+
+      // Create achievements
+      const achievements = await Promise.all([
+        prisma.achievement.upsert({
+          where: { id: 'achieve-1' },
+          update: {},
+          create: { id: 'achieve-1', name: '7 Day Streak', description: 'Practice for 7 days in a row', icon: '🔥', type: 'streak' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-2' },
+          update: {},
+          create: { id: 'achieve-2', name: 'First Song', description: 'Complete your first song lesson', icon: '🎵', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-3' },
+          update: {},
+          create: { id: 'achieve-3', name: 'Quick Learner', description: 'Complete 5 lessons in a week', icon: '⭐', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-4' },
+          update: {},
+          create: { id: 'achieve-4', name: 'Dedicated Student', description: 'Complete 10 lessons total', icon: '📚', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-5' },
+          update: {},
+          create: { id: 'achieve-5', name: 'Practice Champion', description: 'Log 10 hours of practice', icon: '🏆', type: 'milestone' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-6' },
+          update: {},
+          create: { id: 'achieve-6', name: 'Course Graduate', description: 'Complete your first course', icon: '🎓', type: 'course' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-7' },
+          update: {},
+          create: { id: 'achieve-7', name: 'Early Bird', description: 'Practice before 8 AM', icon: '🌅', type: 'special' }
+        }),
+        prisma.achievement.upsert({
+          where: { id: 'achieve-8' },
+          update: {},
+          create: { id: 'achieve-8', name: 'Night Owl', description: 'Practice after 10 PM', icon: '🦉', type: 'special' }
+        })
+      ])
+
+      // Create schedule items
+      const scheduleItems = await Promise.all([
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-1' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 6) }, // 6 hours from now
+          create: { id: 'schedule-1', title: 'Online Rehearsal', description: 'Weekly choir rehearsal via Zoom', date: new Date(Date.now() + 1000 * 60 * 60 * 6), time: '6:00 PM', type: 'rehearsal', isPublic: true }
+        }),
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-2' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 24) }, // 1 day from now
+          create: { id: 'schedule-2', title: 'Vocal Training Session', description: 'Weekly vocal training with Bro. Blaise', date: new Date(Date.now() + 1000 * 60 * 60 * 24), time: '4:00 PM', type: 'lesson', isPublic: true }
+        }),
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-3' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 72) }, // 3 days from now
+          create: { id: 'schedule-3', title: 'Assignment Due: Harmony Exercise', description: 'Submit your four-part harmony assignment', date: new Date(Date.now() + 1000 * 60 * 60 * 72), time: '11:59 PM', type: 'deadline', isPublic: true }
+        }),
+        prisma.scheduleItem.upsert({
+          where: { id: 'schedule-4' },
+          update: { date: new Date(Date.now() + 1000 * 60 * 60 * 168) }, // 7 days from now
+          create: { id: 'schedule-4', title: 'Sunday Service Performance', description: 'G2 Melody leading worship at Church of Christ, Buea', date: new Date(Date.now() + 1000 * 60 * 60 * 168), time: '10:00 AM', type: 'event', isPublic: true }
+        })
+      ])
+
       return handleCORS(NextResponse.json({ 
         success: true, 
         projects: projects.length, 
         music: music.length, 
         admin: admin.email,
         founders: founders.length,
-        choirMembers: choirMembers.length
+        choirMembers: choirMembers.length,
+        // Learning platform data
+        courses: courses.length,
+        lessons: vocalLessons.length + harmonyLessons.length,
+        practiceTracks: practiceTracks.length,
+        achievements: achievements.length,
+        scheduleItems: scheduleItems.length
       }))
     }
 
