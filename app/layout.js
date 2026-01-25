@@ -8,12 +8,14 @@ const dancingScript = Dancing_Script({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-dancing-script',
+  adjustFontFallback: false,
 })
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-nunito-sans',
+  adjustFontFallback: false,
 })
 
 export const metadata = {
