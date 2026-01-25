@@ -28,7 +28,7 @@ import {
 function TikTokIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
     </svg>
   )
 }
@@ -70,21 +70,20 @@ function Navigation({ isScrolled, activeSection }) {
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <img 
-              src="/logo.png" 
-              alt="G2 Melody" 
+            <img
+              src="/logo.png"
+              alt="G2 Melody"
               className="h-12 w-auto group-hover:scale-105 transition-transform duration-300"
             />
-            <span className={`hidden sm:block text-xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
+            <span className={`hidden sm:block text-xl font-bold tracking-tight font-heading ${isScrolled ? 'text-gray-900' : 'text-white'}`}>G2 Melody</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             <Link
               href="/"
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
             >
               Home
             </Link>
@@ -93,14 +92,13 @@ function Navigation({ isScrolled, activeSection }) {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${
-                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-1 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 About
                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${aboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {/* Dropdown Menu */}
               {aboutDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -122,9 +120,8 @@ function Navigation({ isScrolled, activeSection }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
-                  isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${isScrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {link.label}
               </Link>
@@ -146,7 +143,7 @@ function Navigation({ isScrolled, activeSection }) {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -169,7 +166,7 @@ function Navigation({ isScrolled, activeSection }) {
               >
                 Home
               </Link>
-              
+
               {/* About Section in Mobile */}
               <div className="border-t border-gray-100 pt-2 mt-2">
                 <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">About</p>
@@ -216,7 +213,7 @@ function Navigation({ isScrolled, activeSection }) {
 // Hero Section
 function HeroSection({ siteSettings }) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  
+
   const slides = [
     {
       image: 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg',
@@ -266,11 +263,11 @@ function HeroSection({ siteSettings }) {
           />
         </div>
       ))}
-      
+
       {/* Gradient Overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-gray-900/30" />
-      
+
       {/* Decorative Elements */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -360,7 +357,7 @@ function AboutSection() {
       {/* Decorative Background */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-amber-50 to-transparent opacity-50" />
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -372,7 +369,7 @@ function AboutSection() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Melody</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Founded in late 2016, G2 Melody began as a small group from the Church of Christ, Muea, formerly known as Melodious Voices. 
+            Founded in late 2016, G2 Melody began as a small group from the Church of Christ, Muea, formerly known as Melodious Voices.
             The group has since grown into a powerful force for musical evangelism and worship excellence.
           </p>
         </div>
@@ -389,8 +386,8 @@ function AboutSection() {
             </CardHeader>
             <CardContent>
               <p className="text-white/90 leading-relaxed">
-                Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music, 
-                and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church, 
+                Evangelizing through music, uniting individuals under a shared purpose, revitalizing church music,
+                and exemplifying spiritual devotion rooted in the doctrine of Christ and the musical heritage of the Church,
                 while extending Christ's love to individuals from diverse backgrounds.
               </p>
             </CardContent>
@@ -406,8 +403,8 @@ function AboutSection() {
             </CardHeader>
             <CardContent>
               <p className="text-white/90 leading-relaxed">
-                A future where the musical landscape of the Church is revitalized, young choirs are nurtured, 
-                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond. 
+                A future where the musical landscape of the Church is revitalized, young choirs are nurtured,
+                and music-driven evangelism plays a central role in spreading the Gospel across Cameroon and beyond.
                 We envision establishing a music academy and nurturing worship leaders globally.
               </p>
             </CardContent>
@@ -450,12 +447,61 @@ function AboutSection() {
   )
 }
 
+// Skeleton Loader components
+function SkeletonCard({ className }) {
+  return (
+    <div className={`bg-gray-200 animate-pulse rounded-2xl ${className}`} />
+  )
+}
+
+function MusicSkeleton() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-lg">
+          <div className="aspect-square bg-gray-200 animate-pulse" />
+          <CardContent className="p-3 space-y-2">
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4" />
+            <div className="h-3 bg-gray-200 animate-pulse rounded w-1/2" />
+          </CardContent>
+          <CardFooter className="p-3 pt-0 flex justify-between">
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-1/4" />
+            <div className="h-7 bg-gray-200 animate-pulse rounded w-1/3" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+function ProjectSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[1, 2, 3].map((i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-lg">
+          <div className="h-56 bg-gray-200 animate-pulse" />
+          <CardHeader className="pb-2 space-y-2">
+            <div className="h-6 bg-gray-200 animate-pulse rounded w-3/4" />
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-8 bg-gray-200 animate-pulse rounded w-3/4" />
+          </CardContent>
+          <CardFooter className="flex gap-2">
+            <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+            <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
 // Projects Section
-function ProjectsSection({ projects, onDonate }) {
-  // Get total counts for tabs
+function ProjectsSection({ projects, onDonate, loading }) {
   const allCurrentProjects = projects.filter(p => p.status === 'CURRENT')
   const allPastProjects = projects.filter(p => p.status === 'PAST')
-  
+
   // Limit to 3 projects for homepage display
   const currentProjects = allCurrentProjects.slice(0, 3)
   const pastProjects = allPastProjects.slice(0, 3)
@@ -500,57 +546,61 @@ function ProjectsSection({ projects, onDonate }) {
           </TabsList>
 
           <TabsContent value="current">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {currentProjects.map((project) => (
-                <Card key={project.id} className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group">
-                  <div className="relative h-56 overflow-hidden">
-                    <img
-                      src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    {project.deadline && (
-                      <Badge className="absolute top-4 right-4 bg-orange-500 shadow-lg">
-                        <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days left
-                      </Badge>
-                    )}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 bg-white/30" />
-                    </div>
-                  </div>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xl line-clamp-2">{project.title}</CardTitle>
-                    <CardDescription className="line-clamp-2">{project.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-end mb-4">
-                      <div>
-                        <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
-                        <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-semibold text-gray-900">{Math.round(getProgress(project.currentAmount, project.goalAmount))}%</p>
-                        <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
+            {loading && allCurrentProjects.length === 0 ? (
+              <ProjectSkeleton />
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {currentProjects.map((project) => (
+                  <Card key={project.id} className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group">
+                    <div className="relative h-56 overflow-hidden">
+                      <img
+                        src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      {project.deadline && (
+                        <Badge className="absolute top-4 right-4 bg-orange-500 shadow-lg">
+                          <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days left
+                        </Badge>
+                      )}
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 bg-white/30" />
                       </div>
                     </div>
-                  </CardContent>
-                  <CardFooter className="pt-0 flex gap-2">
-                    <Link href={`/projects/${project.id}`} className="flex-1">
-                      <Button variant="outline" className="w-full">
-                        View Details
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl line-clamp-2">{project.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex justify-between items-end mb-4">
+                        <div>
+                          <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
+                          <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-semibold text-gray-900">{Math.round(getProgress(project.currentAmount, project.goalAmount))}%</p>
+                          <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="pt-0 flex gap-2">
+                      <Link href={`/projects/${project.id}`} className="flex-1">
+                        <Button variant="outline" className="w-full">
+                          View Details
+                        </Button>
+                      </Link>
+                      <Button
+                        className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg"
+                        onClick={() => onDonate(project)}
+                      >
+                        <Heart className="mr-2 h-4 w-4" /> Donate
                       </Button>
-                    </Link>
-                    <Button 
-                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg" 
-                      onClick={() => onDonate(project)}
-                    >
-                      <Heart className="mr-2 h-4 w-4" /> Donate
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="past">
@@ -589,9 +639,9 @@ function ProjectsSection({ projects, onDonate }) {
         {/* G2 Meloverse Vision - Featured Section */}
         <div className="mt-20 relative overflow-hidden rounded-3xl">
           <div className="absolute inset-0">
-            <img 
-              src="/g2-meloverse.jpg" 
-              alt="G2 Meloverse" 
+            <img
+              src="/g2-meloverse.jpg"
+              alt="G2 Meloverse"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
@@ -643,7 +693,7 @@ function ProjectsSection({ projects, onDonate }) {
 }
 
 // Music Store Section
-function MusicStoreSection({ music, onPurchase }) {
+function MusicStoreSection({ music, onPurchase, loading }) {
   const [playingId, setPlayingId] = useState(null)
 
   // Limit to 4 music tracks for homepage display
@@ -701,44 +751,48 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {/* Music Grid - Limited to 4 items per row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {displayedMusic.map((track) => (
-            <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
-              <div className="relative aspect-square">
-                <img
-                  src={track.coverImage || 'https://images.unsplash.com/photo-1652626627227-acc5ce198876'}
-                  alt={track.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
-                    className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
-                    onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
-                  >
-                    {playingId === track.id ? (
-                      <Pause className="w-5 h-5 text-rose-600" />
-                    ) : (
-                      <Play className="w-5 h-5 text-rose-600 ml-0.5" />
-                    )}
-                  </button>
+        {loading && music.length === 0 ? (
+          <MusicSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {displayedMusic.map((track) => (
+              <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <div className="relative aspect-square">
+                  <img
+                    src={track.coverImage || 'https://images.unsplash.com/photo-1652626627227-acc5ce198876'}
+                    alt={track.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button
+                      className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
+                      onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
+                    >
+                      {playingId === track.id ? (
+                        <Pause className="w-5 h-5 text-rose-600" />
+                      ) : (
+                        <Play className="w-5 h-5 text-rose-600 ml-0.5" />
+                      )}
+                    </button>
+                  </div>
+                  {track.isHymn && (
+                    <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
+                  )}
                 </div>
-                {track.isHymn && (
-                  <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
-                )}
-              </div>
-              <CardContent className="p-3">
-                <h3 className="font-semibold text-gray-900 line-clamp-1 text-sm mb-1">{track.title}</h3>
-                <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
-              </CardContent>
-              <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
-                <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
-                  <ShoppingCart className="w-3 h-3 mr-1" /> Buy
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                <CardContent className="p-3">
+                  <h3 className="font-semibold text-gray-900 line-clamp-1 text-sm mb-1">{track.title}</h3>
+                  <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
+                </CardContent>
+                <CardFooter className="p-3 pt-0 flex items-center justify-between">
+                  <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
+                  <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
+                    <ShoppingCart className="w-3 h-3 mr-1" /> Buy
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {displayedMusic.length === 0 && (
           <div className="text-center py-16">
@@ -832,7 +886,7 @@ function LearnMuzikSection() {
             <div>
               <h3 className="text-3xl md:text-4xl font-bold mb-4">G2 Melody Music Academy</h3>
               <p className="text-white/90 mb-6 text-lg">
-                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies. 
+                Our vision is to establish a full-fledged music academy in Cameroon that confers degrees in music studies.
                 Until then, we offer comprehensive training programs for aspiring musicians and worship leaders.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -1019,7 +1073,7 @@ function ContactSection() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 text-sm mb-4">
-                  We're available for weddings, church programs, concerts, and special events. 
+                  We're available for weddings, church programs, concerts, and special events.
                   Contact us to discuss your requirements and get a quote.
                 </p>
                 <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500">
@@ -1043,7 +1097,7 @@ function ContactSection() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="John Doe"
                       className="mt-1"
                       required
@@ -1055,7 +1109,7 @@ function ContactSection() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="john@example.com"
                       className="mt-1"
                       required
@@ -1064,7 +1118,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <Label htmlFor="subject">Subject</Label>
-                  <Select value={formData.subject} onValueChange={(value) => setFormData({...formData, subject: value})}>
+                  <Select value={formData.subject} onValueChange={(value) => setFormData({ ...formData, subject: value })}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select a subject" />
                     </SelectTrigger>
@@ -1083,15 +1137,15 @@ function ContactSection() {
                   <Textarea
                     id="message"
                     value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="How can we help you?"
                     rows={5}
                     className="mt-1"
                     required
                   />
                 </div>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
                   disabled={sending}
                 >
@@ -1480,7 +1534,7 @@ export default function App() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
-      
+
       // Update active section
       const sections = ['home', 'about', 'projects', 'music', 'learn', 'contact']
       for (const section of sections.reverse()) {
@@ -1498,22 +1552,43 @@ export default function App() {
   useEffect(() => {
     const initializeData = async () => {
       try {
-        await fetch('/api/seed', { method: 'POST' })
-        
+        // Fetch data in parallel first
         const [projectsRes, musicRes, settingsRes] = await Promise.all([
           fetch('/api/projects'),
           fetch('/api/music'),
           fetch('/api/settings')
         ])
-        
-        const projectsData = await projectsRes.json()
-        const musicData = await musicRes.json()
+
+        let projectsData = await projectsRes.json()
+        let musicData = await musicRes.json()
         const settingsData = await settingsRes.json()
-        
-        setProjects(projectsData)
-        setMusic(musicData)
-        if (settingsData && !settingsData.error) {
-          setSiteSettings(settingsData)
+
+        // If no projects, then seed and re-fetch
+        if (projectsData.length === 0) {
+          console.log('No data found, seeding...')
+          await fetch('/api/seed', { method: 'POST' })
+
+          const [newProjectsRes, newMusicRes, newSettingsRes] = await Promise.all([
+            fetch('/api/projects'),
+            fetch('/api/music'),
+            fetch('/api/settings')
+          ])
+
+          projectsData = await newProjectsRes.json()
+          musicData = await newMusicRes.json()
+          const newSettingsData = await newSettingsRes.json()
+
+          setProjects(projectsData)
+          setMusic(musicData)
+          if (newSettingsData && !newSettingsData.error) {
+            setSiteSettings(newSettingsData)
+          }
+        } else {
+          setProjects(projectsData)
+          setMusic(musicData)
+          if (settingsData && !settingsData.error) {
+            setSiteSettings(settingsData)
+          }
         }
       } catch (error) {
         console.error('Error initializing data:', error)
@@ -1535,27 +1610,15 @@ export default function App() {
     setPurchaseDialogOpen(true)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
-        <div className="text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Music className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">G2 Melody</h2>
-          <p className="text-gray-400">Loading...</p>
-        </div>
-      </div>
-    )
-  }
+  // Remove full-page guard for progressive loading
 
   return (
     <div className="min-h-screen">
       <Navigation isScrolled={isScrolled} activeSection={activeSection} />
       <HeroSection siteSettings={siteSettings} />
       <AboutSection />
-      <ProjectsSection projects={projects} onDonate={handleDonate} />
-      <MusicStoreSection music={music} onPurchase={handlePurchase} />
+      <ProjectsSection projects={projects} onDonate={handleDonate} loading={loading} />
+      <MusicStoreSection music={music} onPurchase={handlePurchase} loading={loading} />
       <LearnMuzikSection />
       <ContactSection />
       <Footer />
