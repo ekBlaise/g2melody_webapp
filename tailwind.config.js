@@ -70,8 +70,8 @@ module.exports = {
 				}
 			},
 			fontFamily: {
-				sans: ['var(--font-lato)', 'sans-serif'],
-				heading: ['var(--font-spectral)', 'serif'],
+				sans: ['var(--font-nunito-sans)', 'sans-serif'],
+				heading: ['var(--font-dancing-script)', 'cursive'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -6,7 +6,22 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { SharedNavigation, SharedFooter } from '@/components/shared'
-import { Calendar, Clock, MapPin, ArrowRight, Megaphone, FileText, Loader2, Newspaper, CalendarDays } from 'lucide-react'
+import { Calendar, Clock, MapPin, ArrowRight, Megaphone, FileText, Newspaper, CalendarDays } from 'lucide-react'
+
+const NewsSkeleton = () => (
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[1, 2, 3, 4, 5, 6].map((i) => (
+      <Card key={i} className="overflow-hidden border-0 shadow-lg">
+        <div className="h-40 bg-gray-200 animate-pulse" />
+        <CardContent className="p-4 space-y-3">
+          <div className="h-5 bg-gray-200 animate-pulse rounded w-3/4" />
+          <div className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+          <div className="h-4 bg-gray-200 animate-pulse rounded w-1/4" />
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+)
 
 export default function NewsPage() {
   const [news, setNews] = useState([])
@@ -40,10 +55,10 @@ export default function NewsPage() {
     })
   }
 
-  const allItems = activeFilter === 'all' 
+  const allItems = activeFilter === 'all'
     ? [...news, ...events].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
-    : activeFilter === 'events' 
-      ? events 
+    : activeFilter === 'events'
+      ? events
       : news
 
   return (
@@ -53,7 +68,7 @@ export default function NewsPage() {
       {/* Hero Section with Image */}
       <section className="relative pt-20 sm:pt-24">
         <div className="absolute inset-0 h-[400px] sm:h-[450px]">
-          <img 
+          <img
             src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920"
             alt="G2 Melody News"
             className="w-full h-full object-cover"
@@ -65,7 +80,7 @@ export default function NewsPage() {
             <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 mb-4">
               <Newspaper className="w-3 h-3 mr-1" /> Stay Informed
             </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 font-heading">
               News & Events
             </h1>
             <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
@@ -102,13 +117,11 @@ export default function NewsPage() {
       <main className="flex-1 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
-            </div>
+            <NewsSkeleton />
           ) : allItems.length === 0 ? (
             <div className="text-center py-20">
               <Megaphone className="w-16 h-16 mx-auto mb-6 text-gray-300" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No updates yet</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 font-heading">No updates yet</h3>
               <p className="text-gray-500">Check back soon for news and events</p>
             </div>
           ) : (
@@ -116,15 +129,15 @@ export default function NewsPage() {
               {/* Featured Items */}
               {activeFilter === 'all' && allItems.filter(item => item.isFeatured).length > 0 && (
                 <div className="mb-12">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6 font-heading">Featured</h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     {allItems.filter(item => item.isFeatured).slice(0, 2).map((item) => (
                       <Link key={item.id} href={`/news/${item.id}`}>
                         <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group h-full">
                           <div className="relative h-56">
                             {item.image ? (
-                              <img 
-                                src={item.image} 
+                              <img
+                                src={item.image}
                                 alt={item.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
@@ -138,17 +151,16 @@ export default function NewsPage() {
                               </div>
                             )}
                             <div className="absolute top-4 left-4 flex gap-2">
-                              <Badge className={`${
-                                item.type === 'event' ? 'bg-blue-500' : 
-                                item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
-                              } text-white`}>
+                              <Badge className={`${item.type === 'event' ? 'bg-blue-500' :
+                                  item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
+                                } text-white`}>
                                 {item.type}
                               </Badge>
                               <Badge className="bg-purple-500 text-white">Featured</Badge>
                             </div>
                           </div>
                           <CardContent className="p-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors font-heading">
                               {item.title}
                             </h3>
                             <p className="text-gray-600 mb-4 line-clamp-2">{item.summary}</p>
@@ -190,9 +202,9 @@ export default function NewsPage() {
 
               {/* All Items Grid */}
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  {activeFilter === 'events' ? 'Upcoming Events' : 
-                   activeFilter === 'news' ? 'News & Announcements' : 'All Updates'}
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 font-heading">
+                  {activeFilter === 'events' ? 'Upcoming Events' :
+                    activeFilter === 'news' ? 'News & Announcements' : 'All Updates'}
                 </h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {allItems.filter(item => activeFilter !== 'all' || !item.isFeatured).map((item) => (
@@ -200,17 +212,16 @@ export default function NewsPage() {
                       <Card className="overflow-hidden border border-gray-200 hover:border-amber-300 hover:shadow-lg transition-all duration-300 group h-full">
                         <div className="relative h-40">
                           {item.image ? (
-                            <img 
-                              src={item.image} 
+                            <img
+                              src={item.image}
                               alt={item.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
-                            <div className={`w-full h-full flex items-center justify-center ${
-                              item.type === 'event' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' :
-                              item.type === 'announcement' ? 'bg-gradient-to-br from-amber-500 to-orange-500' :
-                              'bg-gradient-to-br from-gray-700 to-gray-900'
-                            }`}>
+                            <div className={`w-full h-full flex items-center justify-center ${item.type === 'event' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' :
+                                item.type === 'announcement' ? 'bg-gradient-to-br from-amber-500 to-orange-500' :
+                                  'bg-gradient-to-br from-gray-700 to-gray-900'
+                              }`}>
                               {item.type === 'event' ? (
                                 <Calendar className="w-12 h-12 text-white/80" />
                               ) : item.type === 'announcement' ? (
@@ -220,15 +231,14 @@ export default function NewsPage() {
                               )}
                             </div>
                           )}
-                          <Badge className={`absolute top-3 left-3 ${
-                            item.type === 'event' ? 'bg-blue-500' : 
-                            item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
-                          } text-white text-xs`}>
+                          <Badge className={`absolute top-3 left-3 ${item.type === 'event' ? 'bg-blue-500' :
+                              item.type === 'announcement' ? 'bg-amber-500' : 'bg-gray-800'
+                            } text-white text-xs`}>
                             {item.type}
                           </Badge>
                         </div>
                         <CardContent className="p-4">
-                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors font-heading">
                             {item.title}
                           </h3>
                           <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.summary}</p>
