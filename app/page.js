@@ -447,9 +447,58 @@ function AboutSection() {
   )
 }
 
+// Skeleton Loader components
+function SkeletonCard({ className }) {
+  return (
+    <div className={`bg-gray-200 animate-pulse rounded-2xl ${className}`} />
+  )
+}
+
+function MusicSkeleton() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-lg">
+          <div className="aspect-square bg-gray-200 animate-pulse" />
+          <CardContent className="p-3 space-y-2">
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4" />
+            <div className="h-3 bg-gray-200 animate-pulse rounded w-1/2" />
+          </CardContent>
+          <CardFooter className="p-3 pt-0 flex justify-between">
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-1/4" />
+            <div className="h-7 bg-gray-200 animate-pulse rounded w-1/3" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+function ProjectSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[1, 2, 3].map((i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-lg">
+          <div className="h-56 bg-gray-200 animate-pulse" />
+          <CardHeader className="pb-2 space-y-2">
+            <div className="h-6 bg-gray-200 animate-pulse rounded w-3/4" />
+            <div className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-8 bg-gray-200 animate-pulse rounded w-3/4" />
+          </CardContent>
+          <CardFooter className="flex gap-2">
+            <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+            <div className="h-10 bg-gray-200 animate-pulse rounded flex-1" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
 // Projects Section
-function ProjectsSection({ projects, onDonate }) {
-  // Get total counts for tabs
+function ProjectsSection({ projects, onDonate, loading }) {
   const allCurrentProjects = projects.filter(p => p.status === 'CURRENT')
   const allPastProjects = projects.filter(p => p.status === 'PAST')
 
@@ -497,57 +546,61 @@ function ProjectsSection({ projects, onDonate }) {
           </TabsList>
 
           <TabsContent value="current">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {currentProjects.map((project) => (
-                <Card key={project.id} className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group">
-                  <div className="relative h-56 overflow-hidden">
-                    <img
-                      src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    {project.deadline && (
-                      <Badge className="absolute top-4 right-4 bg-orange-500 shadow-lg">
-                        <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days left
-                      </Badge>
-                    )}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 bg-white/30" />
-                    </div>
-                  </div>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xl line-clamp-2">{project.title}</CardTitle>
-                    <CardDescription className="line-clamp-2">{project.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-end mb-4">
-                      <div>
-                        <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
-                        <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-semibold text-gray-900">{Math.round(getProgress(project.currentAmount, project.goalAmount))}%</p>
-                        <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
+            {loading && allCurrentProjects.length === 0 ? (
+              <ProjectSkeleton />
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {currentProjects.map((project) => (
+                  <Card key={project.id} className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group">
+                    <div className="relative h-56 overflow-hidden">
+                      <img
+                        src={project.image || 'https://images.pexels.com/photos/7520351/pexels-photo-7520351.jpeg'}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      {project.deadline && (
+                        <Badge className="absolute top-4 right-4 bg-orange-500 shadow-lg">
+                          <Clock className="w-3 h-3 mr-1" /> {getDaysLeft(project.deadline)} days left
+                        </Badge>
+                      )}
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <Progress value={getProgress(project.currentAmount, project.goalAmount)} className="h-2 bg-white/30" />
                       </div>
                     </div>
-                  </CardContent>
-                  <CardFooter className="pt-0 flex gap-2">
-                    <Link href={`/projects/${project.id}`} className="flex-1">
-                      <Button variant="outline" className="w-full">
-                        View Details
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl line-clamp-2">{project.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex justify-between items-end mb-4">
+                        <div>
+                          <p className="text-2xl font-bold text-amber-600">{formatCurrency(project.currentAmount)}</p>
+                          <p className="text-sm text-gray-500">of {formatCurrency(project.goalAmount)} goal</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-semibold text-gray-900">{Math.round(getProgress(project.currentAmount, project.goalAmount))}%</p>
+                          <p className="text-xs text-gray-500">{project._count?.donations || 0} donors</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="pt-0 flex gap-2">
+                      <Link href={`/projects/${project.id}`} className="flex-1">
+                        <Button variant="outline" className="w-full">
+                          View Details
+                        </Button>
+                      </Link>
+                      <Button
+                        className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg"
+                        onClick={() => onDonate(project)}
+                      >
+                        <Heart className="mr-2 h-4 w-4" /> Donate
                       </Button>
-                    </Link>
-                    <Button
-                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg"
-                      onClick={() => onDonate(project)}
-                    >
-                      <Heart className="mr-2 h-4 w-4" /> Donate
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="past">
@@ -640,7 +693,7 @@ function ProjectsSection({ projects, onDonate }) {
 }
 
 // Music Store Section
-function MusicStoreSection({ music, onPurchase }) {
+function MusicStoreSection({ music, onPurchase, loading }) {
   const [playingId, setPlayingId] = useState(null)
 
   // Limit to 4 music tracks for homepage display
@@ -698,44 +751,48 @@ function MusicStoreSection({ music, onPurchase }) {
         </div>
 
         {/* Music Grid - Limited to 4 items per row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {displayedMusic.map((track) => (
-            <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
-              <div className="relative aspect-square">
-                <img
-                  src={track.coverImage || 'https://images.unsplash.com/photo-1652626627227-acc5ce198876'}
-                  alt={track.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
-                    className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
-                    onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
-                  >
-                    {playingId === track.id ? (
-                      <Pause className="w-5 h-5 text-rose-600" />
-                    ) : (
-                      <Play className="w-5 h-5 text-rose-600 ml-0.5" />
-                    )}
-                  </button>
+        {loading && music.length === 0 ? (
+          <MusicSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {displayedMusic.map((track) => (
+              <Card key={track.id} className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <div className="relative aspect-square">
+                  <img
+                    src={track.coverImage || 'https://images.unsplash.com/photo-1652626627227-acc5ce198876'}
+                    alt={track.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button
+                      className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform"
+                      onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
+                    >
+                      {playingId === track.id ? (
+                        <Pause className="w-5 h-5 text-rose-600" />
+                      ) : (
+                        <Play className="w-5 h-5 text-rose-600 ml-0.5" />
+                      )}
+                    </button>
+                  </div>
+                  {track.isHymn && (
+                    <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
+                  )}
                 </div>
-                {track.isHymn && (
-                  <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
-                )}
-              </div>
-              <CardContent className="p-3">
-                <h3 className="font-semibold text-gray-900 line-clamp-1 text-sm mb-1">{track.title}</h3>
-                <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
-              </CardContent>
-              <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
-                <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
-                  <ShoppingCart className="w-3 h-3 mr-1" /> Buy
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                <CardContent className="p-3">
+                  <h3 className="font-semibold text-gray-900 line-clamp-1 text-sm mb-1">{track.title}</h3>
+                  <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
+                </CardContent>
+                <CardFooter className="p-3 pt-0 flex items-center justify-between">
+                  <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
+                  <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
+                    <ShoppingCart className="w-3 h-3 mr-1" /> Buy
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {displayedMusic.length === 0 && (
           <div className="text-center py-16">
@@ -1553,62 +1610,15 @@ export default function App() {
     setPurchaseDialogOpen(true)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-600/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600/20 rounded-full blur-[120px] animate-pulse delay-700" />
-
-        <div className="relative z-10 flex flex-col items-center">
-          {/* Logo Animation */}
-          <div className="relative mb-12">
-            <div className="absolute inset-0 bg-amber-500 rounded-3xl blur-2xl opacity-20 animate-pulse" />
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-2xl relative border border-white/10 group">
-              <Music className="w-12 h-12 text-white animate-bounce" />
-            </div>
-          </div>
-
-          {/* Music Wave Animation */}
-          <div className="flex items-end gap-1.5 h-12 mb-8">
-            {[0.6, 0.8, 1.2, 0.9, 1.5, 0.7, 1.1, 0.5].map((delay, i) => (
-              <div
-                key={i}
-                className="w-1.5 bg-gradient-to-t from-amber-500 to-orange-400 rounded-full animate-music-wave"
-                style={{ animationDelay: `${delay}s`, animationDuration: `${delay + 0.5}s` }}
-              />
-            ))}
-          </div>
-
-          {/* Text with Shimmer */}
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-white mb-2 tracking-tight animate-shimmer font-heading">
-              G2 Melody
-            </h2>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-amber-500 rounded-full animate-ping" />
-              <p className="text-amber-500/80 font-medium tracking-[0.2em] uppercase text-xs">
-                Preparing the Atmosphere
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Loading Progress Subtext */}
-        <p className="absolute bottom-12 text-white/20 text-sm font-light tracking-widest uppercase">
-          Excelling in Worship
-        </p>
-      </div>
-    )
-  }
+  // Remove full-page guard for progressive loading
 
   return (
     <div className="min-h-screen">
       <Navigation isScrolled={isScrolled} activeSection={activeSection} />
       <HeroSection siteSettings={siteSettings} />
       <AboutSection />
-      <ProjectsSection projects={projects} onDonate={handleDonate} />
-      <MusicStoreSection music={music} onPurchase={handlePurchase} />
+      <ProjectsSection projects={projects} onDonate={handleDonate} loading={loading} />
+      <MusicStoreSection music={music} onPurchase={handlePurchase} loading={loading} />
       <LearnMuzikSection />
       <ContactSection />
       <Footer />
