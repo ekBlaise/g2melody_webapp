@@ -390,7 +390,7 @@ backend:
         agent: "testing"
         comment: "TESTED: GET /api/settings successfully returns all required fields (memberCount=75, studentsCount=120, programsCount=8, yearsActive=10). API working correctly."
 
-  - task: "Site Settings UPDATE API"
+  - task: "File Upload API"
     implemented: true
     working: true
     file: "/app/app/api/[[...path]]/route.js"
@@ -399,11 +399,32 @@ backend:
     needs_retesting: false
     status_history:
       - working: true
-        agent: "main"
-        comment: "PUT /api/admin/settings endpoint for admin to update site settings"
+        agent: "testing"
+        comment: "TESTED: POST /api/upload endpoint fully functional. Successfully accepts JPEG, PNG, GIF, WebP images under 2MB. Correctly rejects files over 2MB with 'File too large. Maximum size is 2MB.' error. Correctly rejects non-image files with 'Invalid file type' error. Returns proper response structure with {url, filename, size}. Fixed path variable conflict issue that was causing EISDIR errors. All 7 validation scenarios passed (100% success rate)."
+
+  - task: "Project Update API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
       - working: true
         agent: "testing"
-        comment: "TESTED: PUT /api/admin/settings successfully updated memberCount from 50 to 75. Settings persist correctly after update. API working correctly."
+        comment: "TESTED: PUT /api/projects/:id successfully updated project title, description, and goalAmount. Fixed ProjectStatus enum issue (valid values: CURRENT, PAST, DRAFT). Update persisted correctly when verified with GET request."
+
+  - task: "Project Delete API"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "TESTED: DELETE /api/projects/:id successfully deleted test project. Returns {success: true} response. Verified deletion by confirming project no longer exists (404 response on GET)."
 
 frontend:
   - task: "Homepage with Hero Section"
