@@ -189,7 +189,7 @@ def test_project_update(project_id):
             "title": "Updated Test Project",
             "description": "This project has been updated via API testing",
             "goalAmount": 150000,
-            "status": "ACTIVE"
+            "status": "CURRENT"
         }
         
         response = requests.put(
