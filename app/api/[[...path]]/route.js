@@ -111,53 +111,6 @@ async function handleRoute(request, { params }) {
       }))
     }
 
-    // ==================== MEMBERSHIP APPLICATION ====================
-    if (route === '/membership-application' && method === 'POST') {
-      const body = await request.json()
-      
-      // Store membership application (could be a separate table, using metadata in user for now)
-      const application = {
-        id: uuidv4(),
-        fullName: body.fullName,
-        email: body.email,
-        phone: body.phone,
-        dateOfBirth: body.dateOfBirth,
-        location: body.location,
-        congregation: body.congregation,
-        musicalExperience: body.musicalExperience,
-        vocalPart: body.vocalPart,
-        instrument: body.instrument,
-        whyJoin: body.whyJoin,
-        howHeard: body.howHeard,
-        commitment: body.commitment,
-        status: 'pending',
-        submittedAt: new Date().toISOString()
-      }
-      
-      // For now, we'll store in a simple way - in production this would be a separate table
-      // Creating a user with pending status
-      const existingUser = await prisma.user.findUnique({ where: { email: body.email } })
-      if (existingUser) {
-        return handleCORS(NextResponse.json({ error: 'An application with this email already exists' }, { status: 400 }))
-      }
-      
-      // Store application as a pending user with metadata
-      const user = await prisma.user.create({
-        data: {
-          id: application.id,
-          email: body.email,
-          name: body.fullName,
-          role: 'USER', // Will be upgraded to MEMBER by admin
-        }
-      })
-
-      return handleCORS(NextResponse.json({ 
-        success: true, 
-        message: 'Your membership application has been submitted. We will review it and get back to you soon.',
-        applicationId: application.id 
-      }))
-    }
-
     // ==================== ADMIN - Create Member ====================
     if (route === '/admin/members' && method === 'POST') {
       const body = await request.json()
