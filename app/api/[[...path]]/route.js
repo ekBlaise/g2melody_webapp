@@ -1504,6 +1504,7 @@ async function handleRoute(request, { params }) {
         console.log('Generated filename:', filename)
         
         // Ensure uploads directory exists
+        console.log('Current working directory:', process.cwd())
         const uploadDir = path.join(process.cwd(), 'public', 'uploads')
         console.log('Upload directory:', uploadDir)
         if (!existsSync(uploadDir)) {
