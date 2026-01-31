@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Base URL from environment
-BASE_URL = "https://music-platform-36.preview.emergentagent.com/api"
+BASE_URL = "https://music-admin-5.preview.emergentagent.com/api"
 
 def test_api_endpoint(method, endpoint, data=None, params=None, expected_status=200):
     """Test an API endpoint and return the response"""
