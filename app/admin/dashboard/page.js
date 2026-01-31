@@ -1545,6 +1545,22 @@ function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
     const file = e.target.files?.[0]
     if (!file) return
     
+    // Check file size (2MB limit)
+    const MAX_SIZE = 2 * 1024 * 1024 // 2MB
+    if (file.size > MAX_SIZE) {
+      toast.error('File too large. Maximum size is 2MB.')
+      e.target.value = '' // Reset input
+      return
+    }
+
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.')
+      e.target.value = ''
+      return
+    }
+    
     setUploading(true)
     try {
       const uploadFormData = new FormData()
@@ -1558,12 +1574,14 @@ function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
       if (res.ok) {
         const data = await res.json()
         setFormData({ ...formData, image: data.url })
+        toast.success('Image uploaded successfully!')
       } else {
-        alert('Failed to upload image')
+        const errorData = await res.json()
+        toast.error(errorData.error || 'Failed to upload image')
       }
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload image')
+      toast.error('Failed to upload image')
     } finally {
       setUploading(false)
     }
@@ -1583,7 +1601,7 @@ function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Project</DialogTitle>
           <DialogDescription>Add a new fundraising project</DialogDescription>
