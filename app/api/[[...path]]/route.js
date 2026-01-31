@@ -21,8 +21,8 @@ export async function OPTIONS() {
 }
 
 async function handleRoute(request, { params }) {
-  const { path = [] } = params
-  const route = `/${path.join('/')}`
+  const { path: routePath = [] } = params
+  const route = `/${routePath.join('/')}`
   const method = request.method
 
   try {
