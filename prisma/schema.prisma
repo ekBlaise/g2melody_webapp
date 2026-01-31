@@ -571,3 +571,109 @@ model GalleryItem {
   @@index([category])
 }
 
+// ==================== MEMBER APPLICATION SYSTEM ====================
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Member Application - stores applications from join page
+model MemberApplication {
+  id                    String            @id @default(uuid())
+  // Personal Info
+  fullName              String
+  email                 String
+  phone                 String?
+  gender                String?
+  dateOfBirth           String?
+  address               String?
+  city                  String?
+  country               String            @default("Cameroon")
+  // Church/Worship Info
+  congregation          String?
+  churchBranch          String?
+  memberOfChurchOfChrist String?
+  // Current Status
+  currentCommitment     String?
+  occupation            String?
+  // Musical Background
+  musicalExperience     String?
+  vocalPart             String?
+  instrument            String?
+  canReadMusic          String?
+  previousChoirs        String?           @db.Text
+  // Availability & Motivation
+  availability          String?
+  whyJoin               String?           @db.Text
+  howHeard              String?
+  // Application Status
+  status                ApplicationStatus @default(PENDING)
+  reviewedAt            DateTime?
+  reviewedBy            String?
+  rejectionReason       String?           @db.Text
+  // Member account (created on approval)
+  memberId              String?           @unique
+  member                Member?           @relation(fields: [memberId], references: [id])
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+
+// Member - Choir member account (created when application is approved)
+model Member {
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  password              String
+  name                  String
+  phone                 String?
+  image                 String?
+  vocalPart             VocalPart @default(NONE)
+  // First login flag
+  mustChangePassword    Boolean   @default(true)
+  isActive              Boolean   @default(true)
+  // Attendance tracking
+  attendanceCount       Int       @default(0)
+  lastAttendance        DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  application           MemberApplication?
+  attendanceRecords     MemberAttendance[]
+}
+
+// Member Attendance Records
+model MemberAttendance {
+  id          String   @id @default(uuid())
+  memberId    String
+  eventType   String   // rehearsal, concert, meeting
+  eventTitle  String?
+  date        DateTime
+  present     Boolean  @default(true)
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@index([date])
+}
+
+// Member Announcements - Admin announcements for members
+model MemberAnnouncement {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   @db.Text
+  priority    String   @default("normal") // normal, important, urgent
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished])
+}
+
