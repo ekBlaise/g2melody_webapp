@@ -1498,8 +1498,10 @@ async function handleRoute(request, { params }) {
         const buffer = Buffer.from(bytes)
 
         // Generate unique filename
-        const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+        console.log('File name:', file.name)
+        const ext = file.name ? file.name.split('.').pop()?.toLowerCase() || 'jpg' : 'jpg'
         const filename = `${uuidv4()}.${ext}`
+        console.log('Generated filename:', filename)
         
         // Ensure uploads directory exists
         const uploadDir = path.join(process.cwd(), 'public', 'uploads')
