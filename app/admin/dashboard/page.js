@@ -707,6 +707,62 @@ export default function AdminDashboard() {
     }
   }
 
+  // Member Application handlers
+  const handleApproveApplication = async (applicationId) => {
+    try {
+      const res = await fetch(`/api/admin/member-applications/${applicationId}/approve`, {
+        method: 'POST'
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setMemberApplications(memberApplications.map(a => 
+          a.id === applicationId ? { ...a, status: 'APPROVED' } : a
+        ))
+        toast.success(`Application approved! Credentials sent to ${data.member?.email}`)
+        setApplicationDialogOpen(false)
+        setSelectedApplication(null)
+      } else {
+        toast.error(data.error || 'Failed to approve application')
+      }
+    } catch (error) {
+      toast.error('Failed to approve application')
+    }
+  }
+
+  const handleRejectApplication = async () => {
+    if (!selectedApplication) return
+    try {
+      const res = await fetch(`/api/admin/member-applications/${selectedApplication.id}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: rejectionReason })
+      })
+      if (res.ok) {
+        setMemberApplications(memberApplications.map(a => 
+          a.id === selectedApplication.id ? { ...a, status: 'REJECTED', rejectionReason } : a
+        ))
+        toast.success('Application rejected')
+        setRejectDialogOpen(false)
+        setApplicationDialogOpen(false)
+        setSelectedApplication(null)
+        setRejectionReason('')
+      }
+    } catch (error) {
+      toast.error('Failed to reject application')
+    }
+  }
+
+  const openApplicationDetails = (application) => {
+    setSelectedApplication(application)
+    setApplicationDialogOpen(true)
+  }
+
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    })
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
