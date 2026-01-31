@@ -1492,6 +1492,42 @@ export default function AdminDashboard() {
         onOpenChange={setCreateGalleryDialogOpen}
         onSubmit={handleCreateGalleryItem}
       />
+
+      {/* Edit Project Dialog */}
+      <EditProjectDialog
+        open={editProjectDialogOpen}
+        onOpenChange={setEditProjectDialogOpen}
+        project={selectedProject}
+        onSubmit={handleUpdateProject}
+      />
+
+      {/* Delete Project Confirmation Dialog */}
+      <Dialog open={deleteProjectDialogOpen} onOpenChange={setDeleteProjectDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertCircle className="h-5 w-5" />
+              Delete Project
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{selectedProject?.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setDeleteProjectDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => handleDeleteProject(selectedProject?.id)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
