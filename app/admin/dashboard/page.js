@@ -956,7 +956,12 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {projects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
+                    <ProjectCard 
+                      key={project.id} 
+                      project={project} 
+                      onEdit={openEditProject}
+                      onDelete={openDeleteProject}
+                    />
                   ))}
                 </div>
               </CardContent>
