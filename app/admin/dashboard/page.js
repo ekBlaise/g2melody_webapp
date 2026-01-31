@@ -268,6 +268,7 @@ export default function AdminDashboard() {
   const [awards, setAwards] = useState([])
   const [galleryItems, setGalleryItems] = useState([])
   const [siteSettings, setSiteSettings] = useState({})
+  const [memberApplications, setMemberApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [darkMode, setDarkMode] = useState(false)
   const [activeTab, setActiveTab] = useState('overview')
@@ -282,6 +283,10 @@ export default function AdminDashboard() {
   const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false)
   const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
+  const [selectedApplication, setSelectedApplication] = useState(null)
+  const [applicationDialogOpen, setApplicationDialogOpen] = useState(false)
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState('')
 
   useEffect(() => {
     if (status === 'loading') return // Wait for session to load
