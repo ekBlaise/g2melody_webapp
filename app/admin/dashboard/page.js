@@ -1535,9 +1535,39 @@ export default function AdminDashboard() {
 // Create Project Dialog Component
 function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [imageOption, setImageOption] = useState('url') // 'url' or 'upload'
   const [formData, setFormData] = useState({
     title: '', description: '', goalAmount: '', image: '', status: 'CURRENT', deadline: ''
   })
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setUploading(true)
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+      
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadFormData
+      })
+      
+      if (res.ok) {
+        const data = await res.json()
+        setFormData({ ...formData, image: data.url })
+      } else {
+        alert('Failed to upload image')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert('Failed to upload image')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -1546,6 +1576,7 @@ function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
     if (success) {
       onOpenChange(false)
       setFormData({ title: '', description: '', goalAmount: '', image: '', status: 'CURRENT', deadline: '' })
+      setImageOption('url')
     }
     setLoading(false)
   }
@@ -1559,16 +1590,16 @@ function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Project Title</Label>
+            <Label htmlFor="title">Project Title *</Label>
             <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
           </div>
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Description *</Label>
             <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="goalAmount">Goal (XAF)</Label>
+              <Label htmlFor="goalAmount">Goal (XAF) *</Label>
               <Input id="goalAmount" type="number" value={formData.goalAmount} onChange={(e) => setFormData({ ...formData, goalAmount: e.target.value })} required />
             </div>
             <div>
@@ -1584,14 +1615,179 @@ function CreateProjectDialog({ open, onOpenChange, onSubmit }) {
             </div>
           </div>
           <div>
-            <Label htmlFor="image">Image URL</Label>
-            <Input id="image" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://example.com/image.jpg" />
+            <Label htmlFor="deadline">Deadline (Optional)</Label>
+            <Input id="deadline" type="date" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
+          </div>
+          <div className="space-y-3">
+            <Label>Project Image</Label>
+            <div className="flex gap-2 mb-2">
+              <Button type="button" variant={imageOption === 'url' ? 'default' : 'outline'} size="sm" onClick={() => setImageOption('url')}>
+                URL
+              </Button>
+              <Button type="button" variant={imageOption === 'upload' ? 'default' : 'outline'} size="sm" onClick={() => setImageOption('upload')}>
+                Upload
+              </Button>
+            </div>
+            {imageOption === 'url' ? (
+              <Input value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://example.com/image.jpg" />
+            ) : (
+              <div className="space-y-2">
+                <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                {uploading && <p className="text-sm text-gray-500 flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</p>}
+              </div>
+            )}
+            {formData.image && (
+              <div className="mt-2">
+                <img src={formData.image} alt="Preview" className="h-20 w-32 object-cover rounded-lg border" />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-emerald-500 to-teal-500">
+            <Button type="submit" disabled={loading || uploading} className="bg-gradient-to-r from-emerald-500 to-teal-500">
               {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
               Create Project
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// Edit Project Dialog Component
+function EditProjectDialog({ open, onOpenChange, project, onSubmit }) {
+  const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [imageOption, setImageOption] = useState('url')
+  const [formData, setFormData] = useState({
+    title: '', description: '', goalAmount: '', image: '', status: 'CURRENT', deadline: '', currentAmount: 0
+  })
+
+  useEffect(() => {
+    if (project) {
+      setFormData({
+        title: project.title || '',
+        description: project.description || '',
+        goalAmount: project.goalAmount || '',
+        image: project.image || '',
+        status: project.status || 'CURRENT',
+        deadline: project.deadline ? project.deadline.split('T')[0] : '',
+        currentAmount: project.currentAmount || 0
+      })
+    }
+  }, [project])
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setUploading(true)
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+      
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadFormData
+      })
+      
+      if (res.ok) {
+        const data = await res.json()
+        setFormData({ ...formData, image: data.url })
+      } else {
+        alert('Failed to upload image')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert('Failed to upload image')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const success = await onSubmit(project.id, formData)
+    if (success) {
+      onOpenChange(false)
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Edit Project</DialogTitle>
+          <DialogDescription>Update project details</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="edit-title">Project Title *</Label>
+            <Input id="edit-title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+          </div>
+          <div>
+            <Label htmlFor="edit-description">Description *</Label>
+            <Textarea id="edit-description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="edit-goalAmount">Goal (XAF) *</Label>
+              <Input id="edit-goalAmount" type="number" value={formData.goalAmount} onChange={(e) => setFormData({ ...formData, goalAmount: e.target.value })} required />
+            </div>
+            <div>
+              <Label htmlFor="edit-currentAmount">Current Amount (XAF)</Label>
+              <Input id="edit-currentAmount" type="number" value={formData.currentAmount} onChange={(e) => setFormData({ ...formData, currentAmount: e.target.value })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="edit-status">Status</Label>
+              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="CURRENT">Current</SelectItem>
+                  <SelectItem value="DRAFT">Draft</SelectItem>
+                  <SelectItem value="PAST">Past</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="edit-deadline">Deadline</Label>
+              <Input id="edit-deadline" type="date" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <Label>Project Image</Label>
+            <div className="flex gap-2 mb-2">
+              <Button type="button" variant={imageOption === 'url' ? 'default' : 'outline'} size="sm" onClick={() => setImageOption('url')}>
+                URL
+              </Button>
+              <Button type="button" variant={imageOption === 'upload' ? 'default' : 'outline'} size="sm" onClick={() => setImageOption('upload')}>
+                Upload
+              </Button>
+            </div>
+            {imageOption === 'url' ? (
+              <Input value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://example.com/image.jpg" />
+            ) : (
+              <div className="space-y-2">
+                <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                {uploading && <p className="text-sm text-gray-500 flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</p>}
+              </div>
+            )}
+            {formData.image && (
+              <div className="mt-2">
+                <img src={formData.image} alt="Preview" className="h-20 w-32 object-cover rounded-lg border" />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={loading || uploading} className="bg-gradient-to-r from-blue-500 to-indigo-500">
+              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Edit className="h-4 w-4 mr-2" />}
+              Update Project
             </Button>
           </DialogFooter>
         </form>
