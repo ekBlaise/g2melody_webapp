@@ -646,3 +646,21 @@ agent_communication:
     ✅ GET /api/notifications?userId=admin-1 - Successfully returned 1 notification
     
     All 12 Learning Platform API tests passed (100% success rate). The entire Learning Platform backend is fully functional with proper data aggregation, user enrollment, practice tracking, achievements, and notifications. No critical issues found."
+  - agent: "main"
+    message: "VERIFICATION SESSION - Testing Project Image Upload API:
+    
+    **VERIFIED UI FEATURES:**
+    ✅ Admin dashboard refresh keeps admin on /admin/dashboard (does not redirect away)
+    ✅ Project creation dialog has URL and Upload tabs for images
+    ✅ Client-side validation for 2MB file size limit
+    ✅ Client-side validation for file types (JPEG, PNG, GIF, WebP)
+    
+    **NEEDS BACKEND API TESTING:**
+    - POST /api/upload - File upload endpoint with 2MB limit and type validation
+    - PUT /api/projects/:id - Project update with image
+    - DELETE /api/projects/:id - Project deletion
+    
+    **CREDENTIALS:**
+    - Admin: admin@g2melody.com / admin123
+    
+    Ready for backend API testing of upload and project CRUD operations."
