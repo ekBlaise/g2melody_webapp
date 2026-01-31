@@ -543,8 +543,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Learning Platform APIs"
-    - "Dashboard Aggregation APIs"
+    - "File Upload API"
+    - "Project Update API" 
+    - "Project Delete API"
   stuck_tasks:
     - "User Registration API"
   test_all: false
