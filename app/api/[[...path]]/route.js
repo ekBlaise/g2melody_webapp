@@ -254,8 +254,9 @@ async function handleRoute(request, { params }) {
           description: body.description,
           image: body.image,
           goalAmount: body.goalAmount ? parseFloat(body.goalAmount) : undefined,
+          currentAmount: body.currentAmount ? parseFloat(body.currentAmount) : undefined,
           status: body.status,
-          deadline: body.deadline ? new Date(body.deadline) : undefined
+          deadline: body.deadline ? new Date(body.deadline) : null
         }
       })
       return handleCORS(NextResponse.json(project))
