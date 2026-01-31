@@ -2445,6 +2445,544 @@ async function handleRoute(request, { params }) {
       }))
     }
 
+    // ==================== MEMBER APPLICATION SYSTEM ====================
+
+    // Submit membership application (public)
+    if (route === '/membership-application' && method === 'POST') {
+      const body = await request.json()
+      
+      // Check if email already has a pending application
+      const existingApplication = await prisma.memberApplication.findFirst({
+        where: { 
+          email: body.email,
+          status: 'PENDING'
+        }
+      })
+      
+      if (existingApplication) {
+        return handleCORS(NextResponse.json({ 
+          error: 'You already have a pending application. Please wait for review.' 
+        }, { status: 400 }))
+      }
+
+      const application = await prisma.memberApplication.create({
+        data: {
+          fullName: body.fullName,
+          email: body.email,
+          phone: body.phone,
+          gender: body.gender,
+          dateOfBirth: body.dateOfBirth,
+          address: body.address,
+          city: body.city,
+          country: body.country || 'Cameroon',
+          congregation: body.congregation,
+          churchBranch: body.churchBranch,
+          memberOfChurchOfChrist: body.memberOfChurchOfChrist,
+          currentCommitment: body.currentCommitment,
+          occupation: body.occupation,
+          musicalExperience: body.musicalExperience,
+          vocalPart: body.vocalPart,
+          instrument: body.instrument,
+          canReadMusic: body.canReadMusic,
+          previousChoirs: body.previousChoirs,
+          availability: body.availability,
+          whyJoin: body.whyJoin,
+          howHeard: body.howHeard,
+        }
+      })
+
+      return handleCORS(NextResponse.json({ 
+        message: 'Application submitted successfully',
+        applicationId: application.id 
+      }))
+    }
+
+    // Get all member applications (admin only)
+    if (route === '/admin/member-applications' && method === 'GET') {
+      const url = new URL(request.url)
+      const status = url.searchParams.get('status') // PENDING, APPROVED, REJECTED
+      
+      const where = status ? { status } : {}
+      
+      const applications = await prisma.memberApplication.findMany({
+        where,
+        include: {
+          member: {
+            select: { id: true, email: true, isActive: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
+      })
+
+      return handleCORS(NextResponse.json(applications))
+    }
+
+    // Get single application details (admin)
+    if (route.match(/^\/admin\/member-applications\/[^\/]+$/) && method === 'GET') {
+      const id = route.split('/').pop()
+      
+      const application = await prisma.memberApplication.findUnique({
+        where: { id },
+        include: {
+          member: true
+        }
+      })
+
+      if (!application) {
+        return handleCORS(NextResponse.json({ error: 'Application not found' }, { status: 404 }))
+      }
+
+      return handleCORS(NextResponse.json(application))
+    }
+
+    // Approve member application (admin)
+    if (route.match(/^\/admin\/member-applications\/[^\/]+\/approve$/) && method === 'POST') {
+      const id = route.split('/')[3]
+      
+      const application = await prisma.memberApplication.findUnique({
+        where: { id }
+      })
+
+      if (!application) {
+        return handleCORS(NextResponse.json({ error: 'Application not found' }, { status: 404 }))
+      }
+
+      if (application.status !== 'PENDING') {
+        return handleCORS(NextResponse.json({ 
+          error: 'Application has already been processed' 
+        }, { status: 400 }))
+      }
+
+      // Generate a random password
+      const generatedPassword = Math.random().toString(36).slice(-8) + 'G2!'
+      const hashedPassword = await bcrypt.hash(generatedPassword, 10)
+
+      // Map vocal part string to enum
+      const vocalPartMap = {
+        'soprano': 'SOPRANO',
+        'alto': 'ALTO',
+        'tenor': 'TENOR',
+        'bass': 'BASS'
+      }
+      const vocalPart = vocalPartMap[application.vocalPart?.toLowerCase()] || 'NONE'
+
+      // Create member account
+      const member = await prisma.member.create({
+        data: {
+          email: application.email,
+          password: hashedPassword,
+          name: application.fullName,
+          phone: application.phone,
+          vocalPart: vocalPart,
+          mustChangePassword: true,
+        }
+      })
+
+      // Update application status
+      await prisma.memberApplication.update({
+        where: { id },
+        data: {
+          status: 'APPROVED',
+          reviewedAt: new Date(),
+          memberId: member.id
+        }
+      })
+
+      // Send approval email with credentials
+      try {
+        const nodemailer = require('nodemailer')
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD,
+          },
+        })
+
+        await transporter.sendMail({
+          from: `"G2 Melody Choir" <${process.env.SMTP_USER}>`,
+          to: application.email,
+          subject: '🎉 Welcome to G2 Melody Choir! Your Application Has Been Approved',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #f59e0b; margin: 0;">🎵 G2 Melody Choir</h1>
+              </div>
+              
+              <h2 style="color: #333;">Congratulations, ${application.fullName}!</h2>
+              
+              <p style="font-size: 16px; line-height: 1.6; color: #555;">
+                We are delighted to inform you that your application to join G2 Melody Choir has been <strong style="color: #10b981;">APPROVED</strong>!
+              </p>
+              
+              <div style="background: #f8fafc; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                <h3 style="margin-top: 0; color: #333;">Your Member Login Credentials</h3>
+                <p style="margin: 5px 0;"><strong>Email:</strong> ${application.email}</p>
+                <p style="margin: 5px 0;"><strong>Temporary Password:</strong> <code style="background: #e5e7eb; padding: 2px 8px; border-radius: 4px;">${generatedPassword}</code></p>
+                <p style="margin: 5px 0;"><strong>Member Portal:</strong> <a href="${process.env.NEXT_PUBLIC_BASE_URL}/members/login" style="color: #f59e0b;">${process.env.NEXT_PUBLIC_BASE_URL}/members/login</a></p>
+              </div>
+              
+              <p style="font-size: 14px; color: #666; background: #fff3cd; padding: 10px; border-radius: 5px;">
+                ⚠️ <strong>Important:</strong> You will be required to change your password upon first login.
+              </p>
+              
+              <p style="font-size: 16px; line-height: 1.6; color: #555;">
+                We look forward to making beautiful music together!
+              </p>
+              
+              <p style="font-size: 14px; color: #888; margin-top: 30px;">
+                With musical blessings,<br>
+                <strong>The G2 Melody Team</strong>
+              </p>
+            </div>
+          `
+        })
+      } catch (emailError) {
+        console.error('Failed to send approval email:', emailError)
+        // Don't fail the request, just log the error
+      }
+
+      return handleCORS(NextResponse.json({ 
+        message: 'Application approved and member account created',
+        member: {
+          id: member.id,
+          email: member.email,
+          name: member.name,
+          temporaryPassword: generatedPassword // Only returned once for admin reference
+        }
+      }))
+    }
+
+    // Reject member application (admin)
+    if (route.match(/^\/admin\/member-applications\/[^\/]+\/reject$/) && method === 'POST') {
+      const id = route.split('/')[3]
+      const body = await request.json()
+      
+      const application = await prisma.memberApplication.findUnique({
+        where: { id }
+      })
+
+      if (!application) {
+        return handleCORS(NextResponse.json({ error: 'Application not found' }, { status: 404 }))
+      }
+
+      if (application.status !== 'PENDING') {
+        return handleCORS(NextResponse.json({ 
+          error: 'Application has already been processed' 
+        }, { status: 400 }))
+      }
+
+      // Update application status
+      await prisma.memberApplication.update({
+        where: { id },
+        data: {
+          status: 'REJECTED',
+          reviewedAt: new Date(),
+          rejectionReason: body.reason || 'No reason provided'
+        }
+      })
+
+      // Send rejection email
+      try {
+        const nodemailer = require('nodemailer')
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD,
+          },
+        })
+
+        await transporter.sendMail({
+          from: `"G2 Melody Choir" <${process.env.SMTP_USER}>`,
+          to: application.email,
+          subject: 'G2 Melody Choir - Application Update',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #f59e0b; margin: 0;">🎵 G2 Melody Choir</h1>
+              </div>
+              
+              <h2 style="color: #333;">Dear ${application.fullName},</h2>
+              
+              <p style="font-size: 16px; line-height: 1.6; color: #555;">
+                Thank you for your interest in joining G2 Melody Choir. After careful review of your application, we regret to inform you that we are unable to offer you membership at this time.
+              </p>
+              
+              ${body.reason ? `
+              <div style="background: #f8fafc; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #6b7280;">
+                <h3 style="margin-top: 0; color: #333;">Feedback</h3>
+                <p style="color: #555;">${body.reason}</p>
+              </div>
+              ` : ''}
+              
+              <p style="font-size: 16px; line-height: 1.6; color: #555;">
+                We encourage you to continue pursuing your musical journey, and you are welcome to apply again in the future.
+              </p>
+              
+              <p style="font-size: 14px; color: #888; margin-top: 30px;">
+                With best regards,<br>
+                <strong>The G2 Melody Team</strong>
+              </p>
+            </div>
+          `
+        })
+      } catch (emailError) {
+        console.error('Failed to send rejection email:', emailError)
+      }
+
+      return handleCORS(NextResponse.json({ 
+        message: 'Application rejected',
+        applicationId: id
+      }))
+    }
+
+    // ==================== MEMBER PORTAL APIS ====================
+
+    // Member login
+    if (route === '/members/login' && method === 'POST') {
+      const body = await request.json()
+      
+      const member = await prisma.member.findUnique({
+        where: { email: body.email }
+      })
+
+      if (!member) {
+        return handleCORS(NextResponse.json({ error: 'Invalid credentials' }, { status: 401 }))
+      }
+
+      if (!member.isActive) {
+        return handleCORS(NextResponse.json({ error: 'Account is deactivated' }, { status: 403 }))
+      }
+
+      const isValidPassword = await bcrypt.compare(body.password, member.password)
+      if (!isValidPassword) {
+        return handleCORS(NextResponse.json({ error: 'Invalid credentials' }, { status: 401 }))
+      }
+
+      return handleCORS(NextResponse.json({
+        member: {
+          id: member.id,
+          email: member.email,
+          name: member.name,
+          vocalPart: member.vocalPart,
+          image: member.image,
+          mustChangePassword: member.mustChangePassword
+        }
+      }))
+    }
+
+    // Change member password
+    if (route === '/members/change-password' && method === 'POST') {
+      const body = await request.json()
+      
+      const member = await prisma.member.findUnique({
+        where: { id: body.memberId }
+      })
+
+      if (!member) {
+        return handleCORS(NextResponse.json({ error: 'Member not found' }, { status: 404 }))
+      }
+
+      // Verify current password
+      const isValidPassword = await bcrypt.compare(body.currentPassword, member.password)
+      if (!isValidPassword) {
+        return handleCORS(NextResponse.json({ error: 'Current password is incorrect' }, { status: 401 }))
+      }
+
+      // Hash and update new password
+      const hashedPassword = await bcrypt.hash(body.newPassword, 10)
+      await prisma.member.update({
+        where: { id: body.memberId },
+        data: {
+          password: hashedPassword,
+          mustChangePassword: false
+        }
+      })
+
+      return handleCORS(NextResponse.json({ message: 'Password changed successfully' }))
+    }
+
+    // Get member dashboard data
+    if (route === '/members/dashboard' && method === 'GET') {
+      const url = new URL(request.url)
+      const memberId = url.searchParams.get('memberId')
+
+      if (!memberId) {
+        return handleCORS(NextResponse.json({ error: 'Member ID required' }, { status: 400 }))
+      }
+
+      const member = await prisma.member.findUnique({
+        where: { id: memberId }
+      })
+
+      if (!member) {
+        return handleCORS(NextResponse.json({ error: 'Member not found' }, { status: 404 }))
+      }
+
+      // Get practice tracks for member's vocal part
+      const practiceTracks = await prisma.practiceTrack.findMany({
+        where: {
+          OR: [
+            { vocalPart: member.vocalPart },
+            { vocalPart: 'NONE' }
+          ],
+          isPublished: true
+        },
+        orderBy: { order: 'asc' }
+      })
+
+      // Get upcoming schedule items
+      const scheduleItems = await prisma.scheduleItem.findMany({
+        where: {
+          isPublic: true,
+          date: { gte: new Date() }
+        },
+        orderBy: { date: 'asc' },
+        take: 10
+      })
+
+      // Get announcements
+      const announcements = await prisma.memberAnnouncement.findMany({
+        where: {
+          isPublished: true,
+          OR: [
+            { expiresAt: null },
+            { expiresAt: { gte: new Date() } }
+          ]
+        },
+        orderBy: { publishedAt: 'desc' },
+        take: 10
+      })
+
+      // Get attendance records
+      const attendanceRecords = await prisma.memberAttendance.findMany({
+        where: { memberId },
+        orderBy: { date: 'desc' },
+        take: 20
+      })
+
+      // Calculate attendance stats
+      const totalAttendance = attendanceRecords.length
+      const presentCount = attendanceRecords.filter(r => r.present).length
+      const attendanceRate = totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 100) : 100
+
+      return handleCORS(NextResponse.json({
+        member: {
+          id: member.id,
+          name: member.name,
+          email: member.email,
+          vocalPart: member.vocalPart,
+          image: member.image,
+          attendanceCount: member.attendanceCount
+        },
+        practiceTracks,
+        scheduleItems,
+        announcements,
+        attendanceRecords,
+        stats: {
+          attendanceRate,
+          totalAttendance,
+          presentCount
+        }
+      }))
+    }
+
+    // Get member announcements (admin)
+    if (route === '/admin/member-announcements' && method === 'GET') {
+      const announcements = await prisma.memberAnnouncement.findMany({
+        orderBy: { createdAt: 'desc' }
+      })
+      return handleCORS(NextResponse.json(announcements))
+    }
+
+    // Create member announcement (admin)
+    if (route === '/admin/member-announcements' && method === 'POST') {
+      const body = await request.json()
+      
+      const announcement = await prisma.memberAnnouncement.create({
+        data: {
+          title: body.title,
+          content: body.content,
+          priority: body.priority || 'normal',
+          isPublished: body.isPublished !== false,
+          expiresAt: body.expiresAt ? new Date(body.expiresAt) : null
+        }
+      })
+
+      return handleCORS(NextResponse.json(announcement))
+    }
+
+    // Delete member announcement (admin)
+    if (route.match(/^\/admin\/member-announcements\/[^\/]+$/) && method === 'DELETE') {
+      const id = route.split('/').pop()
+      await prisma.memberAnnouncement.delete({ where: { id } })
+      return handleCORS(NextResponse.json({ message: 'Announcement deleted' }))
+    }
+
+    // Record member attendance (admin)
+    if (route === '/admin/member-attendance' && method === 'POST') {
+      const body = await request.json()
+      
+      const attendance = await prisma.memberAttendance.create({
+        data: {
+          memberId: body.memberId,
+          eventType: body.eventType,
+          eventTitle: body.eventTitle,
+          date: new Date(body.date),
+          present: body.present !== false,
+          notes: body.notes
+        }
+      })
+
+      // Update member attendance count
+      if (body.present !== false) {
+        await prisma.member.update({
+          where: { id: body.memberId },
+          data: {
+            attendanceCount: { increment: 1 },
+            lastAttendance: new Date(body.date)
+          }
+        })
+      }
+
+      return handleCORS(NextResponse.json(attendance))
+    }
+
+    // Get all members (admin)
+    if (route === '/admin/members' && method === 'GET') {
+      const members = await prisma.member.findMany({
+        orderBy: { name: 'asc' },
+        include: {
+          application: {
+            select: { id: true, vocalPart: true, createdAt: true }
+          }
+        }
+      })
+      return handleCORS(NextResponse.json(members))
+    }
+
+    // Toggle member active status (admin)
+    if (route.match(/^\/admin\/members\/[^\/]+\/toggle-status$/) && method === 'POST') {
+      const id = route.split('/')[3]
+      
+      const member = await prisma.member.findUnique({ where: { id } })
+      if (!member) {
+        return handleCORS(NextResponse.json({ error: 'Member not found' }, { status: 404 }))
+      }
+
+      const updated = await prisma.member.update({
+        where: { id },
+        data: { isActive: !member.isActive }
+      })
+
+      return handleCORS(NextResponse.json(updated))
+    }
+
     return handleCORS(NextResponse.json({ error: `Route ${route} not found` }, { status: 404 }))
 
   } catch (error) {
