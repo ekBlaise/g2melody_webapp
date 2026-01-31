@@ -1505,12 +1505,14 @@ async function handleRoute(request, { params }) {
         
         // Ensure uploads directory exists
         const uploadDir = path.join(process.cwd(), 'public', 'uploads')
+        console.log('Upload directory:', uploadDir)
         if (!existsSync(uploadDir)) {
           await mkdir(uploadDir, { recursive: true })
         }
 
         // Write file
         const filepath = path.join(uploadDir, filename)
+        console.log('File path:', filepath)
         await writeFile(filepath, buffer)
 
         // Return the public URL
