@@ -1478,11 +1478,27 @@ async function handleRoute(request, { params }) {
           return handleCORS(NextResponse.json({ error: 'No file provided' }, { status: 400 }))
         }
 
+        // Check file size (2MB limit)
+        const MAX_SIZE = 2 * 1024 * 1024 // 2MB in bytes
+        if (file.size > MAX_SIZE) {
+          return handleCORS(NextResponse.json({ 
+            error: 'File too large. Maximum size is 2MB.' 
+          }, { status: 400 }))
+        }
+
+        // Check file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+        if (!allowedTypes.includes(file.type)) {
+          return handleCORS(NextResponse.json({ 
+            error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.' 
+          }, { status: 400 }))
+        }
+
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
 
         // Generate unique filename
-        const ext = file.name.split('.').pop()
+        const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
         const filename = `${uuidv4()}.${ext}`
         
         // Ensure uploads directory exists
@@ -1497,10 +1513,10 @@ async function handleRoute(request, { params }) {
 
         // Return the public URL
         const url = `/uploads/${filename}`
-        return handleCORS(NextResponse.json({ url, filename }))
+        return handleCORS(NextResponse.json({ url, filename, size: file.size }))
       } catch (error) {
         console.error('Upload error:', error)
-        return handleCORS(NextResponse.json({ error: 'Failed to upload file' }, { status: 500 }))
+        return handleCORS(NextResponse.json({ error: 'Failed to upload file: ' + error.message }, { status: 500 }))
       }
     }
 
