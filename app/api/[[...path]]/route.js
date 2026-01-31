@@ -1476,7 +1476,7 @@ async function handleRoute(request, { params }) {
       }))
     }
 
-    // ==================== IMAGE UPLOAD ====================
+    // ==================== IMAGE UPLOAD (Cloudinary) ====================
     if (route === '/upload' && method === 'POST') {
       try {
         const formData = await request.formData()
@@ -1502,28 +1502,41 @@ async function handleRoute(request, { params }) {
           }, { status: 400 }))
         }
 
+        // Convert file to base64 for Cloudinary upload
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
+        const base64 = buffer.toString('base64')
+        const dataURI = `data:${file.type};base64,${base64}`
 
-        // Generate unique filename
-        const ext = file.name ? file.name.split('.').pop()?.toLowerCase() || 'jpg' : 'jpg'
-        const filename = `${uuidv4()}.${ext}`
-        
-        // Ensure uploads directory exists
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-        if (!existsSync(uploadDir)) {
-          await mkdir(uploadDir, { recursive: true })
-        }
+        // Upload to Cloudinary
+        const uploadResult = await new Promise((resolve, reject) => {
+          cloudinary.uploader.upload(
+            dataURI,
+            {
+              folder: 'g2melody',
+              resource_type: 'image',
+              transformation: [
+                { quality: 'auto', fetch_format: 'auto' }
+              ]
+            },
+            (error, result) => {
+              if (error) reject(error)
+              else resolve(result)
+            }
+          )
+        })
 
-        // Write file
-        const filepath = path.join(uploadDir, filename)
-        await writeFile(filepath, buffer)
-
-        // Return the public URL
-        const url = `/uploads/${filename}`
-        return handleCORS(NextResponse.json({ url, filename, size: file.size }))
+        // Return the Cloudinary URL
+        const result = uploadResult
+        return handleCORS(NextResponse.json({ 
+          url: result.secure_url, 
+          publicId: result.public_id,
+          width: result.width,
+          height: result.height,
+          size: file.size 
+        }))
       } catch (error) {
-        console.error('Upload error:', error)
+        console.error('Cloudinary upload error:', error)
         return handleCORS(NextResponse.json({ error: 'Failed to upload file: ' + error.message }, { status: 500 }))
       }
     }
