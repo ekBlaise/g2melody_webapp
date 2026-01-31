@@ -1506,8 +1506,220 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Applications Tab */}
+          <TabsContent value="applications" className="space-y-6">
+            <Card className="border-0 shadow-xl dark:bg-gray-900">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-blue-500" />
+                    Member Applications
+                  </CardTitle>
+                  <CardDescription>Review and manage membership applications</CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                    {memberApplications.filter(a => a.status === 'PENDING').length} Pending
+                  </Badge>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    {memberApplications.filter(a => a.status === 'APPROVED').length} Approved
+                  </Badge>
+                  <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                    {memberApplications.filter(a => a.status === 'REJECTED').length} Rejected
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {memberApplications.length === 0 ? (
+                  <div className="text-center py-12">
+                    <User className="h-12 w-12 mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">No applications yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {memberApplications.map((application) => (
+                      <div 
+                        key={application.id} 
+                        className={`p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md ${
+                          application.status === 'PENDING' 
+                            ? 'border-yellow-200 bg-yellow-50/50 dark:border-yellow-800 dark:bg-yellow-900/20' 
+                            : application.status === 'APPROVED'
+                            ? 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-900/20'
+                            : 'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20'
+                        }`}
+                        onClick={() => openApplicationDetails(application)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <Avatar className="h-12 w-12">
+                              <AvatarFallback className={`${
+                                application.status === 'PENDING' ? 'bg-yellow-500' : 
+                                application.status === 'APPROVED' ? 'bg-green-500' : 'bg-red-500'
+                              } text-white`}>
+                                {application.fullName?.charAt(0) || '?'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h4 className="font-semibold text-gray-900 dark:text-white">{application.fullName}</h4>
+                              <p className="text-sm text-gray-500">{application.email}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Badge variant="outline" className="text-xs">{application.vocalPart || 'Not specified'}</Badge>
+                                <span className="text-xs text-gray-400">Applied: {formatDate(application.createdAt)}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Badge className={`${
+                              application.status === 'PENDING' ? 'bg-yellow-500' : 
+                              application.status === 'APPROVED' ? 'bg-green-500' : 'bg-red-500'
+                            } text-white`}>
+                              {application.status}
+                            </Badge>
+                            <ChevronRight className="h-5 w-5 text-gray-400" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
+
+      {/* Application Details Dialog */}
+      <Dialog open={applicationDialogOpen} onOpenChange={setApplicationDialogOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Application Details</DialogTitle>
+            <DialogDescription>Review the membership application</DialogDescription>
+          </DialogHeader>
+          {selectedApplication && (
+            <div className="space-y-6">
+              {/* Status Badge */}
+              <div className="flex items-center justify-between">
+                <Badge className={`${
+                  selectedApplication.status === 'PENDING' ? 'bg-yellow-500' : 
+                  selectedApplication.status === 'APPROVED' ? 'bg-green-500' : 'bg-red-500'
+                } text-white text-sm px-3 py-1`}>
+                  {selectedApplication.status}
+                </Badge>
+                <span className="text-sm text-gray-500">Submitted: {formatDate(selectedApplication.createdAt)}</span>
+              </div>
+
+              {/* Personal Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white border-b pb-2">Personal Information</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div><span className="text-gray-500">Full Name:</span> <span className="font-medium">{selectedApplication.fullName}</span></div>
+                  <div><span className="text-gray-500">Email:</span> <span className="font-medium">{selectedApplication.email}</span></div>
+                  <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{selectedApplication.phone || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">Gender:</span> <span className="font-medium">{selectedApplication.gender || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">Date of Birth:</span> <span className="font-medium">{selectedApplication.dateOfBirth || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">City:</span> <span className="font-medium">{selectedApplication.city || 'N/A'}, {selectedApplication.country}</span></div>
+                </div>
+              </div>
+
+              {/* Church Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white border-b pb-2">Church Information</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div><span className="text-gray-500">Congregation:</span> <span className="font-medium">{selectedApplication.congregation || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">Church Branch:</span> <span className="font-medium">{selectedApplication.churchBranch || 'N/A'}</span></div>
+                  <div className="col-span-2"><span className="text-gray-500">Member of Church of Christ:</span> <span className="font-medium">{selectedApplication.memberOfChurchOfChrist || 'N/A'}</span></div>
+                </div>
+              </div>
+
+              {/* Musical Background */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white border-b pb-2">Musical Background</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div><span className="text-gray-500">Vocal Part:</span> <span className="font-medium">{selectedApplication.vocalPart || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">Can Read Music:</span> <span className="font-medium">{selectedApplication.canReadMusic || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">Instrument:</span> <span className="font-medium">{selectedApplication.instrument || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">Experience:</span> <span className="font-medium">{selectedApplication.musicalExperience || 'N/A'}</span></div>
+                </div>
+                {selectedApplication.previousChoirs && (
+                  <div className="text-sm">
+                    <span className="text-gray-500">Previous Choirs:</span>
+                    <p className="mt-1 p-2 bg-gray-50 dark:bg-gray-800 rounded">{selectedApplication.previousChoirs}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Availability & Motivation */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white border-b pb-2">Availability & Motivation</h3>
+                <div className="text-sm space-y-2">
+                  <div><span className="text-gray-500">Availability:</span> <span className="font-medium">{selectedApplication.availability || 'N/A'}</span></div>
+                  <div><span className="text-gray-500">How they heard about us:</span> <span className="font-medium">{selectedApplication.howHeard || 'N/A'}</span></div>
+                  {selectedApplication.whyJoin && (
+                    <div>
+                      <span className="text-gray-500">Why they want to join:</span>
+                      <p className="mt-1 p-2 bg-gray-50 dark:bg-gray-800 rounded">{selectedApplication.whyJoin}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Rejection Reason (if rejected) */}
+              {selectedApplication.status === 'REJECTED' && selectedApplication.rejectionReason && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                  <h4 className="font-medium text-red-700 dark:text-red-400 mb-2">Rejection Reason</h4>
+                  <p className="text-sm text-red-600 dark:text-red-300">{selectedApplication.rejectionReason}</p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              {selectedApplication.status === 'PENDING' && (
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button 
+                    className="flex-1 bg-green-500 hover:bg-green-600"
+                    onClick={() => handleApproveApplication(selectedApplication.id)}
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    Approve & Create Account
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    className="flex-1"
+                    onClick={() => setRejectDialogOpen(true)}
+                  >
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Reject Application Dialog */}
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reject Application</DialogTitle>
+            <DialogDescription>Provide a reason for rejecting this application (will be sent to applicant)</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Enter rejection reason..."
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              rows={4}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleRejectApplication}>
+              Confirm Rejection
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Project Dialog */}
       <CreateProjectDialog 
