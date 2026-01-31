@@ -388,6 +388,51 @@ export default function AdminDashboard() {
     return false
   }
 
+  const handleUpdateProject = async (projectId, formData) => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setProjects(projects.map(p => p.id === projectId ? updated : p))
+        toast.success('Project updated!')
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to update project')
+    }
+    return false
+  }
+
+  const handleDeleteProject = async (projectId) => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setProjects(projects.filter(p => p.id !== projectId))
+        toast.success('Project deleted!')
+        setDeleteProjectDialogOpen(false)
+        setSelectedProject(null)
+        return true
+      }
+    } catch (error) {
+      toast.error('Failed to delete project')
+    }
+    return false
+  }
+
+  const openEditProject = (project) => {
+    setSelectedProject(project)
+    setEditProjectDialogOpen(true)
+  }
+
+  const openDeleteProject = (project) => {
+    setSelectedProject(project)
+    setDeleteProjectDialogOpen(true)
+  }
+
   const handleCreateMusic = async (formData) => {
     try {
       const res = await fetch('/api/music', {
