@@ -279,11 +279,19 @@ export default function AdminDashboard() {
   const [createNewsDialogOpen, setCreateNewsDialogOpen] = useState(false)
   const [createAwardDialogOpen, setCreateAwardDialogOpen] = useState(false)
   const [createGalleryDialogOpen, setCreateGalleryDialogOpen] = useState(false)
+  const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false)
+  const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState(null)
 
   useEffect(() => {
+    if (status === 'loading') return // Wait for session to load
+    
     if (status === 'unauthenticated') {
       router.push('/admin/login')
-    } else if (session?.user?.role !== 'ADMIN') {
+      return
+    }
+    
+    if (status === 'authenticated' && session?.user?.role !== 'ADMIN') {
       toast.error('Access denied. Admin only.')
       router.push('/dashboard')
     }
