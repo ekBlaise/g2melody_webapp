@@ -867,6 +867,14 @@ export default function AdminDashboard() {
               <TabsTrigger value="gallery" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900">
                 <Camera className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Gallery
               </TabsTrigger>
+              <TabsTrigger value="applications" className="rounded-lg px-3 sm:px-5 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow dark:data-[state=active]:bg-gray-900 relative">
+                <User className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> Applications
+                {memberApplications.filter(a => a.status === 'PENDING').length > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                    {memberApplications.filter(a => a.status === 'PENDING').length}
+                  </span>
+                )}
+              </TabsTrigger>
             </TabsList>
           </div>
 
