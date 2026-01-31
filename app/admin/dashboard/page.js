@@ -305,7 +305,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, projectsRes, musicRes, usersRes, settingsRes, foundersRes, membersRes, historyRes, newsRes, awardsRes, galleryRes] = await Promise.all([
+        const [statsRes, projectsRes, musicRes, usersRes, settingsRes, foundersRes, membersRes, historyRes, newsRes, awardsRes, galleryRes, applicationsRes] = await Promise.all([
           fetch('/api/admin/stats'),
           fetch('/api/projects'),
           fetch('/api/music'),
@@ -316,10 +316,11 @@ export default function AdminDashboard() {
           fetch('/api/history'),
           fetch('/api/news'),
           fetch('/api/awards'),
-          fetch('/api/gallery')
+          fetch('/api/gallery'),
+          fetch('/api/admin/member-applications')
         ])
 
-        const [statsData, projectsData, musicData, usersData, settingsData, foundersData, membersData, historyData, newsData, awardsData, galleryData] = await Promise.all([
+        const [statsData, projectsData, musicData, usersData, settingsData, foundersData, membersData, historyData, newsData, awardsData, galleryData, applicationsData] = await Promise.all([
           statsRes.json(),
           projectsRes.json(),
           musicRes.json(),
@@ -330,7 +331,8 @@ export default function AdminDashboard() {
           historyRes.json(),
           newsRes.json(),
           awardsRes.json(),
-          galleryRes.json()
+          galleryRes.json(),
+          applicationsRes.json()
         ])
 
         setStats(statsData)
@@ -344,6 +346,7 @@ export default function AdminDashboard() {
         setNewsEvents(Array.isArray(newsData) ? newsData : [])
         setAwards(Array.isArray(awardsData) ? awardsData : [])
         setGalleryItems(Array.isArray(galleryData) ? galleryData : [])
+        setMemberApplications(Array.isArray(applicationsData) ? applicationsData : [])
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
