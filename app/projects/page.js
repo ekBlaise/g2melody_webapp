@@ -21,14 +21,16 @@ export default function ProjectsPage() {
       try {
         const res = await fetch('/api/projects')
         let data = await res.json()
+        let projectList = Array.isArray(data) ? data : (data?.data ?? [])
 
-        if (data.length === 0) {
+        if (projectList.length === 0) {
           await fetch('/api/seed', { method: 'POST' })
           const reRes = await fetch('/api/projects')
           data = await reRes.json()
+          projectList = Array.isArray(data) ? data : (data?.data ?? [])
         }
 
-        setProjects(data)
+        setProjects(projectList)
       } catch (error) {
         console.error('Error:', error)
       } finally {
@@ -50,9 +52,10 @@ export default function ProjectsPage() {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
   }
 
-  const currentProjects = projects.filter(p => p.status === 'CURRENT')
-  const pastProjects = projects.filter(p => p.status === 'PAST')
-  const meloverse = projects.find(p => p.id === 'proj-meloverse')
+  const projectList = Array.isArray(projects) ? projects : (projects?.data ?? [])
+  const currentProjects = projectList.filter(p => p.status === 'CURRENT')
+  const pastProjects = projectList.filter(p => p.status === 'PAST')
+  const meloverse = projectList.find(p => p.id === 'proj-meloverse')
 
   function ProjectSkeleton() {
     return (

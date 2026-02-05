@@ -292,7 +292,7 @@ function HeroSection({ siteSettings }) {
             <Link href="/projects">
               <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-lg px-8 py-6 rounded-xl shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 group">
                 <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
-                Support Our Mission
+                Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-100 to-white">Mission</span>
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -433,8 +433,8 @@ function AboutSection() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {coreValues.map((value, index) => (
               <div key={index} className="text-center group">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-3 group-hover:from-amber-500 group-hover:to-orange-500 transition-all duration-300">
-                  <value.icon className="w-7 h-7 text-amber-400 group-hover:text-white transition-colors" />
+                <div className="w-16 h-16 rounded-2xl bg-blue-600/30 ring-1 ring-blue-400/30 flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/40 group-hover:ring-blue-300/40 transition-all duration-300">
+                  <value.icon className="w-7 h-7 text-blue-200 group-hover:text-white transition-colors" />
                 </div>
                 <h4 className="font-semibold mb-1">{value.title}</h4>
                 <p className="text-xs text-gray-400">{value.desc}</p>
@@ -499,8 +499,9 @@ function ProjectSkeleton() {
 
 // Projects Section
 function ProjectsSection({ projects, onDonate, loading }) {
-  const allCurrentProjects = projects.filter(p => p.status === 'CURRENT')
-  const allPastProjects = projects.filter(p => p.status === 'PAST')
+  const projectList = Array.isArray(projects) ? projects : (projects?.data ?? [])
+  const allCurrentProjects = projectList.filter(p => p.status === 'CURRENT')
+  const allPastProjects = projectList.filter(p => p.status === 'PAST')
 
   // Limit to 3 projects for homepage display
   const currentProjects = allCurrentProjects.slice(0, 3)
@@ -527,7 +528,7 @@ function ProjectsSection({ projects, onDonate, loading }) {
             <Target className="w-3 h-3 mr-1" /> Our Projects
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Mission</span>
+            Support Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">Mission</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Your generous contributions help us spread the Gospel through music and nurture the next generation of worship leaders.
@@ -711,15 +712,15 @@ function MusicStoreSection({ music, onPurchase, loading }) {
   }
 
   return (
-    <section id="music" className="py-16 bg-gradient-to-b from-white via-purple-50/30 to-white">
+    <section id="music" className="py-16 bg-gradient-to-b from-white via-blue-50/40 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-purple-100 text-purple-700 px-4 py-1.5">
+          <Badge className="mb-4 bg-blue-100 text-blue-700 px-4 py-1.5">
             <Headphones className="w-3 h-3 mr-1" /> Music Store
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">Music Collection</span>
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">Music Collection</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Experience the power of a cappella worship. Stream our music for free, or purchase and download our original compositions, hymns, and gospel songs.
@@ -727,7 +728,7 @@ function MusicStoreSection({ music, onPurchase, loading }) {
         </div>
 
         {/* Album Highlight */}
-        <div className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
+        <div className="bg-indigo-700 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -737,7 +738,7 @@ function MusicStoreSection({ music, onPurchase, loading }) {
                 Our debut album released in 2019, featuring original compositions that showcase the beauty of four-part harmony and acapella worship.
               </p>
               <Link href="/music">
-                <Button className="bg-white text-rose-600 hover:bg-white/90">
+                <Button className="bg-white text-blue-700 hover:bg-white/90">
                   <Play className="mr-2 h-4 w-4" /> Browse All Music
                 </Button>
               </Link>
@@ -769,14 +770,14 @@ function MusicStoreSection({ music, onPurchase, loading }) {
                       onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
                     >
                       {playingId === track.id ? (
-                        <Pause className="w-5 h-5 text-rose-600" />
+                        <Pause className="w-5 h-5 text-blue-700" />
                       ) : (
-                        <Play className="w-5 h-5 text-rose-600 ml-0.5" />
+                        <Play className="w-5 h-5 text-blue-700 ml-0.5" />
                       )}
                     </button>
                   </div>
                   {track.isHymn && (
-                    <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">Hymn</Badge>
+                    <Badge className="absolute top-2 left-2 bg-blue-600 text-xs">Hymn</Badge>
                   )}
                 </div>
                 <CardContent className="p-3">
@@ -784,8 +785,8 @@ function MusicStoreSection({ music, onPurchase, loading }) {
                   <p className="text-xs text-gray-500 line-clamp-1">{track.artist}</p>
                 </CardContent>
                 <CardFooter className="p-3 pt-0 flex items-center justify-between">
-                  <span className="text-sm font-bold text-rose-600">{formatCurrency(track.price)}</span>
-                  <Button size="sm" className="bg-rose-500 hover:bg-rose-600 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
+                  <span className="text-sm font-bold text-blue-700">{formatCurrency(track.price)}</span>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 h-7 text-xs px-2" onClick={() => onPurchase(track)}>
                     <ShoppingCart className="w-3 h-3 mr-1" /> Buy
                   </Button>
                 </CardFooter>
@@ -804,7 +805,7 @@ function MusicStoreSection({ music, onPurchase, loading }) {
         {/* View All Music Button */}
         <div className="text-center mt-10">
           <Link href="/music">
-            <Button size="lg" variant="outline" className="border-rose-500 text-rose-600 hover:bg-rose-50">
+            <Button size="lg" variant="outline" className="border-blue-600 text-blue-700 hover:bg-blue-50">
               View All Music <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -871,7 +872,7 @@ function LearnMuzikSection() {
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Develop Your{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-500">Musical Gift</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">Musical Gift</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Our structured music education program is designed to nurture your talents and equip you for worship leadership.
@@ -879,7 +880,7 @@ function LearnMuzikSection() {
         </div>
 
         {/* Feature Banner */}
-        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-700 to-blue-600 rounded-3xl p-8 md:p-12 text-white mb-12 relative overflow-hidden">
           <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full" />
           <div className="absolute right-20 top-10 w-32 h-32 bg-white/5 rounded-full" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
@@ -891,7 +892,7 @@ function LearnMuzikSection() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/join">
-                  <Button className="bg-white text-blue-600 hover:bg-white/90">
+                  <Button className="bg-white text-indigo-700 hover:bg-white/90">
                     <GraduationCap className="mr-2 h-4 w-4" /> Enroll Now
                   </Button>
                 </Link>
@@ -928,8 +929,8 @@ function LearnMuzikSection() {
           {programs.map((program, index) => (
             <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
               <CardHeader>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mb-4 group-hover:from-blue-500 group-hover:to-cyan-500 transition-all duration-300">
-                  <program.icon className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center mb-4 group-hover:from-blue-600 group-hover:to-blue-500 transition-all duration-300">
+                  <program.icon className="w-7 h-7 text-blue-700 group-hover:text-white transition-colors" />
                 </div>
                 <CardTitle className="text-xl">{program.title}</CardTitle>
                 <CardDescription>{program.desc}</CardDescription>
@@ -955,7 +956,7 @@ function LearnMuzikSection() {
         <div className="text-center mt-16">
           <p className="text-gray-600 mb-4">Ready to start your musical journey?</p>
           <Link href="/register">
-            <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
+            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600">
               Join G2 Melody Today <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
@@ -1564,7 +1565,10 @@ export default function App() {
         const settingsData = await settingsRes.json()
 
         // If no projects, then seed and re-fetch
-        if (projectsData.length === 0) {
+        const initialProjects = Array.isArray(projectsData) ? projectsData : (projectsData?.data ?? [])
+        const initialMusic = Array.isArray(musicData) ? musicData : (musicData?.data ?? [])
+
+        if (initialProjects.length === 0) {
           console.log('No data found, seeding...')
           await fetch('/api/seed', { method: 'POST' })
 
@@ -1578,14 +1582,14 @@ export default function App() {
           musicData = await newMusicRes.json()
           const newSettingsData = await newSettingsRes.json()
 
-          setProjects(projectsData)
-          setMusic(musicData)
+          setProjects(Array.isArray(projectsData) ? projectsData : (projectsData?.data ?? []))
+          setMusic(Array.isArray(musicData) ? musicData : (musicData?.data ?? []))
           if (newSettingsData && !newSettingsData.error) {
             setSiteSettings(newSettingsData)
           }
         } else {
-          setProjects(projectsData)
-          setMusic(musicData)
+          setProjects(initialProjects)
+          setMusic(initialMusic)
           if (settingsData && !settingsData.error) {
             setSiteSettings(settingsData)
           }

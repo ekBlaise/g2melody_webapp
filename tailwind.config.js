@@ -1,4 +1,20 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors')
+
+const navyBlue = {
+	50: '#f2f4ff',
+	100: '#e2e6ff',
+	200: '#c7cffc',
+	300: '#a0aedf',
+	400: '#7689bf',
+	500: '#23307a',
+	600: '#1e2a67',
+	700: '#192354',
+	800: '#141c43',
+	900: '#0f1533',
+	950: '#0b0f26'
+}
+
 module.exports = {
 	darkMode: ["class"],
 	content: [
@@ -9,6 +25,12 @@ module.exports = {
 	],
 	prefix: "",
 	theme: {
+		colors: {
+			...colors,
+			amber: navyBlue,
+			orange: navyBlue,
+			yellow: navyBlue
+		},
 		container: {
 			center: true,
 			padding: '2rem',
