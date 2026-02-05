@@ -30,7 +30,10 @@ export default function GalleryPage() {
         const itemsData = await itemsRes.json()
         const filtersData = await filtersRes.json()
         setItems(Array.isArray(itemsData) ? itemsData : [])
-        setFilters(filtersData || { years: [], categories: [] })
+        setFilters({
+          years: Array.isArray(filtersData?.years) ? filtersData.years : [],
+          categories: Array.isArray(filtersData?.categories) ? filtersData.categories : []
+        })
       } catch (error) {
         console.error('Error fetching gallery:', error)
       } finally {
